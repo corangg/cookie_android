@@ -8,9 +8,7 @@ plugins {
 
 android {
     namespace = "com.nuecoo.data"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 35

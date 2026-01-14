@@ -11,7 +11,6 @@ import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.myren.core.util.isDenied
 
 private fun Context.getNotificationManager() = getSystemService(NotificationManager::class.java)
 

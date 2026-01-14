@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">NueCoo</string>
+
+    <string name="menu_main_oven">오븐</string>
+    <string name="menu_main_collection">수집</string>
+    <string name="menu_main_menu">메뉴</string>
+
+    <!--Permission-->
+    <string name="text_permission_title">권한 필요</string>
+    <string name="text_message_permission_permanent_refusal">권한이 영구적으로 거부되었습니다. 설정에서 권한을 허용해 주세요.</string>
+    <string name="text_message_permission_refusal">이 기능을 사용하려면 권한이 필요합니다. 권한을 허용해 주세요.</string>
+    <string name="text_move_setting">설정으로 이동</string>
+    <string name="text_retry">다시 시도</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
 </resources>
