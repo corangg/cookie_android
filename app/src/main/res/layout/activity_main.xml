@@ -36,7 +36,7 @@
             android:layout_height="@dimen/main_navi_height"
             android:layout_alignParentBottom="true"
             android:layout_marginHorizontal="36dp"
-            android:layout_marginBottom="72dp"
+            android:layout_marginBottom="36dp"
             android:background="@drawable/bg_bottom_navi"
             app:itemActiveIndicatorStyle="@color/transparent"
             app:itemIconSize="52dp"
