@@ -1,8 +1,10 @@
-package com.nuecoo.ui
+package com.nuecoo.ui.activity
 
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.provider.Settings
+import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -48,11 +50,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
     }
 
     private fun bindingNavigation() {
-        val navController =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment)?.findNavController()
-                ?: return
+        val navController = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)?.findNavController() ?: return
         binding.bottomNavigation.setupWithNavController(navController)
+        binding.bottomNavigation.itemIconTintList = null
+        applyBottomNaviScale(binding.bottomNavigation.selectedItemId)
         binding.bottomNavigation.setOnItemSelectedListener { item ->
+            applyBottomNaviScale(item.itemId)
+
             when (item.itemId) {
                 R.id.navi_oven, R.id.navi_collection, R.id.navi_menu -> {
                     NavigationUI.onNavDestinationSelected(item, navController)
@@ -61,6 +65,23 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
 
                 else -> false
             }
+        }
+    }
+
+    private fun applyBottomNaviScale(selectedItemId: Int) {
+        val menuView = binding.bottomNavigation.getChildAt(0) as ViewGroup
+
+        for (i in 0 until menuView.childCount) {
+            val itemView = menuView.getChildAt(i)
+            val menuItem = binding.bottomNavigation.menu.getItem(i)
+
+            val isSelected = menuItem.itemId == selectedItemId
+
+            itemView.animate()
+                .scaleX(if (isSelected) 1.25f else 1.0f)
+                .scaleY(if (isSelected) 1.25f else 1.0f)
+                .setDuration(0)
+                .start()
         }
     }
 
@@ -86,7 +107,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
                             "취소",
                         ) {
                             val intent =
-                                Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                                     data = Uri.fromParts("package", packageName, null)
                                 }
                             startActivity(intent)

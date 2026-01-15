@@ -3,17 +3,17 @@
     <item
         android:id="@+id/navi_oven"
         android:enabled="true"
-        android:icon="@drawable/ic_oven"
+        android:icon="@drawable/selector_oven"
         android:title="@string/menu_main_oven" />
 
     <item
         android:id="@+id/navi_collection"
         android:enabled="true"
-        android:icon="@drawable/ic_collection"
+        android:icon="@drawable/selector_collection"
         android:title="@string/menu_main_menu" />
     <item
         android:id="@+id/navi_menu"
         android:enabled="true"
-        android:icon="@drawable/ic_menu"
+        android:icon="@drawable/selector_menu"
         android:title="@string/menu_main_menu" />
 </menu>
