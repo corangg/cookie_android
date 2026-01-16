@@ -6,7 +6,8 @@ import com.nuecoo.core.di.DefaultDispatcher
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.MainDispatcher
 import com.nuecoo.core.viewmodel.BaseViewModel
-import com.nuecoo.domain.ObserveDailyCookieData
+import com.nuecoo.domain.usecase.ObserveDailyCookieData
+import com.nuecoo.domain.usecase.RemainTimeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.MainCoroutineDispatcher
@@ -16,9 +17,11 @@ import javax.inject.Inject
 @HiltViewModel
 class OvenFragmentViewModel @Inject constructor(
     observeDailyCookieData: ObserveDailyCookieData,
+    remainTimeUseCase: RemainTimeUseCase,
     @MainDispatcher mainDispatcher: MainCoroutineDispatcher,
     @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
     @IoDispatcher ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel(mainDispatcher, defaultDispatcher, ioDispatcher) {
     val dailyCookieData = observeDailyCookieData().map { it.list }.asLiveData(viewModelScope.coroutineContext)
+    val remainTime = remainTimeUseCase().asLiveData(viewModelScope.coroutineContext)
 }
