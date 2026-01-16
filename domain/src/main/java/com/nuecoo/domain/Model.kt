@@ -2,14 +2,19 @@ package com.nuecoo.domain
 
 import androidx.annotation.DrawableRes
 
+
+data class DailyCookieItemData(
+    val date: String,
+    val list: List<CookieItemData>
+)
 data class CookieItemData(
-    val time: String,
+    val time: String? = null,
     val type: Int,
     val isOpened: Boolean = false,
 )
 
 data class CookieUIItemData(
-    val time: String,
+    val time: String? = null,
     val type: Int,
     val isOpened: Boolean = false,
     @field:DrawableRes val imgRes: Int

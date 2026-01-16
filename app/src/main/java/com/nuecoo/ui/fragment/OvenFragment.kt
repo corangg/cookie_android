@@ -32,7 +32,7 @@ class OvenFragment : BaseFragment<FragmentOvenBinding>(FragmentOvenBinding::infl
     }
 
     override fun setObserve(lifecycleOwner: LifecycleOwner) {
-        viewModel."".observe(lifecycleOwner, ::updateList)
+        viewModel.dailyCookieData.observe(lifecycleOwner, ::updateList)
     }
 
     private fun bindingOnClick() {
