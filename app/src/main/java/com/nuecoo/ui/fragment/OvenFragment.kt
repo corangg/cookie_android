@@ -2,12 +2,17 @@ package com.nuecoo.ui.fragment
 
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import com.nuecoo.R
 import com.nuecoo.core.ui.BaseFragment
 import com.nuecoo.databinding.FragmentOvenBinding
 import com.nuecoo.domain.CookieItemData
+import com.nuecoo.domain.CookieUIItemData
 import com.nuecoo.mapper.toUiItem
 import com.nuecoo.ui.adapter.CookieAdapter
 import com.nuecoo.viewmodel.OvenFragmentViewModel
@@ -15,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class OvenFragment : BaseFragment<FragmentOvenBinding>(FragmentOvenBinding::inflate) {
-    private val viewModel: OvenFragmentViewModel by viewModels()
+    private val viewModel: OvenFragmentViewModel by activityViewModels()
 
     private var cookieAdapter: CookieAdapter? = null
 
@@ -42,7 +47,7 @@ class OvenFragment : BaseFragment<FragmentOvenBinding>(FragmentOvenBinding::infl
         binding.rvCookie.run {
             layoutManager = GridLayoutManager(requireContext(), 2)
             cookieAdapter = CookieAdapter {
-
+                showCookieOpenDialog(it)
             }
             adapter = cookieAdapter
         }
@@ -62,5 +67,14 @@ class OvenFragment : BaseFragment<FragmentOvenBinding>(FragmentOvenBinding::infl
     private fun updateList(items: List<CookieItemData>) {
         val uiItems = items.map { it.toUiItem() }
         cookieAdapter?.submitList(uiItems)
+    }
+
+    private fun showCookieOpenDialog(data: CookieUIItemData) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .setReorderingAllowed(true)
+            .add(R.id.overlay_container, CookieOpenFragment(), "CookieOpen")
+            .addToBackStack("overlay")
+            .commit()
+        viewModel.setSelectCookieType(data)
     }
 }

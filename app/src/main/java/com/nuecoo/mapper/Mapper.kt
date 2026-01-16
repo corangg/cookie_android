@@ -30,3 +30,24 @@ fun CookieItemData.toUiItem(): CookieUIItemData {
         imgRes = img
     )
 }
+
+fun CookieUIItemData.toOpenItem() : Int{
+    val img = if (this.isOpened) {
+        when (this.type) {
+            CookieType.Cheering.type -> R.drawable.img_cookie_cheering_5
+            CookieType.Consolation.type -> R.drawable.img_cookie_comfort_5
+            CookieType.Passion.type -> R.drawable.img_cookie_passion_5
+            CookieType.Determination.type -> R.drawable.img_cookie_sermon_5
+            else -> R.drawable.img_cookie_deactive
+        }
+    } else {
+        when (this.type) {
+            CookieType.Cheering.type -> R.drawable.img_cookie_cheering_2
+            CookieType.Consolation.type -> R.drawable.img_cookie_comfort_2
+            CookieType.Passion.type -> R.drawable.img_cookie_passion_2
+            CookieType.Determination.type -> R.drawable.img_cookie_sermon_2
+            else -> R.drawable.img_cookie_deactive
+        }
+    }
+    return img
+}

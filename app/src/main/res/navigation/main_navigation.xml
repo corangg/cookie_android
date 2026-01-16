@@ -10,6 +10,16 @@
         android:name="com.nuecoo.ui.fragment.OvenFragment"
         android:label="homeFragment"
         tools:layout="@layout/fragment_oven">
+        <action
+            android:id="@+id/action_show_open_cookie"
+            app:destination="@id/navi_open_cookie" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navi_open_cookie"
+        android:name="com.nuecoo.ui.fragment.CookieOpenFragment"
+        android:label="cookieOpenFragment"
+        tools:layout="@layout/fragment_cookie_open">
     </fragment>
 
     <fragment

@@ -25,4 +25,5 @@ enum class CookieType(val type: Int) {
     Consolation(1),
     Passion(2),
     Determination(3),
+    Unknown(-1)
 }
