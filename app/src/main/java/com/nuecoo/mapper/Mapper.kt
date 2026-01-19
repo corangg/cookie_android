@@ -51,3 +51,33 @@ fun CookieUIItemData.toOpenItem() : Int{
     }
     return img
 }
+
+fun CookieUIItemData.toOpenAnimationItem(): List<Int> {
+    return when (this.type) {
+        CookieType.Cheering.type -> listOf(
+            R.drawable.img_cookie_cheering_3,
+            R.drawable.img_cookie_cheering_4,
+            R.drawable.img_cookie_cheering_5
+        )
+
+        CookieType.Consolation.type -> listOf(
+            R.drawable.img_cookie_comfort_3,
+            R.drawable.img_cookie_comfort_4,
+            R.drawable.img_cookie_comfort_5
+        )
+
+        CookieType.Passion.type -> listOf(
+            R.drawable.img_cookie_passion_3,
+            R.drawable.img_cookie_passion_4,
+            R.drawable.img_cookie_passion_5
+        )
+
+        CookieType.Determination.type -> listOf(
+            R.drawable.img_cookie_sermon_3,
+            R.drawable.img_cookie_sermon_4,
+            R.drawable.img_cookie_sermon_5
+        )
+
+        else -> listOf(R.drawable.img_cookie_deactive)
+    }
+}

@@ -8,6 +8,7 @@ import com.nuecoo.core.di.DefaultDispatcher
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.MainDispatcher
 import com.nuecoo.core.viewmodel.BaseViewModel
+import com.nuecoo.domain.CookieType
 import com.nuecoo.domain.CookieUIItemData
 import com.nuecoo.domain.usecase.ObserveDailyCookieData
 import com.nuecoo.domain.usecase.RemainTimeUseCase
@@ -33,5 +34,9 @@ class OvenFragmentViewModel @Inject constructor(
 
     fun setSelectCookieType(data: CookieUIItemData) {
         _selectCookieType.value = data
+    }
+
+    fun updateOpenCookieData(type: Int) = onUiWork {
+
     }
 }
