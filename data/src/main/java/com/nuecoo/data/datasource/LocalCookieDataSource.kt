@@ -8,7 +8,7 @@ interface LocalCookieDataSource {
     suspend fun upsertCookieListData(entity: List<LocalDailyCookieData>)
     suspend fun getLastDailyCookieData(): LocalDailyCookieData?
     suspend fun getCookieList(): List<LocalDailyCookieData>
-    fun observeLastDailyCookieData(): Flow<LocalDailyCookieData>
+    fun observeLastDailyCookieData(): Flow<LocalDailyCookieData?>
     fun observeCookieList(): Flow<List<LocalDailyCookieData>>
     suspend fun deleteCookieData()
 }

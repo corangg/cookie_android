@@ -2,19 +2,19 @@ package com.nuecoo.ui.fragment
 
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
+import androidx.lifecycle.map
 import androidx.recyclerview.widget.GridLayoutManager
 import com.nuecoo.R
 import com.nuecoo.core.ui.BaseFragment
 import com.nuecoo.databinding.FragmentOvenBinding
-import com.nuecoo.domain.CookieItemData
-import com.nuecoo.domain.CookieUIItemData
+import com.nuecoo.domain.model.CookieItemData
+import com.nuecoo.domain.model.CookieUIItemData
 import com.nuecoo.mapper.toUiItem
 import com.nuecoo.ui.adapter.CookieAdapter
+import com.nuecoo.ui.util.CustomToast
 import com.nuecoo.viewmodel.OvenFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,13 +31,14 @@ class OvenFragment : BaseFragment<FragmentOvenBinding>(FragmentOvenBinding::infl
         binding.flTray.post {
             slideDown(binding.flTray)
         }
+        initCookieData()
     }
 
     override fun setUpDate() {
     }
 
     override fun setObserve(lifecycleOwner: LifecycleOwner) {
-        viewModel.dailyCookieData.observe(lifecycleOwner, ::updateList)
+        viewModel.dailyCookieData.map { it.list }.observe(lifecycleOwner, ::updateList)
     }
 
     private fun bindingOnClick() {
@@ -47,7 +48,12 @@ class OvenFragment : BaseFragment<FragmentOvenBinding>(FragmentOvenBinding::infl
         binding.rvCookie.run {
             layoutManager = GridLayoutManager(requireContext(), 2)
             cookieAdapter = CookieAdapter {
-                showCookieOpenDialog(it)
+                if(it.isOpened == null){
+                    CustomToast.createToast(requireContext(), getString(R.string.text_toast_cookie_all_collect)).show()
+
+                }else{
+                    showCookieOpenDialog(it)
+                }
             }
             adapter = cookieAdapter
         }
@@ -76,5 +82,16 @@ class OvenFragment : BaseFragment<FragmentOvenBinding>(FragmentOvenBinding::infl
             .addToBackStack("overlay")
             .commit()
         viewModel.setSelectCookieType(data)
+    }
+
+    private fun initCookieData() {
+        val names = mapOf(
+            0 to resources.getStringArray(R.array.cookie_type_cheering).toList(),
+            1 to resources.getStringArray(R.array.cookie_type_consolation).toList(),
+            2 to resources.getStringArray(R.array.cookie_type_passion).toList(),
+            3 to resources.getStringArray(R.array.cookie_type_determination).toList(),
+        )
+
+        viewModel.getDailyCookieData(names)
     }
 }

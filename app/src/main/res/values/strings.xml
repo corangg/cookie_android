@@ -5,6 +5,9 @@
     <string name="menu_main_collection">수집</string>
     <string name="menu_main_menu">메뉴</string>
 
+    <!--Toast-->
+    <string name="text_toast_cookie_all_collect">모든 쿠키를 열었습니다.\n다음 쿠키를 기대해 주세요!</string>
+
     <!--Permission-->
     <string name="text_permission_title">권한 필요</string>
     <string name="text_message_permission_permanent_refusal">권한이 영구적으로 거부되었습니다. 설정에서 권한을 허용해 주세요.</string>

@@ -1,4 +1,4 @@
-package com.nuecoo.domain
+package com.nuecoo.domain.model
 
 import androidx.annotation.DrawableRes
 
@@ -10,13 +10,15 @@ data class DailyCookieItemData(
 data class CookieItemData(
     val time: String? = null,
     val type: Int,
-    val isOpened: Boolean = false,
+    val no: Int? = null,
+    val isOpened: Boolean? = false,
 )
 
 data class CookieUIItemData(
     val time: String? = null,
     val type: Int,
-    val isOpened: Boolean = false,
+    val no: Int? = null,
+    val isOpened: Boolean? = false,
     @field:DrawableRes val imgRes: Int
 )
 

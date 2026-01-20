@@ -7,7 +7,7 @@ import com.bumptech.glide.Glide
 import com.nuecoo.core.ui.BaseListViewAdapter
 import com.nuecoo.core.ui.BaseViewHolder
 import com.nuecoo.databinding.ItemCookieBinding
-import com.nuecoo.domain.CookieUIItemData
+import com.nuecoo.domain.model.CookieUIItemData
 
 class CookieViewHolder(
     private val binding: ItemCookieBinding,

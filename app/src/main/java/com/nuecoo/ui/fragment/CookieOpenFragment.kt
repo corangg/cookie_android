@@ -4,10 +4,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.nuecoo.R
 import com.nuecoo.controller.CookiePinchOpenController
 import com.nuecoo.core.ui.BaseFragment
 import com.nuecoo.databinding.FragmentCookieOpenBinding
-import com.nuecoo.domain.CookieUIItemData
+import com.nuecoo.domain.model.CookieUIItemData
 import com.nuecoo.mapper.toOpenAnimationItem
 import com.nuecoo.mapper.toOpenItem
 import com.nuecoo.viewmodel.OvenFragmentViewModel
@@ -23,6 +24,15 @@ class CookieOpenFragment : BaseFragment<FragmentCookieOpenBinding>(FragmentCooki
     lateinit var pinchController: CookiePinchOpenController
 
     private var openAnimJob: Job? = null
+
+    private val cookieList by lazy {
+        mapOf(
+            0 to resources.getStringArray(R.array.cookie_type_cheering).toList(),
+            1 to resources.getStringArray(R.array.cookie_type_consolation).toList(),
+            2 to resources.getStringArray(R.array.cookie_type_passion).toList(),
+            3 to resources.getStringArray(R.array.cookie_type_determination).toList(),
+        )
+    }
 
     override fun setUi() {
         binding.viewModel = viewModel
@@ -45,8 +55,10 @@ class CookieOpenFragment : BaseFragment<FragmentCookieOpenBinding>(FragmentCooki
     private fun setCookieUI(data: CookieUIItemData){
         val imgRes = data.toOpenItem()
         Glide.with(requireContext()).load(imgRes).into(binding.ivOpenCookie)
-        if(!data.isOpened){
-            setCookieOpenController(data)
+        data.isOpened?.let {
+            if(!it){
+                setCookieOpenController(data)
+            }
         }
     }
 
@@ -54,7 +66,7 @@ class CookieOpenFragment : BaseFragment<FragmentCookieOpenBinding>(FragmentCooki
         pinchController = CookiePinchOpenController(
             targetView = binding.ivOpenCookie,
             onOpen = {
-                viewModel.updateOpenCookieData(data.type)
+                viewModel.updateOpenCookieData(data.type, cookieList)
                 showCookieOpenAnimation(data)
             }
         )

@@ -15,5 +15,6 @@ data class LocalDailyCookieData(
 data class LocalCookieData(
     val time: String? = null,
     val type: Int,
-    val isOpened: Boolean = false,
+    val no: Int? = null,
+    val isOpened: Boolean? = false,
 )

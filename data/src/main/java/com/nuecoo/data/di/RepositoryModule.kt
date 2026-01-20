@@ -1,7 +1,7 @@
 package com.nuecoo.data.di
 
 import com.nuecoo.data.repository.DefaultLocalRepository
-import com.nuecoo.domain.LocalRepository
+import com.nuecoo.domain.repository.LocalRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
