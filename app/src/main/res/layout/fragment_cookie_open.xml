@@ -17,6 +17,13 @@
         android:background="@color/transparent"
         tools:context=".ui.fragment.CookieOpenFragment">
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.2" />
+
         <View
             android:id="@+id/v_dim"
             android:layout_width="match_parent"
@@ -38,8 +45,37 @@
             android:id="@+id/iv_open_cookie"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:src="@drawable/img_cookie_cheering_2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_close" />
+
+        <ImageView
+            android:id="@+id/iv_message_paper"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/img_message_paper"
+            app:layout_constraintBottom_toBottomOf="@id/tv_message"
+            app:layout_constraintEnd_toEndOf="@id/tv_message"
+            app:layout_constraintStart_toStartOf="@id/tv_message"
+            app:layout_constraintTop_toTopOf="@id/tv_message" />
+
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="48dp"
+            android:paddingVertical="24dp"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/guideline_message" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_message"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="iv_message_paper,tv_message" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

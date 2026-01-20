@@ -37,9 +37,6 @@ class OvenFragmentViewModel @Inject constructor(
     }
     val remainTime = remainTimeUseCase().asLiveData(viewModelScope.coroutineContext)
 
-    private val _openCookieNum = MutableLiveData<Int>()
-    val openCookieNum : LiveData<Int> = _openCookieNum
-
     private val _selectCookieType = MutableLiveData<CookieUIItemData>()
     val selectCookieType: LiveData<CookieUIItemData> = _selectCookieType
 
@@ -49,7 +46,7 @@ class OvenFragmentViewModel @Inject constructor(
 
     fun updateOpenCookieData(type: Int, list: Map<Int, List<String>>) = onUiWork {
        val baseDailyCookieData = dailyCookieData.value?:return@onUiWork
-        _openCookieNum.value = updateOpenCookieData(type, baseDailyCookieData, list)
+        updateOpenCookieData(type, baseDailyCookieData, list)
     }
 
     fun getDailyCookieData(list: Map<Int, List<String>>) = onUiWork {

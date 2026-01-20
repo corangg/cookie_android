@@ -57,17 +57,13 @@ class ObserveDailyCookieData @Inject constructor(
 class UpdateOpenCookieData @Inject constructor(
     private val repository: LocalRepository
 ) {
-    suspend operator fun invoke(type: Int, dailyCookieData: DailyCookieItemData, list: Map<Int, List<String>>): Int? {
+    suspend operator fun invoke(type: Int, dailyCookieData: DailyCookieItemData, list: Map<Int, List<String>>){
         val totalCookieData = repository.getCookieDataList()
         val cookieListSize = getCookieListSize(list,type)
         val openNoList = filterOpenedCookeList(type, totalCookieData)
-        val openCookieNo = randomExclude(cookieListSize, openNoList) ?: return null
+        val openCookieNo = randomExclude(cookieListSize, openNoList) ?: return
         val updateCookieData = newCookieData(openCookieNo, type, dailyCookieData)
-        return if (repository.upsertDailyCookieData(updateCookieData)) {
-            openCookieNo
-        } else {
-            null
-        }
+        repository.upsertDailyCookieData(updateCookieData)
     }
 
     private fun getCookieListSize(list: Map<Int, List<String>>, type: Int): Int {

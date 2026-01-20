@@ -1,5 +1,6 @@
 package com.nuecoo.ui.fragment
 
+import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -58,6 +59,8 @@ class CookieOpenFragment : BaseFragment<FragmentCookieOpenBinding>(FragmentCooki
         data.isOpened?.let {
             if(!it){
                 setCookieOpenController(data)
+            }else{
+                setCookieMessage(data.type)
             }
         }
     }
@@ -82,6 +85,24 @@ class CookieOpenFragment : BaseFragment<FragmentCookieOpenBinding>(FragmentCooki
                 binding.ivOpenCookie.setImageResource(resId)
                 delay(800L)
             }
+            if (::pinchController.isInitialized) pinchController.dispose()
+            setCookieMessage(data.type)
         }
+    }
+
+    private fun setCookieMessage(type: Int) {
+        val dailyCookieData = viewModel.dailyCookieData.value
+        dailyCookieData?.let { data ->
+            val cookieNo = data.list.find { it.type == type }?.no ?: return
+            val message = cookieList[type]?.getOrNull(cookieNo - 1) ?: getString(R.string.text_message_open_cookie_error)
+            binding.groupMessage.visibility = View.VISIBLE
+            binding.tvMessage.text = message
+        }
+    }
+
+    override fun onDestroyView() {
+        openAnimJob?.cancel()
+        if (::pinchController.isInitialized) pinchController.dispose()
+        super.onDestroyView()
     }
 }

@@ -20,8 +20,10 @@ class CookiePinchOpenController(
 
     init {
         targetView.setOnTouchListener { _, event ->
-            handleTouch(event)
-            true
+            if (isAnimating) return@setOnTouchListener false
+
+            val handled = handleTouch(event)
+            handled
         }
     }
 
@@ -29,16 +31,29 @@ class CookiePinchOpenController(
         isAnimating = value
     }
 
-    private fun handleTouch(event: MotionEvent) {
-        when (event.actionMasked) {
+    private fun handleTouch(event: MotionEvent): Boolean {
+        return when (event.actionMasked) {
             MotionEvent.ACTION_DOWN,
-            MotionEvent.ACTION_POINTER_DOWN -> onPointerDown(event)
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                onPointerDown(event)
+                activePointers.isNotEmpty()
+            }
 
-            MotionEvent.ACTION_MOVE -> onPointerMove(event)
+            MotionEvent.ACTION_MOVE -> {
+                val shouldHandle = activePointers.size == 2 && !isAnimating
+                if (shouldHandle) onPointerMove(event)
+                shouldHandle
+            }
 
             MotionEvent.ACTION_UP,
             MotionEvent.ACTION_POINTER_UP,
-            MotionEvent.ACTION_CANCEL -> onPointerUp(event)
+            MotionEvent.ACTION_CANCEL -> {
+                val hadPointers = activePointers.isNotEmpty()
+                onPointerUp(event)
+                hadPointers
+            }
+
+            else -> false
         }
     }
 
@@ -122,5 +137,11 @@ class CookiePinchOpenController(
         val localY = event.getY(index)
 
         return PointF(viewXOnScreen + localX, viewYOnScreen + localY)
+    }
+
+    fun dispose() {
+        targetView.setOnTouchListener(null)
+        activePointers.clear()
+        initialDistance = 0f
     }
 }
