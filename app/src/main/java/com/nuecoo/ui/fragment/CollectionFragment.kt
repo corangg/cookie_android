@@ -1,60 +1,141 @@
 package com.nuecoo.ui.fragment
 
+import android.R.string.no
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.map
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.nuecoo.R
+import com.nuecoo.core.ui.BaseFragment
+import com.nuecoo.databinding.FragmentCollectionBinding
+import com.nuecoo.databinding.FragmentOvenBinding
+import com.nuecoo.databinding.FragmentOvenBinding.inflate
+import com.nuecoo.domain.model.CookieItemData
+import com.nuecoo.domain.model.CookieUIItemData
+import com.nuecoo.domain.model.DailyCookieItemData
+import com.nuecoo.mapper.toUiItem
+import com.nuecoo.ui.adapter.CollectionAdapter
+import com.nuecoo.ui.adapter.CookieAdapter
+import com.nuecoo.ui.util.CustomToast
+import com.nuecoo.viewmodel.CollectionFragmentViewModel
+import com.nuecoo.viewmodel.OvenFragmentViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlin.collections.map
+import kotlin.getValue
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+@AndroidEntryPoint
+class CollectionFragment : BaseFragment<FragmentCollectionBinding>(FragmentCollectionBinding::inflate) {
+    private val viewModel: CollectionFragmentViewModel by viewModels()
 
-/**
- * A simple [Fragment] subclass.
- * Use the [CollectionFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class CollectionFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var collectionAdapter: CollectionAdapter? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    override fun setUi() {
+        binding.viewModel = viewModel
+        bindingOnClick()
+        setAdapter()
+    }
+
+    override fun setUpDate() {
+    }
+
+    override fun setObserve(lifecycleOwner: LifecycleOwner) {
+        viewModel.cookieList.observe(lifecycleOwner, ::updateList)
+    }
+
+    private fun bindingOnClick() {
+        /*binding.rvCollection.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val offsetPx = recyclerView.computeVerticalScrollOffset() // 현재 스크롤된 px
+                offsetPx
+                val isBottom = !binding.rvCollection.canScrollVertically(1)
+                if(offsetPx<200){
+                    binding.rvCollection.setBackgroundResource(R.drawable.img_collection_background_top)
+                }else if(offsetPx>200){
+                    binding.rvCollection.setBackgroundResource(R.drawable.img_collection_background_mid)
+                }
+                // offsetPx 사용
+            }
+        })*/
+    }
+
+    private fun setAdapter() {
+        binding.rvCollection.run {
+            layoutManager = GridLayoutManager(requireContext(), 2)
+            collectionAdapter = CollectionAdapter{
+
+            }
+            adapter = collectionAdapter
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_collection, container, false)
+    private fun updateList(items: List<DailyCookieItemData>) {
+        //val uiItems = items.map { it.toUiItem() }
+
+        val testList = listOf<CookieUIItemData>(
+            CookieUIItemData(
+                type = 1,
+                no = 1,
+                isOpened = true,
+                imgRes = R.drawable.img_cookie_cheering_6
+            ),
+            CookieUIItemData(
+                type = 1,
+                no = 1,
+                isOpened = true,
+                imgRes = R.drawable.img_cookie_cheering_6
+            ),
+            CookieUIItemData(
+                type = 1,
+                no = 1,
+                isOpened = true,
+                imgRes = R.drawable.img_cookie_cheering_6
+            ),
+            CookieUIItemData(
+                type = 1,
+                no = 1,
+                isOpened = true,
+                imgRes = R.drawable.img_cookie_cheering_6
+            ),
+            CookieUIItemData(
+                type = 1,
+                no = 1,
+                isOpened = true,
+                imgRes = R.drawable.img_cookie_cheering_6
+            ),
+            CookieUIItemData(
+                type = 1,
+                no = 1,
+                isOpened = true,
+                imgRes = R.drawable.img_cookie_cheering_6
+            ),
+            CookieUIItemData(
+                type = 1,
+                no = 1,
+                isOpened = true,
+                imgRes = R.drawable.img_cookie_cheering_6
+            ),
+            CookieUIItemData(
+                type = 1,
+                no = 1,
+                isOpened = true,
+                imgRes = R.drawable.img_cookie_cheering_6
+            ),
+            CookieUIItemData(
+                type = 1,
+                no = 1,
+                isOpened = true,
+                imgRes = R.drawable.img_cookie_cheering_6
+            ),
+
+        )
+        collectionAdapter?.submitList(testList)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CollectionFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CollectionFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 }

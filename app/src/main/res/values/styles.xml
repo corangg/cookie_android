@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.Cookie.MaterialCheckBox"
+        parent="Widget.Material3.CompoundButton.CheckBox">
+
+        <!-- Material 기본 색 자동 적용 끄기 -->
+        <item name="useMaterialThemeColors">false</item>
+
+        <!-- 박스 + 체크 아이콘 색 -->
+        <item name="buttonTint">@color/main_border</item>
+
+        <!-- ripple 색 -->
+        <!--<item name="buttonRippleColor">@color/checkbox_ripple</item>-->
+
+    </style>
+
+</resources>

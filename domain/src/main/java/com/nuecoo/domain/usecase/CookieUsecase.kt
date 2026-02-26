@@ -22,7 +22,6 @@ class ObserveDailyCookieData @Inject constructor(
                     list = createCookieItemDataList(list, dataList)
                 )
             }
-
         }
     }
 
@@ -99,4 +98,10 @@ class UpdateOpenCookieData @Inject constructor(
 
         return baseData.copy(list = updatedList)
     }
+}
+
+class ObserveCookieListUseCase @Inject constructor(
+    private val repository: LocalRepository
+) {
+    operator fun invoke(): Flow<List<DailyCookieItemData>> = repository.getFlowCookieDataList()
 }

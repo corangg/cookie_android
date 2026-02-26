@@ -20,6 +20,7 @@
     <color name="main_color">#FBB11B</color>
     <color name="main_border">#4D310E</color>
     <color name="sub_border">#FFF4D8</color>
+    <color name="main_btn">#EEB85E</color>
     <color name="select_ic">#FFE5A0</color>
     <color name="select_ic_background">#4D310E</color>
 

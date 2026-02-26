@@ -1,14 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.fragment.CollectionFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.nuecoo.viewmodel.CollectionFragmentViewModel" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        tools:context=".ui.fragment.CollectionFragment">
 
-</FrameLayout>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_collection_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="36dp"
+            android:background="@drawable/bg_default_button"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:paddingHorizontal="36dp"
+            android:paddingVertical="8dp"
+            android:text="@string/text_collection_no"
+            android:textColor="@color/main_border"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:useMaterialThemeColors="false"
+            style="@style/Widget.Cookie.MaterialCheckBox"
+            app:layout_constraintTop_toTopOf="@id/btn_collection_type"
+            app:layout_constraintBottom_toBottomOf="@id/btn_collection_type"
+            app:layout_constraintStart_toEndOf="@id/btn_collection_type"
+            android:id="@+id/cb_collect"
+            android:text="@string/text_collection_check_text"
+            android:textColor="@color/main_border"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_collection"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/img_collection_background"
+            android:paddingHorizontal="28dp"
+            android:paddingVertical="36dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_collection_type" />
+
+        <!--<FrameLayout
+            android:id="@+id/root"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            &lt;!&ndash; 배경 이미지(4번 전체 이미지) &ndash;&gt;
+            <ImageView
+                android:id="@+id/ivBg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/img_collection_background" />
+
+            &lt;!&ndash; 실제 리스트 &ndash;&gt;
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_collection"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"/>
+        </FrameLayout>-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
