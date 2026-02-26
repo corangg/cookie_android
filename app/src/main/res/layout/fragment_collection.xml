@@ -36,7 +36,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.checkbox.MaterialCheckBox
+        <!--<com.google.android.material.checkbox.MaterialCheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:useMaterialThemeColors="false"
@@ -46,7 +46,22 @@
             app:layout_constraintStart_toEndOf="@id/btn_collection_type"
             android:id="@+id/cb_collect"
             android:text="@string/text_collection_check_text"
-            android:textColor="@color/main_border"/>
+            android:textColor="@color/main_border"/>-->
+
+        <android.widget.CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/btn_collection_type"
+            app:layout_constraintBottom_toBottomOf="@id/btn_collection_type"
+            app:layout_constraintStart_toEndOf="@id/btn_collection_type"
+            android:id="@+id/cb_collect"
+            android:layout_marginStart="6dp"
+            android:paddingStart="6dp"
+            android:text="@string/text_collection_check_text"
+            android:textColor="@color/main_border"
+            android:button="@drawable/cb_collected_selector"
+            android:buttonTint="@null"
+            android:background="@null"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_collection"
