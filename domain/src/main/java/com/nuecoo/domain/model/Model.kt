@@ -22,6 +22,11 @@ data class CookieUIItemData(
     @field:DrawableRes val imgRes: Int
 )
 
+data class CookieTypeData(
+    val type: CookieType,
+    @field:DrawableRes val imgRes: Int
+)
+
 enum class CookieType(val type: Int) {
     Cheering(0),
     Consolation(1),

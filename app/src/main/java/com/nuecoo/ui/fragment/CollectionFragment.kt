@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.map
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nuecoo.R
 import com.nuecoo.core.ui.BaseFragment
@@ -18,10 +19,13 @@ import com.nuecoo.databinding.FragmentCollectionBinding
 import com.nuecoo.databinding.FragmentOvenBinding
 import com.nuecoo.databinding.FragmentOvenBinding.inflate
 import com.nuecoo.domain.model.CookieItemData
+import com.nuecoo.domain.model.CookieType
 import com.nuecoo.domain.model.CookieUIItemData
 import com.nuecoo.domain.model.DailyCookieItemData
+import com.nuecoo.mapper.getCookieTypeList
 import com.nuecoo.mapper.toUiItem
 import com.nuecoo.ui.adapter.CollectionAdapter
+import com.nuecoo.ui.adapter.CollectionTypeAdapter
 import com.nuecoo.ui.adapter.CookieAdapter
 import com.nuecoo.ui.util.CustomToast
 import com.nuecoo.viewmodel.CollectionFragmentViewModel
@@ -35,6 +39,7 @@ class CollectionFragment : BaseFragment<FragmentCollectionBinding>(FragmentColle
     private val viewModel: CollectionFragmentViewModel by viewModels()
 
     private var collectionAdapter: CollectionAdapter? = null
+    private var collectionTypeAdapter: CollectionTypeAdapter? = null
 
     override fun setUi() {
         binding.viewModel = viewModel
@@ -50,22 +55,14 @@ class CollectionFragment : BaseFragment<FragmentCollectionBinding>(FragmentColle
     }
 
     private fun bindingOnClick() {
-        /*binding.rvCollection.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val offsetPx = recyclerView.computeVerticalScrollOffset() // 현재 스크롤된 px
-                offsetPx
-                val isBottom = !binding.rvCollection.canScrollVertically(1)
-                if(offsetPx<200){
-                    binding.rvCollection.setBackgroundResource(R.drawable.img_collection_background_top)
-                }else if(offsetPx>200){
-                    binding.rvCollection.setBackgroundResource(R.drawable.img_collection_background_mid)
-                }
-                // offsetPx 사용
-            }
-        })*/
     }
 
     private fun setAdapter() {
+        setCollectionAdapter()
+        setCollectionItemAdapter()
+    }
+
+    private fun setCollectionAdapter(){
         binding.rvCollection.run {
             layoutManager = GridLayoutManager(requireContext(), 2)
             collectionAdapter = CollectionAdapter{
@@ -73,6 +70,17 @@ class CollectionFragment : BaseFragment<FragmentCollectionBinding>(FragmentColle
             }
             adapter = collectionAdapter
         }
+    }
+
+    private fun setCollectionItemAdapter(){
+        binding.rvCookieType.run {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            collectionTypeAdapter = CollectionTypeAdapter{
+
+            }
+            adapter = collectionTypeAdapter
+        }
+        collectionTypeAdapter?.submitList(getCookieTypeList())
     }
 
     private fun updateList(items: List<DailyCookieItemData>) {

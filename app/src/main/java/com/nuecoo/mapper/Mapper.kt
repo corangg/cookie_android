@@ -3,6 +3,7 @@ package com.nuecoo.mapper
 import com.nuecoo.R
 import com.nuecoo.domain.model.CookieItemData
 import com.nuecoo.domain.model.CookieType
+import com.nuecoo.domain.model.CookieTypeData
 import com.nuecoo.domain.model.CookieUIItemData
 
 fun CookieItemData.toUiItem(): CookieUIItemData {
@@ -92,5 +93,46 @@ fun CookieUIItemData.toOpenAnimationItem(): List<Int> {
         )
 
         else -> listOf(R.drawable.img_cookie_deactive)
+    }
+}
+
+fun getCookieTypeList(): List<CookieTypeData> {
+    return CookieType.entries.filter { it != CookieType.Unknown }.map {
+        when (it){
+            CookieType.Cheering->{
+                CookieTypeData(
+                    type = it,
+                    imgRes = R.drawable.img_cookie_cheering_1,
+                )
+            }
+
+            CookieType.Consolation->{
+                CookieTypeData(
+                    type = it,
+                    imgRes = R.drawable.img_cookie_comfort_1,
+                )
+            }
+
+            CookieType.Passion->{
+                CookieTypeData(
+                    type = it,
+                    imgRes = R.drawable.img_cookie_passion_1,
+                )
+            }
+
+            CookieType.Determination->{
+                CookieTypeData(
+                    type = it,
+                    imgRes = R.drawable.img_cookie_sermon_1,
+                )
+            }
+
+            else -> {
+                CookieTypeData(
+                    type = it,
+                    imgRes = R.drawable.img_cookie_deactive,
+                )
+            }
+        }
     }
 }
