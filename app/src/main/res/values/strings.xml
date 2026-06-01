@@ -1,28 +1,41 @@
 <resources>
     <string name="app_name">NueCoo</string>
 
+    <!-- Bottom Nav -->
     <string name="menu_main_oven">오븐</string>
     <string name="menu_main_collection">수집</string>
     <string name="menu_main_menu">메뉴</string>
 
-    <!--Message-->
-    <string name="text_message_open_cookie_error">잘못된 쿠키 입니다.</string>
+    <!-- Login -->
+    <string name="hint_email">이메일</string>
+    <string name="hint_pw">비밀번호</string>
+    <string name="btn_login">로그인</string>
+    <string name="btn_signup">회원가입</string>
 
-    <!--Toast-->
+    <!-- SignUp -->
+    <string name="label_signup">회원가입</string>
+    <string name="text_input_email">이메일을 입력해주세요</string>
+    <string name="text_input_pw">비밀번호를 입력해주세요</string>
+    <string name="text_input_phone">휴대폰 번호를 입력해주세요</string>
+    <string name="text_valid_pw">비밀번호는 8-20자 영문, 숫자, 특수문자를 포함해야 합니다</string>
+    <string name="btn_ok">확인</string>
+    <string name="btn_send">인증</string>
+    <string name="btn_resend">재전송</string>
+
+    <!-- Collection -->
+    <string name="text_collection_no">번호순</string>
+    <string name="text_collection_check_text">수집한 쿠키만 보기</string>
+
+    <!-- Message -->
+    <string name="text_message_open_cookie_error">잘못된 쿠키입니다.</string>
+
+    <!-- Toast -->
     <string name="text_toast_cookie_all_collect">모든 쿠키를 열었습니다.\n다음 쿠키를 기대해 주세요!</string>
 
-    <!--Permission-->
+    <!-- Permission -->
     <string name="text_permission_title">권한 필요</string>
     <string name="text_message_permission_permanent_refusal">권한이 영구적으로 거부되었습니다. 설정에서 권한을 허용해 주세요.</string>
     <string name="text_message_permission_refusal">이 기능을 사용하려면 권한이 필요합니다. 권한을 허용해 주세요.</string>
     <string name="text_move_setting">설정으로 이동</string>
     <string name="text_retry">다시 시도</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <!--Collection-->
-    <string name="text_collection_no">번호</string>
-    <string name="text_collection_check_text">수집한 쿠키만 보기</string>
-
-
 </resources>

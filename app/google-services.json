@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "967385309827",
+    "project_id": "youcoo-3a84b",
+    "storage_bucket": "youcoo-3a84b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:967385309827:android:c72d4f7b78a042953d31b6",
+        "android_client_info": {
+          "package_name": "com.nuecoo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmpRXgUBP1Jqz0x3Wj6PnxNyssxkDsrs4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

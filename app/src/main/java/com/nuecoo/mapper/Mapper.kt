@@ -8,131 +8,60 @@ import com.nuecoo.domain.model.CookieUIItemData
 
 fun CookieItemData.toUiItem(): CookieUIItemData {
     val img = when (this.isOpened) {
-        null -> {
-            R.drawable.img_cookie_deactive
+        null -> R.drawable.img_cookie_deactive
+        true -> when (this.type) {
+            CookieType.Cheering.type -> R.drawable.img_cookie_cheering_6
+            CookieType.Consolation.type -> R.drawable.img_cookie_comfort_6
+            CookieType.Passion.type -> R.drawable.img_cookie_passion_6
+            CookieType.Determination.type -> R.drawable.img_cookie_sermon_6
+            else -> R.drawable.img_cookie_deactive
         }
-        true -> {
-            when (this.type) {
-                CookieType.Cheering.type -> R.drawable.img_cookie_cheering_6
-                CookieType.Consolation.type -> R.drawable.img_cookie_comfort_6
-                CookieType.Passion.type -> R.drawable.img_cookie_passion_6
-                CookieType.Determination.type -> R.drawable.img_cookie_sermon_6
-                else -> R.drawable.img_cookie_deactive
-            }
-        }
-        false -> {
-            when (this.type) {
-                CookieType.Cheering.type -> R.drawable.img_cookie_cheering_1
-                CookieType.Consolation.type -> R.drawable.img_cookie_comfort_1
-                CookieType.Passion.type -> R.drawable.img_cookie_passion_1
-                CookieType.Determination.type -> R.drawable.img_cookie_sermon_1
-                else -> R.drawable.img_cookie_deactive
-            }
+        false -> when (this.type) {
+            CookieType.Cheering.type -> R.drawable.img_cookie_cheering_1
+            CookieType.Consolation.type -> R.drawable.img_cookie_comfort_1
+            CookieType.Passion.type -> R.drawable.img_cookie_passion_1
+            CookieType.Determination.type -> R.drawable.img_cookie_sermon_1
+            else -> R.drawable.img_cookie_deactive
         }
     }
+    return CookieUIItemData(time = this.time, type = this.type, no = this.no, isOpened = this.isOpened, imgRes = img)
+}
 
-    return CookieUIItemData(
-        time = this.time,
-        type = this.type,
-        isOpened = this.isOpened,
-        imgRes = img
+fun getCollectionTypeImages(type: Int): List<Int> = when (type) {
+    CookieType.Cheering.type -> listOf(
+        R.drawable.img_cookie_cheering_1, R.drawable.img_cookie_cheering_2,
+        R.drawable.img_cookie_cheering_3, R.drawable.img_cookie_cheering_4,
+        R.drawable.img_cookie_cheering_5, R.drawable.img_cookie_cheering_6
     )
-}
-
-fun CookieUIItemData.toOpenItem(): Int {
-    val img = when (this.isOpened) {
-        null -> {
-            R.drawable.img_cookie_deactive
-        }
-        true -> {
-            when (this.type) {
-                CookieType.Cheering.type -> R.drawable.img_cookie_cheering_5
-                CookieType.Consolation.type -> R.drawable.img_cookie_comfort_5
-                CookieType.Passion.type -> R.drawable.img_cookie_passion_5
-                CookieType.Determination.type -> R.drawable.img_cookie_sermon_5
-                else -> R.drawable.img_cookie_deactive
-            }
-        }
-        false -> {
-            when (this.type) {
-                CookieType.Cheering.type -> R.drawable.img_cookie_cheering_2
-                CookieType.Consolation.type -> R.drawable.img_cookie_comfort_2
-                CookieType.Passion.type -> R.drawable.img_cookie_passion_2
-                CookieType.Determination.type -> R.drawable.img_cookie_sermon_2
-                else -> R.drawable.img_cookie_deactive
-            }
-        }
-    }
-    return img
-}
-
-fun CookieUIItemData.toOpenAnimationItem(): List<Int> {
-    return when (this.type) {
-        CookieType.Cheering.type -> listOf(
-            R.drawable.img_cookie_cheering_3,
-            R.drawable.img_cookie_cheering_4,
-            R.drawable.img_cookie_cheering_5
-        )
-
-        CookieType.Consolation.type -> listOf(
-            R.drawable.img_cookie_comfort_3,
-            R.drawable.img_cookie_comfort_4,
-            R.drawable.img_cookie_comfort_5
-        )
-
-        CookieType.Passion.type -> listOf(
-            R.drawable.img_cookie_passion_3,
-            R.drawable.img_cookie_passion_4,
-            R.drawable.img_cookie_passion_5
-        )
-
-        CookieType.Determination.type -> listOf(
-            R.drawable.img_cookie_sermon_3,
-            R.drawable.img_cookie_sermon_4,
-            R.drawable.img_cookie_sermon_5
-        )
-
-        else -> listOf(R.drawable.img_cookie_deactive)
-    }
+    CookieType.Consolation.type -> listOf(
+        R.drawable.img_cookie_comfort_1, R.drawable.img_cookie_comfort_2,
+        R.drawable.img_cookie_comfort_3, R.drawable.img_cookie_comfort_4,
+        R.drawable.img_cookie_comfort_5, R.drawable.img_cookie_comfort_6
+    )
+    CookieType.Passion.type -> listOf(
+        R.drawable.img_cookie_passion_1, R.drawable.img_cookie_passion_2,
+        R.drawable.img_cookie_passion_3, R.drawable.img_cookie_passion_4,
+        R.drawable.img_cookie_passion_5, R.drawable.img_cookie_passion_6
+    )
+    CookieType.Determination.type -> listOf(
+        R.drawable.img_cookie_sermon_1, R.drawable.img_cookie_sermon_2,
+        R.drawable.img_cookie_sermon_3, R.drawable.img_cookie_sermon_4,
+        R.drawable.img_cookie_sermon_5, R.drawable.img_cookie_sermon_6
+    )
+    else -> listOf(R.drawable.img_cookie_deactive)
 }
 
 fun getCookieTypeList(): List<CookieTypeData> {
     return CookieType.entries.filter { it != CookieType.Unknown }.map {
-        when (it){
-            CookieType.Cheering->{
-                CookieTypeData(
-                    type = it,
-                    imgRes = R.drawable.img_cookie_cheering_1,
-                )
+        CookieTypeData(
+            type = it,
+            imgRes = when (it) {
+                CookieType.Cheering -> R.drawable.img_cookie_cheering_1
+                CookieType.Consolation -> R.drawable.img_cookie_comfort_1
+                CookieType.Passion -> R.drawable.img_cookie_passion_1
+                CookieType.Determination -> R.drawable.img_cookie_sermon_1
+                else -> R.drawable.img_cookie_deactive
             }
-
-            CookieType.Consolation->{
-                CookieTypeData(
-                    type = it,
-                    imgRes = R.drawable.img_cookie_comfort_1,
-                )
-            }
-
-            CookieType.Passion->{
-                CookieTypeData(
-                    type = it,
-                    imgRes = R.drawable.img_cookie_passion_1,
-                )
-            }
-
-            CookieType.Determination->{
-                CookieTypeData(
-                    type = it,
-                    imgRes = R.drawable.img_cookie_sermon_1,
-                )
-            }
-
-            else -> {
-                CookieTypeData(
-                    type = it,
-                    imgRes = R.drawable.img_cookie_deactive,
-                )
-            }
-        }
+        )
     }
 }
