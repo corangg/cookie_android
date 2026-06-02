@@ -151,7 +151,7 @@ fun OvenScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(horizontal = 12.dp, vertical = 16.dp)
+                    .padding(horizontal = 12.dp)
             ) {
                 Image(
                     painter = painterResource(R.drawable.img_tray),
@@ -174,6 +174,14 @@ fun OvenScreenContent(
                     }
                 }
             }
+
+            Text(
+                text = "쿠키를 열어 당신을 위한 언어를 확인해 보세요!",
+                color = MainTitle,
+                fontSize = 14.sp,
+                fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
+                fontWeight = FontWeight.Thin
+            )
         }
 
         selectedCookie?.let { cookie ->
