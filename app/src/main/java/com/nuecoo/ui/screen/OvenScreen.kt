@@ -1,5 +1,7 @@
 package com.nuecoo.ui.screen
 
+import android.R.attr.fontFamily
+import android.R.attr.fontWeight
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,42 +23,53 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nuecoo.R
-import com.nuecoo.domain.model.CookieItemData
 import com.nuecoo.domain.model.CookieType
 import com.nuecoo.domain.model.CookieUIItemData
 import com.nuecoo.mapper.toUiItem
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
+import com.nuecoo.ui.theme.MainTitle
+import com.nuecoo.ui.theme.NueCooTheme
 import com.nuecoo.ui.theme.TimerBackground
 import com.nuecoo.viewmodel.OvenViewModel
 
 @Composable
 fun OvenScreen(viewModel: OvenViewModel = hiltViewModel()) {
-    val context = LocalContext.current
     val dailyCookieData by viewModel.dailyCookieData.collectAsState()
     val remainTime by viewModel.remainTime.collectAsState()
     val selectedCookie by viewModel.selectedCookie.collectAsState()
 
-    val cookieNameMap = remember {
+    val cheeringList = stringArrayResource(R.array.cookie_type_cheering).toList()
+    val consolationList = stringArrayResource(R.array.cookie_type_consolation).toList()
+    val passionList = stringArrayResource(R.array.cookie_type_passion).toList()
+    val determinationList = stringArrayResource(R.array.cookie_type_determination).toList()
+
+    val cookieNameMap = remember(
+        cheeringList,
+        consolationList,
+        passionList,
+        determinationList
+    ) {
         mapOf(
-            CookieType.Cheering.type to context.resources.getStringArray(R.array.cookie_type_cheering).toList(),
-            CookieType.Consolation.type to context.resources.getStringArray(R.array.cookie_type_consolation).toList(),
-            CookieType.Passion.type to context.resources.getStringArray(R.array.cookie_type_passion).toList(),
-            CookieType.Determination.type to context.resources.getStringArray(R.array.cookie_type_determination).toList(),
+            CookieType.Cheering.type to cheeringList,
+            CookieType.Consolation.type to consolationList,
+            CookieType.Passion.type to passionList,
+            CookieType.Determination.type to determinationList,
         )
     }
 
@@ -63,6 +77,32 @@ fun OvenScreen(viewModel: OvenViewModel = hiltViewModel()) {
         viewModel.initCookieData(cookieNameMap)
     }
 
+    OvenScreenContent(
+        remainTime = remainTime,
+        cookieList = dailyCookieData?.list?.map { it.toUiItem() } ?: emptyList(),
+        selectedCookie = selectedCookie,
+        cookieNameMap = cookieNameMap,
+        onCookieClick = { uiItem ->
+            val domainItem = dailyCookieData?.list?.find { it.type == uiItem.type }
+            if (domainItem?.isOpened != null) {
+                viewModel.selectCookie(uiItem)
+            }
+        },
+        onCookieClose = { viewModel.clearSelectedCookie() },
+        onCookieOpened = { type -> viewModel.updateOpenCookieData(type) }
+    )
+}
+
+@Composable
+fun OvenScreenContent(
+    remainTime: String,
+    cookieList: List<CookieUIItemData>,
+    selectedCookie: CookieUIItemData?,
+    cookieNameMap: Map<Int, List<String>>,
+    onCookieClick: (CookieUIItemData) -> Unit,
+    onCookieClose: () -> Unit,
+    onCookieOpened: (Int) -> Unit,
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -72,65 +112,76 @@ fun OvenScreen(viewModel: OvenViewModel = hiltViewModel()) {
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Timer
             Text(
-                text = remainTime,
-                color = MainBorder,
-                fontSize = 20.sp,
+                text = "오늘의 쿠키",
+                color = MainTitle,
+                fontSize = 40.sp,
+                fontFamily = FontFamily(Font(R.font.cookie_run_bold)),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(top = 32.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(TimerBackground)
-                    .padding(horizontal = 32.dp, vertical = 10.dp)
+                    .padding(top = 16.dp)
             )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "남은 쿠키 ${3}개",
+                    color = MainTitle,
+                    fontSize = 13.sp,
+                    fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
+                    fontWeight = FontWeight.Thin,
+                    modifier = Modifier
+                        .padding(start = 28.dp)
+                )
 
-            // Tray with cookies
+                Text(
+                    text = remainTime,
+                    color = MainBorder,
+                    fontSize = 13.sp,
+                    fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
+                    modifier = Modifier
+                        .padding(end = 28.dp)
+                )
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(24.dp)
+                    .padding(horizontal = 12.dp, vertical = 16.dp)
             ) {
                 Image(
-                    painter = painterResource(R.drawable.img_oven_tray),
+                    painter = painterResource(R.drawable.img_tray),
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds,
-                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(8.dp))
+                    modifier = Modifier
+                        .fillMaxSize()
                 )
-                val cookieList = dailyCookieData?.list ?: emptyList()
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 40.dp, vertical = 60.dp),
-                    contentPadding = PaddingValues(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                        .padding(horizontal = 40.dp, vertical = 80.dp),
+                    contentPadding = PaddingValues(20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(36.dp)
                 ) {
                     items(cookieList, key = { it.type }) { item ->
-                        CookieItem(
-                            data = item.toUiItem(),
-                            onClick = {
-                                if (item.isOpened == null) {
-                                    // All collected toast
-                                } else {
-                                    viewModel.selectCookie(item.toUiItem())
-                                }
-                            }
-                        )
+                        CookieItem(data = item, onClick = { onCookieClick(item) })
                     }
                 }
             }
         }
 
-        // Cookie open overlay
         selectedCookie?.let { cookie ->
             CookieOpenScreen(
                 cookieData = cookie,
                 cookieMessages = cookieNameMap,
-                onClose = { viewModel.clearSelectedCookie() },
-                onCookieOpened = { type -> viewModel.updateOpenCookieData(type) }
+                onClose = onCookieClose,
+                onCookieOpened = onCookieOpened
             )
         }
     }
@@ -146,4 +197,46 @@ fun CookieItem(data: CookieUIItemData, onClick: () -> Unit) {
             .wrapContentSize()
             .clickable(onClick = onClick)
     )
+}
+
+@Preview(
+    showBackground = true,
+    name = "Oven Screen",
+    widthDp = 360,
+    heightDp = 800
+)
+@Composable
+private fun OvenScreenPreview() {
+    NueCooTheme {
+        OvenScreenContent(
+            remainTime = "08 : 30 : 00",
+            cookieList = listOf(
+                CookieUIItemData(
+                    type = CookieType.Cheering.type,
+                    isOpened = false,
+                    imgRes = R.drawable.img_cookie_cheering_1
+                ),
+                CookieUIItemData(
+                    type = CookieType.Consolation.type,
+                    isOpened = true,
+                    imgRes = R.drawable.img_cookie_comfort_6
+                ),
+                CookieUIItemData(
+                    type = CookieType.Passion.type,
+                    isOpened = false,
+                    imgRes = R.drawable.img_cookie_passion_1
+                ),
+                CookieUIItemData(
+                    type = CookieType.Determination.type,
+                    isOpened = null,
+                    imgRes = R.drawable.img_cookie_deactive
+                ),
+            ),
+            selectedCookie = null,
+            cookieNameMap = emptyMap(),
+            onCookieClick = {},
+            onCookieClose = {},
+            onCookieOpened = {}
+        )
+    }
 }

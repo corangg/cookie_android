@@ -86,7 +86,7 @@ fun SplashScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(R.mipmap.ic_launcher),
+            painter = painterResource(R.drawable.img_oven_tray),
             contentDescription = null,
             modifier = Modifier
                 .size(200.dp)

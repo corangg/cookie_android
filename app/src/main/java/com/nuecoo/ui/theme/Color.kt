@@ -2,7 +2,10 @@ package com.nuecoo.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val MainBackground = Color(0xFFF7E0A6)
+val MainBackground = Color(0xFFEBDEC5)
+
+val MainTitle = Color(0xFF46382A)
+
 val SubBackground = Color(0xFFFFF2CC)
 val MainBorder = Color(0xFF4D310E)
 val MainButton = Color(0xFFEEB85E)

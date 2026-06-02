@@ -133,7 +133,7 @@ fun CollectionScreen(viewModel: CollectionViewModel = hiltViewModel()) {
                         checkmarkColor = MainButton
                     )
                 )
-                Text("수집한 쿠키만 보기", color = MainBorder, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                Text("수집한 쿠키만 보기ㅁ", color = MainBorder, fontSize = 14.sp, fontWeight = FontWeight.Bold)
             }
         }
 

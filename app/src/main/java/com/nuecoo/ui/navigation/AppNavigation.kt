@@ -2,12 +2,14 @@ package com.nuecoo.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.nuecoo.ui.screen.LoginScreen
+import com.nuecoo.ui.screen.MainBottomNavBar
 import com.nuecoo.ui.screen.MainScreen
 import com.nuecoo.ui.screen.SignUpBirthScreen
 import com.nuecoo.ui.screen.SignUpEmailScreen
