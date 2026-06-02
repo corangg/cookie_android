@@ -22,6 +22,15 @@
     <string name="btn_send">인증</string>
     <string name="btn_resend">재전송</string>
 
+    <!-- Oven -->
+    <string name="text_oven_title">오늘의 쿠키</string>
+    <string name="text_oven_sub">남은 쿠키</string>
+    <string name="text_oven_sub_unit">개</string>
+    <string name="text_oven_tray">쿠키를 열어 당신을 위한 한마디를 확인해 보세요!</string>
+
+    <!-- OpenCookie -->
+    <string name="text_open_cookie_sub">양손으로 쿠키를 벌려보세요</string>
+
     <!-- Collection -->
     <string name="text_collection_no">번호순</string>
     <string name="text_collection_check_text">수집한 쿠키만 보기</string>

@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -19,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -31,12 +31,16 @@ import androidx.navigation.compose.rememberNavController
 import com.nuecoo.R
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
-import com.nuecoo.ui.theme.MainButton
 import com.nuecoo.ui.theme.SubBackground
 
 sealed class BottomNavItem(val route: String, val selectedIcon: Int, val unselectedIcon: Int) {
     object Oven : BottomNavItem("oven", R.drawable.ic_oven_selected, R.drawable.ic_oven_unselected)
-    object Collection : BottomNavItem("collection", R.drawable.ic_collection_selected, R.drawable.ic_collection_unselected)
+    object Collection : BottomNavItem(
+        "collection",
+        R.drawable.ic_collection_selected,
+        R.drawable.ic_collection_unselected
+    )
+
     object Menu : BottomNavItem("menu", R.drawable.ic_menu_selected, R.drawable.ic_menu_unselected)
 }
 
@@ -46,7 +50,7 @@ val bottomNavItems = listOf(BottomNavItem.Oven, BottomNavItem.Collection, Bottom
 fun MainScreen(rootNavController: NavController) {
     val navController = rememberNavController()
 
-    Scaffold(
+    /*Scaffold(
         containerColor = MainBackground,
         bottomBar = {
             MainBottomNavBar(navController = navController)
@@ -69,7 +73,41 @@ fun MainScreen(rootNavController: NavController) {
                 }
             }
         }
+    }*/
+
+    Box(modifier = Modifier.fillMaxSize()) {
+
+        Scaffold(
+            containerColor = MainBackground,
+            bottomBar = {
+                MainBottomNavBar(navController = navController)
+            }
+        ) { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                NavHost(
+                    navController = navController,
+                    startDestination = BottomNavItem.Oven.route
+                ) {
+                    composable(BottomNavItem.Oven.route) {
+                        OvenScreen()
+                    }
+                    composable(BottomNavItem.Collection.route) {
+                        CollectionScreen()
+                    }
+                    composable(BottomNavItem.Menu.route) {
+                        MenuScreen(rootNavController = rootNavController)
+                    }
+                }
+
+
+            }
+        }
     }
+
 }
 
 @Composable
@@ -80,6 +118,7 @@ fun MainBottomNavBar(navController: NavController) {
     NavigationBar(
         containerColor = SubBackground,
         modifier = Modifier
+            .navigationBarsPadding()
             .padding(horizontal = 36.dp, vertical = 16.dp)
             .clip(RoundedCornerShape(50.dp))
             .border(width = 4.dp, color = MainBorder, shape = RoundedCornerShape(50.dp))

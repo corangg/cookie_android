@@ -1,10 +1,15 @@
 package com.nuecoo.ui.screen
 
-import android.R.attr.fontFamily
-import android.R.attr.fontWeight
+import android.R.attr.scaleX
+import android.R.attr.scaleY
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,30 +17,34 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nuecoo.R
 import com.nuecoo.domain.model.CookieType
@@ -45,8 +54,8 @@ import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainTitle
 import com.nuecoo.ui.theme.NueCooTheme
-import com.nuecoo.ui.theme.TimerBackground
 import com.nuecoo.viewmodel.OvenViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun OvenScreen(viewModel: OvenViewModel = hiltViewModel()) {
@@ -113,14 +122,14 @@ fun OvenScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "오늘의 쿠키",
+                text = stringResource(R.string.text_oven_title),
                 color = MainTitle,
                 fontSize = 40.sp,
                 fontFamily = FontFamily(Font(R.font.cookie_run_bold)),
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(top = 16.dp)
+                modifier = Modifier.padding(top = 16.dp)
             )
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -128,13 +137,12 @@ fun OvenScreenContent(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "남은 쿠키 ${3}개",
+                    text = "${stringResource(R.string.text_oven_title)} ${3}${stringResource(R.string.text_oven_sub_unit)}",
                     color = MainTitle,
                     fontSize = 13.sp,
                     fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
                     fontWeight = FontWeight.Thin,
-                    modifier = Modifier
-                        .padding(start = 28.dp)
+                    modifier = Modifier.padding(start = 28.dp)
                 )
 
                 Text(
@@ -142,8 +150,7 @@ fun OvenScreenContent(
                     color = MainBorder,
                     fontSize = 13.sp,
                     fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
-                    modifier = Modifier
-                        .padding(end = 28.dp)
+                    modifier = Modifier.padding(end = 28.dp)
                 )
             }
 
@@ -157,9 +164,9 @@ fun OvenScreenContent(
                     painter = painterResource(R.drawable.img_tray),
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 )
+
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier
@@ -170,13 +177,16 @@ fun OvenScreenContent(
                     verticalArrangement = Arrangement.spacedBy(36.dp)
                 ) {
                     items(cookieList, key = { it.type }) { item ->
-                        CookieItem(data = item, onClick = { onCookieClick(item) })
+                        CookieItem(
+                            data = item,
+                            onClick = { onCookieClick(item) }
+                        )
                     }
                 }
             }
 
             Text(
-                text = "쿠키를 열어 당신을 위한 언어를 확인해 보세요!",
+                text = stringResource(R.string.text_oven_tray),
                 color = MainTitle,
                 fontSize = 14.sp,
                 fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
@@ -185,25 +195,56 @@ fun OvenScreenContent(
         }
 
         selectedCookie?.let { cookie ->
-            CookieOpenScreen(
-                cookieData = cookie,
-                cookieMessages = cookieNameMap,
-                onClose = onCookieClose,
-                onCookieOpened = onCookieOpened
-            )
+            Dialog(
+                onDismissRequest = onCookieClose,
+                properties = DialogProperties(
+                    usePlatformDefaultWidth = false,
+                    decorFitsSystemWindows = false
+                )
+            ) {
+                CookieOpenScreen(
+                    cookieData = cookie,
+                    cookieMessages = cookieNameMap,
+                    onClose = onCookieClose,
+                    onCookieOpened = onCookieOpened
+                )
+            }
         }
     }
 }
 
 @Composable
 fun CookieItem(data: CookieUIItemData, onClick: () -> Unit) {
+    val scale = remember { Animatable(1f) }
+    val coroutineScope = rememberCoroutineScope()
+    val interactionSource = remember { MutableInteractionSource() }
+
     Image(
         painter = painterResource(data.imgRes),
         contentDescription = null,
         contentScale = ContentScale.Fit,
         modifier = Modifier
             .wrapContentSize()
-            .clickable(onClick = onClick)
+            .graphicsLayer {
+                scaleX = scale.value
+                scaleY = scale.value
+            }
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) {
+                coroutineScope.launch {
+                    scale.animateTo(
+                        targetValue = 0.9f,
+                        animationSpec = tween(80)
+                    )
+                    scale.animateTo(
+                        targetValue = 1f,
+                        animationSpec = tween(120)
+                    )
+                    onClick()
+                }
+            }
     )
 }
 
