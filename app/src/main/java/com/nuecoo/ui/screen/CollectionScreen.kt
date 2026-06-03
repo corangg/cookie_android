@@ -43,7 +43,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -211,9 +210,9 @@ private fun CollectionItemCard(item: CollectionDisplayItem, type: Int) {
 private fun CookieTypeSelector(selectedType: Int, onTypeSelected: (Int) -> Unit) {
     val types = listOf(
         CookieType.Cheering.type to R.drawable.img_cookie_cheering_1,
-        CookieType.Consolation.type to R.drawable.img_cookie_comfort_1,
+        CookieType.Comfort.type to R.drawable.img_cookie_comfort_1,
         CookieType.Passion.type to R.drawable.img_cookie_passion_1,
-        CookieType.Determination.type to R.drawable.img_cookie_sermon_1
+        CookieType.Sermon.type to R.drawable.img_cookie_sermon_1
     )
 
     Box(

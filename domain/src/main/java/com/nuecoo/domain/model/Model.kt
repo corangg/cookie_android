@@ -29,8 +29,9 @@ data class CookieTypeData(
 
 enum class CookieType(val type: Int) {
     Cheering(0),
-    Consolation(1),
+    Comfort(1),
     Passion(2),
-    Determination(3),
+    Sermon(3),
+    Love(4),
     Unknown(-1)
 }

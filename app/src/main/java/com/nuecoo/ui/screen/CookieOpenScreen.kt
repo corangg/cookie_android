@@ -55,9 +55,14 @@ import androidx.compose.ui.unit.sp
 import com.nuecoo.R
 import com.nuecoo.domain.model.CookieType
 import com.nuecoo.domain.model.CookieUIItemData
+import com.nuecoo.ui.theme.CheeringColor
+import com.nuecoo.ui.theme.ComfortColor
+import com.nuecoo.ui.theme.LoveColor
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainButton
 import com.nuecoo.ui.theme.NueCooTheme
+import com.nuecoo.ui.theme.PassionColor
+import com.nuecoo.ui.theme.SermonColor
 import kotlinx.coroutines.delay
 import kotlin.math.hypot
 
@@ -67,7 +72,7 @@ fun getAnimationFrames(type: Int): List<Int> = when (type) {
         R.drawable.img_cookie_cheering_4, R.drawable.img_cookie_cheering_5
     )
 
-    CookieType.Consolation.type -> listOf(
+    CookieType.Comfort.type -> listOf(
         R.drawable.img_cookie_comfort_2, R.drawable.img_cookie_comfort_3,
         R.drawable.img_cookie_comfort_4, R.drawable.img_cookie_comfort_5
     )
@@ -77,7 +82,7 @@ fun getAnimationFrames(type: Int): List<Int> = when (type) {
         R.drawable.img_cookie_passion_4, R.drawable.img_cookie_passion_5
     )
 
-    CookieType.Determination.type -> listOf(
+    CookieType.Sermon.type -> listOf(
         R.drawable.img_cookie_sermon_2, R.drawable.img_cookie_sermon_3,
         R.drawable.img_cookie_sermon_4, R.drawable.img_cookie_sermon_5
     )
@@ -87,9 +92,9 @@ fun getAnimationFrames(type: Int): List<Int> = when (type) {
 
 fun getOpenedImage(type: Int): Int = when (type) {
     CookieType.Cheering.type -> R.drawable.img_cookie_cheering_6
-    CookieType.Consolation.type -> R.drawable.img_cookie_comfort_6
+    CookieType.Comfort.type -> R.drawable.img_cookie_comfort_6
     CookieType.Passion.type -> R.drawable.img_cookie_passion_6
-    CookieType.Determination.type -> R.drawable.img_cookie_sermon_6
+    CookieType.Sermon.type -> R.drawable.img_cookie_sermon_6
     else -> R.drawable.img_cookie_deactive
 }
 
@@ -105,8 +110,6 @@ fun CookieOpenScreen(
     var isAnimating by remember { mutableStateOf(false) }
     var currentFrame by remember { mutableIntStateOf(0) }
     val animFrames = remember(cookieData.type) { getAnimationFrames(cookieData.type) }
-
-    // Trigger animation when pinch opens cookie
     var triggerAnimation by remember { mutableStateOf(false) }
 
     LaunchedEffect(triggerAnimation) {
@@ -178,42 +181,45 @@ fun CookieOpenScreen(
                         )
                     }
                 }
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(50.dp))
-                        .background(Color.White.copy(alpha = 0.9f))
-                        .padding(horizontal = 20.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(10.dp)
-                            .background(
-                                color = Color(0xFF5C8DCC),
-                                shape = CircleShape
-                            )
-                    )
-
-                    Spacer(modifier = Modifier.width(6.dp))
-
-                    Text(
-                        text = "응원",
-                        color = Color(0xFF5C8DCC),
-                        fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = "힘을 주는 한마디",
-                        color = Color(0xFF7A6E63),
-                        fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
-                        fontWeight = FontWeight.Thin,
-                        fontSize = 13.sp
-                    )
+                when (cookieData.type) {
+                    CookieType.Cheering.type -> {
+                        SetTypeMessage(
+                            CheeringColor,
+                            stringResource(R.string.text_open_cookie_cheer_main),
+                            stringResource(R.string.text_open_cookie_cheer_sub)
+                        )
+                    }
+                    CookieType.Comfort.type -> {
+                        SetTypeMessage(
+                            ComfortColor,
+                            stringResource(R.string.text_open_cookie_comfort_main),
+                            stringResource(R.string.text_open_cookie_comfort_sub)
+                        )
+                    }
+                    CookieType.Passion.type -> {
+                        SetTypeMessage(
+                            PassionColor,
+                            stringResource(R.string.text_open_cookie_passion_main),
+                            stringResource(R.string.text_open_cookie_passion_sub)
+                        )
+                    }
+                    CookieType.Sermon.type -> {
+                        SetTypeMessage(
+                            SermonColor,
+                            stringResource(R.string.text_open_cookie_sermon_main),
+                            stringResource(R.string.text_open_cookie_sermon_sub)
+                        )
+                    }
+                    CookieType.Love.type -> {
+                        SetTypeMessage(
+                            LoveColor,
+                            stringResource(R.string.text_open_cookie_love_main),
+                            stringResource(R.string.text_open_cookie_love_sub)
+                        )
+                    }
+                    else ->{}
                 }
+
 
                 Spacer(Modifier.height(12.dp))
 
@@ -288,6 +294,45 @@ fun CookieOpenScreen(
                 modifier = Modifier.size(28.dp)
             )
         }
+    }
+}
+
+@Composable
+private fun SetTypeMessage(typeColor: Color, main: String, sub: String) {
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(50.dp))
+            .background(Color.White.copy(alpha = 0.9f))
+            .padding(horizontal = 20.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(10.dp)
+                .background(
+                    color = typeColor,
+                    shape = CircleShape
+                )
+        )
+
+        Spacer(modifier = Modifier.width(6.dp))
+
+        Text(
+            text = main,
+            color = typeColor,
+            fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Text(
+            text = sub,
+            color = Color(0xFF7A6E63),
+            fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
+            fontWeight = FontWeight.Thin,
+            fontSize = 13.sp
+        )
     }
 }
 

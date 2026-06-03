@@ -23,13 +23,23 @@
     <string name="btn_resend">재전송</string>
 
     <!-- Oven -->
-    <string name="text_oven_title">오늘의 쿠키</string>
+    <string name="text_oven_title">오늘의 남은 쿠키</string>
     <string name="text_oven_sub">남은 쿠키</string>
     <string name="text_oven_sub_unit">개</string>
     <string name="text_oven_tray">쿠키를 열어 당신을 위한 한마디를 확인해 보세요!</string>
 
     <!-- OpenCookie -->
     <string name="text_open_cookie_sub">양손으로 쿠키를 벌려보세요</string>
+    <string name="text_open_cookie_cheer_main">응원</string>
+    <string name="text_open_cookie_cheer_sub">힘을 주는 한마디</string>
+    <string name="text_open_cookie_comfort_main">위로</string>
+    <string name="text_open_cookie_comfort_sub">편안함을 주는 한마디</string>
+    <string name="text_open_cookie_passion_main">열정</string>
+    <string name="text_open_cookie_passion_sub">심장을 뛰게하는 한마디</string>
+    <string name="text_open_cookie_sermon_main">결심</string>
+    <string name="text_open_cookie_sermon_sub">각오를 다지는 한마디</string>
+    <string name="text_open_cookie_love_main">사랑</string>
+    <string name="text_open_cookie_love_sub">마음을 전하는 한마디</string>
 
     <!-- Collection -->
     <string name="text_collection_no">번호순</string>
