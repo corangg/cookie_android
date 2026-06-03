@@ -8,6 +8,8 @@ val MainTitle = Color(0xFF46382A)
 
 val SubBackground = Color(0xFFFFF2CC)
 val MainBorder = Color(0xFF4D310E)
+//val MainText = Color(0xFF3F352A)
+val MainText = Color(0xFF4A3F32)
 val MainButton = Color(0xFFEEB85E)
 val SubBorder = Color(0xFFFFF4D8)
 val SelectIconBackground = Color(0xFF4D310E)

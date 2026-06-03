@@ -8,7 +8,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,14 +16,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,7 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,8 +56,7 @@ import com.nuecoo.domain.model.CookieUIItemData
 import com.nuecoo.ui.theme.CheeringColor
 import com.nuecoo.ui.theme.ComfortColor
 import com.nuecoo.ui.theme.LoveColor
-import com.nuecoo.ui.theme.MainBorder
-import com.nuecoo.ui.theme.MainButton
+import com.nuecoo.ui.theme.MainText
 import com.nuecoo.ui.theme.NueCooTheme
 import com.nuecoo.ui.theme.PassionColor
 import com.nuecoo.ui.theme.SermonColor
@@ -158,29 +155,6 @@ fun CookieOpenScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                if (isOpened && message.isNotEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(1f)
-                            .padding(bottom = 16.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.img_message_paper),
-                            contentDescription = null,
-                            contentScale = ContentScale.FillBounds,
-                            modifier = Modifier.matchParentSize()
-                        )
-                        Text(
-                            text = message,
-                            color = MainBorder,
-                            fontSize = 16.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 40.dp, vertical = 24.dp)
-                        )
-                    }
-                }
                 when (cookieData.type) {
                     CookieType.Cheering.type -> {
                         SetTypeMessage(
@@ -189,6 +163,7 @@ fun CookieOpenScreen(
                             stringResource(R.string.text_open_cookie_cheer_sub)
                         )
                     }
+
                     CookieType.Comfort.type -> {
                         SetTypeMessage(
                             ComfortColor,
@@ -196,6 +171,7 @@ fun CookieOpenScreen(
                             stringResource(R.string.text_open_cookie_comfort_sub)
                         )
                     }
+
                     CookieType.Passion.type -> {
                         SetTypeMessage(
                             PassionColor,
@@ -203,6 +179,7 @@ fun CookieOpenScreen(
                             stringResource(R.string.text_open_cookie_passion_sub)
                         )
                     }
+
                     CookieType.Sermon.type -> {
                         SetTypeMessage(
                             SermonColor,
@@ -210,6 +187,7 @@ fun CookieOpenScreen(
                             stringResource(R.string.text_open_cookie_sermon_sub)
                         )
                     }
+
                     CookieType.Love.type -> {
                         SetTypeMessage(
                             LoveColor,
@@ -217,7 +195,8 @@ fun CookieOpenScreen(
                             stringResource(R.string.text_open_cookie_love_sub)
                         )
                     }
-                    else ->{}
+
+                    else -> {}
                 }
 
 
@@ -251,10 +230,8 @@ fun CookieOpenScreen(
                         }
                 )
 
-                Spacer(Modifier.height(72.dp))
-
                 if (!isOpened && !isAnimating) {
-                    Spacer(Modifier.height(24.dp))
+                    Spacer(Modifier.height(96.dp))
                     Text(
                         stringResource(R.string.text_open_cookie_sub),
                         color = Color.White,
@@ -265,18 +242,7 @@ fun CookieOpenScreen(
                 }
 
                 if (isOpened) {
-                    Spacer(Modifier.height(32.dp))
-                    Button(
-                        onClick = onClose,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MainButton,
-                            contentColor = MainBorder
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.border(2.dp, MainBorder, RoundedCornerShape(8.dp))
-                    ) {
-                        Text("확인", fontWeight = FontWeight.Bold, color = MainBorder)
-                    }
+                    MessageBackgroundBox(message = message)
                 }
             }
         }
@@ -328,11 +294,69 @@ private fun SetTypeMessage(typeColor: Color, main: String, sub: String) {
 
         Text(
             text = sub,
-            color = Color(0xFF7A6E63),
+            color = MainText,
             fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
             fontWeight = FontWeight.Thin,
             fontSize = 13.sp
         )
+    }
+}
+
+@Composable
+private fun MessageBackgroundBox(
+    message: String,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 28.dp)
+            .padding(top = 16.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Image(
+                painter = painterResource(R.drawable.img_message_background_top),
+                contentDescription = null,
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 260.dp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.img_message_background_mid),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.matchParentSize()
+                )
+
+                Text(
+                    text = message,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 22.dp)
+                        .padding(top = 8.dp, bottom = 8.dp),
+                    maxLines = 10,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MainText,
+                    fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
+                    fontSize = 18.sp,
+                    lineHeight = 22.sp
+                )
+            }
+
+            Image(
+                painter = painterResource(R.drawable.img_message_background_bottom),
+                contentDescription = null,
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 
