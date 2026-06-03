@@ -53,7 +53,7 @@ import com.nuecoo.viewmodel.OvenViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun OvenScreen(viewModel: OvenViewModel = hiltViewModel()) {
+fun OvenScreen(viewModel: OvenViewModel = hiltViewModel(), onMoveCollection: () -> Unit) {
     val dailyCookieData by viewModel.dailyCookieData.collectAsState()
     val remainTime by viewModel.remainTime.collectAsState()
     val selectedCookie by viewModel.selectedCookie.collectAsState()
@@ -93,7 +93,8 @@ fun OvenScreen(viewModel: OvenViewModel = hiltViewModel()) {
             }
         },
         onCookieClose = { viewModel.clearSelectedCookie() },
-        onCookieOpened = { type -> viewModel.updateOpenCookieData(type) }
+        onCookieOpened = { type -> viewModel.updateOpenCookieData(type) },
+        onMoveCollection = onMoveCollection
     )
 }
 
@@ -106,6 +107,8 @@ fun OvenScreenContent(
     onCookieClick: (CookieUIItemData) -> Unit,
     onCookieClose: () -> Unit,
     onCookieOpened: (Int) -> Unit,
+    onMoveCollection: () -> Unit,
+
 ) {
     Box(
         modifier = Modifier
@@ -201,7 +204,11 @@ fun OvenScreenContent(
                     cookieData = cookie,
                     cookieMessages = cookieNameMap,
                     onClose = onCookieClose,
-                    onCookieOpened = onCookieOpened
+                    onCookieOpened = onCookieOpened,
+                    onMoveCollection = {
+                        onCookieClose()
+                        onMoveCollection()
+                    }
                 )
             }
         }
@@ -280,7 +287,8 @@ private fun OvenScreenPreview() {
             cookieNameMap = emptyMap(),
             onCookieClick = {},
             onCookieClose = {},
-            onCookieOpened = {}
+            onCookieOpened = {},
+            onMoveCollection = {}
         )
     }
 }

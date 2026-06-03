@@ -49,32 +49,6 @@ val bottomNavItems = listOf(BottomNavItem.Oven, BottomNavItem.Collection, Bottom
 @Composable
 fun MainScreen(rootNavController: NavController) {
     val navController = rememberNavController()
-
-    /*Scaffold(
-        containerColor = MainBackground,
-        bottomBar = {
-            MainBottomNavBar(navController = navController)
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            NavHost(navController = navController, startDestination = BottomNavItem.Oven.route) {
-                composable(BottomNavItem.Oven.route) {
-                    OvenScreen()
-                }
-                composable(BottomNavItem.Collection.route) {
-                    CollectionScreen()
-                }
-                composable(BottomNavItem.Menu.route) {
-                    MenuScreen(rootNavController = rootNavController)
-                }
-            }
-        }
-    }*/
-
     Box(modifier = Modifier.fillMaxSize()) {
 
         Scaffold(
@@ -93,7 +67,17 @@ fun MainScreen(rootNavController: NavController) {
                     startDestination = BottomNavItem.Oven.route
                 ) {
                     composable(BottomNavItem.Oven.route) {
-                        OvenScreen()
+                        OvenScreen(
+                            onMoveCollection = {
+                                navController.navigate(BottomNavItem.Collection.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        )
                     }
                     composable(BottomNavItem.Collection.route) {
                         CollectionScreen()
@@ -129,7 +113,9 @@ fun MainBottomNavBar(navController: NavController) {
                 selected = isSelected,
                 onClick = {
                     navController.navigate(item.route) {
-                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
                         launchSingleTop = true
                         restoreState = true
                     }

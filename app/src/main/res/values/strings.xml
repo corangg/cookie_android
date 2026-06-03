@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">NueCoo</string>
 
+    <!-- Default -->
+    <string name="close">닫기</string>
+
     <!-- Bottom Nav -->
     <string name="menu_main_oven">오븐</string>
     <string name="menu_main_collection">수집</string>
@@ -40,6 +43,8 @@
     <string name="text_open_cookie_sermon_sub">각오를 다지는 한마디</string>
     <string name="text_open_cookie_love_main">사랑</string>
     <string name="text_open_cookie_love_sub">마음을 전하는 한마디</string>
+    <string name="text_open_cookie_error_main">오류</string>
+    <string name="text_open_cookie_start_collection">도감으로 이동</string>
 
     <!-- Collection -->
     <string name="text_collection_no">번호순</string>

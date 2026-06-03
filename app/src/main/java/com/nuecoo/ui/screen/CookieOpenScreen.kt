@@ -55,11 +55,13 @@ import com.nuecoo.domain.model.CookieType
 import com.nuecoo.domain.model.CookieUIItemData
 import com.nuecoo.ui.theme.CheeringColor
 import com.nuecoo.ui.theme.ComfortColor
+import com.nuecoo.ui.theme.GrayText
 import com.nuecoo.ui.theme.LoveColor
 import com.nuecoo.ui.theme.MainText
 import com.nuecoo.ui.theme.NueCooTheme
 import com.nuecoo.ui.theme.PassionColor
 import com.nuecoo.ui.theme.SermonColor
+import com.nuecoo.ui.util.CommonRoundButton
 import kotlinx.coroutines.delay
 import kotlin.math.hypot
 
@@ -100,7 +102,8 @@ fun CookieOpenScreen(
     cookieData: CookieUIItemData,
     cookieMessages: Map<Int, List<String>>,
     onClose: () -> Unit,
-    onCookieOpened: (Int) -> Unit
+    onCookieOpened: (Int) -> Unit,
+    onMoveCollection: () -> Unit
 ) {
     val isAlreadyOpened = cookieData.isOpened == true
     var isOpened by remember { mutableStateOf(isAlreadyOpened) }
@@ -108,6 +111,31 @@ fun CookieOpenScreen(
     var currentFrame by remember { mutableIntStateOf(0) }
     val animFrames = remember(cookieData.type) { getAnimationFrames(cookieData.type) }
     var triggerAnimation by remember { mutableStateOf(false) }
+    val typeColor = when (cookieData.type) {
+        CookieType.Cheering.type -> CheeringColor
+        CookieType.Comfort.type -> ComfortColor
+        CookieType.Passion.type -> PassionColor
+        CookieType.Sermon.type -> SermonColor
+        CookieType.Love.type -> LoveColor
+        else -> GrayText
+    }
+    val typeMainText = when (cookieData.type) {
+        CookieType.Cheering.type -> stringResource(R.string.text_open_cookie_cheer_main)
+        CookieType.Comfort.type -> stringResource(R.string.text_open_cookie_comfort_main)
+        CookieType.Passion.type -> stringResource(R.string.text_open_cookie_passion_main)
+        CookieType.Sermon.type -> stringResource(R.string.text_open_cookie_sermon_main)
+        CookieType.Love.type -> stringResource(R.string.text_open_cookie_love_main)
+        else -> stringResource(R.string.text_open_cookie_error_main)
+    }
+
+    val typeSubText = when (cookieData.type) {
+        CookieType.Cheering.type -> stringResource(R.string.text_open_cookie_cheer_sub)
+        CookieType.Comfort.type -> stringResource(R.string.text_open_cookie_comfort_sub)
+        CookieType.Passion.type -> stringResource(R.string.text_open_cookie_passion_sub)
+        CookieType.Sermon.type -> stringResource(R.string.text_open_cookie_sermon_sub)
+        CookieType.Love.type -> stringResource(R.string.text_open_cookie_love_sub)
+        else -> ""
+    }
 
     LaunchedEffect(triggerAnimation) {
         if (!triggerAnimation || isOpened || isAnimating) return@LaunchedEffect
@@ -155,50 +183,7 @@ fun CookieOpenScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                when (cookieData.type) {
-                    CookieType.Cheering.type -> {
-                        SetTypeMessage(
-                            CheeringColor,
-                            stringResource(R.string.text_open_cookie_cheer_main),
-                            stringResource(R.string.text_open_cookie_cheer_sub)
-                        )
-                    }
-
-                    CookieType.Comfort.type -> {
-                        SetTypeMessage(
-                            ComfortColor,
-                            stringResource(R.string.text_open_cookie_comfort_main),
-                            stringResource(R.string.text_open_cookie_comfort_sub)
-                        )
-                    }
-
-                    CookieType.Passion.type -> {
-                        SetTypeMessage(
-                            PassionColor,
-                            stringResource(R.string.text_open_cookie_passion_main),
-                            stringResource(R.string.text_open_cookie_passion_sub)
-                        )
-                    }
-
-                    CookieType.Sermon.type -> {
-                        SetTypeMessage(
-                            SermonColor,
-                            stringResource(R.string.text_open_cookie_sermon_main),
-                            stringResource(R.string.text_open_cookie_sermon_sub)
-                        )
-                    }
-
-                    CookieType.Love.type -> {
-                        SetTypeMessage(
-                            LoveColor,
-                            stringResource(R.string.text_open_cookie_love_main),
-                            stringResource(R.string.text_open_cookie_love_sub)
-                        )
-                    }
-
-                    else -> {}
-                }
-
+                SetTypeMessage(typeColor, typeMainText, typeSubText)
 
                 Spacer(Modifier.height(12.dp))
 
@@ -243,6 +228,38 @@ fun CookieOpenScreen(
 
                 if (isOpened) {
                     MessageBackgroundBox(message = message)
+                    Spacer(Modifier.height(24.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.padding(horizontal = 28.dp)
+                    ) {
+                        CommonRoundButton(
+                            text = stringResource(R.string.close),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(52.dp),
+
+                            backgroundColor = Color(0x66FFFFFF),
+                            borderColor = Color.White.copy(alpha = 0.5f),
+                            cornerRadius = 24.dp,
+                            textColor = Color.White,
+
+                            onClick = { onClose() }
+                        )
+
+                        CommonRoundButton(
+                            text = stringResource(R.string.text_open_cookie_start_collection),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(52.dp),
+
+                            backgroundColor = typeColor,
+                            cornerRadius = 24.dp,
+                            textColor = Color.White,
+
+                            onClick = { onMoveCollection() }
+                        )
+                    }
                 }
             }
         }
@@ -446,7 +463,8 @@ private fun CookieOpenScreenClosedPreview() {
                 )
             ),
             onClose = {},
-            onCookieOpened = {}
+            onCookieOpened = {},
+            onMoveCollection = {}
         )
     }
 }
