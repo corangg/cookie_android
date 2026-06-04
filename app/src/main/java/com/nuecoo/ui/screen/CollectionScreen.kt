@@ -52,13 +52,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.nuecoo.R
 import com.nuecoo.domain.model.CollectionDisplayItem
 import com.nuecoo.domain.model.CookieType
-import com.nuecoo.mapper.getCollectionTypeImages
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainButton
 import com.nuecoo.ui.theme.SubBackground
 import com.nuecoo.viewmodel.CollectionSortType
 import com.nuecoo.viewmodel.CollectionViewModel
+import getCollectionTypeImages
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,7 +76,9 @@ fun CollectionScreen(viewModel: CollectionViewModel = hiltViewModel()) {
     LaunchedEffect(Unit) { viewModel.loadCollection(CookieType.Cheering.type) }
 
     Column(
-        modifier = Modifier.fillMaxSize().background(MainBackground)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MainBackground)
     ) {
         // Top controls
         Row(
@@ -97,15 +99,20 @@ fun CollectionScreen(viewModel: CollectionViewModel = hiltViewModel()) {
                     singleLine = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(sortExpanded) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = MainBorder, unfocusedTextColor = MainBorder,
-                        focusedContainerColor = SubBackground, unfocusedContainerColor = SubBackground,
-                        focusedBorderColor = MainBorder, unfocusedBorderColor = MainBorder
+                        focusedTextColor = MainBorder,
+                        unfocusedTextColor = MainBorder,
+                        focusedContainerColor = SubBackground,
+                        unfocusedContainerColor = SubBackground,
+                        focusedBorderColor = MainBorder,
+                        unfocusedBorderColor = MainBorder
                     ),
                     textStyle = androidx.compose.ui.text.TextStyle(
                         fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MainBorder
                     ),
                     shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.menuAnchor().height(44.dp)
+                    modifier = Modifier
+                        .menuAnchor()
+                        .height(44.dp)
                 )
                 ExposedDropdownMenu(
                     expanded = sortExpanded,
@@ -113,7 +120,13 @@ fun CollectionScreen(viewModel: CollectionViewModel = hiltViewModel()) {
                 ) {
                     sortOptions.forEach { (label, sort) ->
                         DropdownMenuItem(
-                            text = { Text(label, color = MainBorder, fontWeight = FontWeight.Bold) },
+                            text = {
+                                Text(
+                                    label,
+                                    color = MainBorder,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            },
                             onClick = { viewModel.setSortType(sort); sortExpanded = false }
                         )
                     }
@@ -132,13 +145,20 @@ fun CollectionScreen(viewModel: CollectionViewModel = hiltViewModel()) {
                         checkmarkColor = MainButton
                     )
                 )
-                Text("수집한 쿠키만 보기ㅁ", color = MainBorder, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "수집한 쿠키만 보기ㅁ",
+                    color = MainBorder,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
 
         // Collection grid
         if (isLoading) {
-            Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+            Box(Modifier
+                .weight(1f)
+                .fillMaxWidth(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = MainBorder)
             }
         } else {

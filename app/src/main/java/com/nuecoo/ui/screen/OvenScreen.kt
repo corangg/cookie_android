@@ -20,9 +20,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -44,41 +44,25 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.nuecoo.R
 import com.nuecoo.domain.model.CookieType
 import com.nuecoo.domain.model.CookieUIItemData
-import com.nuecoo.mapper.toUiItem
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainTitle
 import com.nuecoo.ui.theme.NueCooTheme
 import com.nuecoo.viewmodel.OvenViewModel
+import getCookieMessageResMap
 import kotlinx.coroutines.launch
+import toUiItem
 
 @Composable
 fun OvenScreen(viewModel: OvenViewModel = hiltViewModel(), onMoveCollection: () -> Unit) {
-    val dailyCookieData by viewModel.dailyCookieData.collectAsState()
+    val dailyCookieData by viewModel.dailyCookieData.observeAsState()
     val remainTime by viewModel.remainTime.collectAsState()
     val selectedCookie by viewModel.selectedCookie.collectAsState()
 
-    val cheeringList = stringArrayResource(R.array.cookie_type_cheering).toList()
-    val consolationList = stringArrayResource(R.array.cookie_type_consolation).toList()
-    val passionList = stringArrayResource(R.array.cookie_type_passion).toList()
-    val determinationList = stringArrayResource(R.array.cookie_type_determination).toList()
+    val cookieMessageResMap = getCookieMessageResMap()
 
-    val cookieNameMap = remember(
-        cheeringList,
-        consolationList,
-        passionList,
-        determinationList
-    ) {
-        mapOf(
-            CookieType.Cheering.type to cheeringList,
-            CookieType.Comfort.type to consolationList,
-            CookieType.Passion.type to passionList,
-            CookieType.Sermon.type to determinationList,
-        )
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.initCookieData(cookieNameMap)
+    val cookieNameMap = cookieMessageResMap.mapValues { entry ->
+        stringArrayResource(entry.value).toList()
     }
 
     OvenScreenContent(
@@ -93,7 +77,12 @@ fun OvenScreen(viewModel: OvenViewModel = hiltViewModel(), onMoveCollection: () 
             }
         },
         onCookieClose = { viewModel.clearSelectedCookie() },
-        onCookieOpened = { type -> viewModel.updateOpenCookieData(type) },
+        onCookieOpened = { type ->
+            viewModel.updateOpenCookieData(
+                type,
+                size = cookieNameMap[type]?.size ?: 0
+            )
+        },
         onMoveCollection = onMoveCollection
     )
 }
@@ -109,7 +98,7 @@ fun OvenScreenContent(
     onCookieOpened: (Int) -> Unit,
     onMoveCollection: () -> Unit,
 
-) {
+    ) {
     Box(
         modifier = Modifier
             .fillMaxSize()

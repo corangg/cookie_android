@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.compose.lifecycle.runtime)
     implementation(libs.compose.viewmodel)
     debugImplementation(libs.compose.ui.tooling)
+    implementation(libs.androidx.compose.runtime.livedata)
 
     // Hilt
     implementation(libs.hilt)

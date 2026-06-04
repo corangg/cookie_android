@@ -53,49 +53,16 @@ import androidx.compose.ui.unit.sp
 import com.nuecoo.R
 import com.nuecoo.domain.model.CookieType
 import com.nuecoo.domain.model.CookieUIItemData
-import com.nuecoo.ui.theme.CheeringColor
-import com.nuecoo.ui.theme.ComfortColor
-import com.nuecoo.ui.theme.GrayText
-import com.nuecoo.ui.theme.LoveColor
 import com.nuecoo.ui.theme.MainText
 import com.nuecoo.ui.theme.NueCooTheme
-import com.nuecoo.ui.theme.PassionColor
-import com.nuecoo.ui.theme.SermonColor
 import com.nuecoo.ui.util.CommonRoundButton
+import getCookieAnimationFrames
+import getCookieTypeColor
+import getCookieTypeMainTextRes
+import getCookieTypeSubTextRes
+import getOpenedCookieImage
 import kotlinx.coroutines.delay
 import kotlin.math.hypot
-
-fun getAnimationFrames(type: Int): List<Int> = when (type) {
-    CookieType.Cheering.type -> listOf(
-        R.drawable.img_cookie_cheering_2, R.drawable.img_cookie_cheering_3,
-        R.drawable.img_cookie_cheering_4, R.drawable.img_cookie_cheering_5
-    )
-
-    CookieType.Comfort.type -> listOf(
-        R.drawable.img_cookie_comfort_2, R.drawable.img_cookie_comfort_3,
-        R.drawable.img_cookie_comfort_4, R.drawable.img_cookie_comfort_5
-    )
-
-    CookieType.Passion.type -> listOf(
-        R.drawable.img_cookie_passion_2, R.drawable.img_cookie_passion_3,
-        R.drawable.img_cookie_passion_4, R.drawable.img_cookie_passion_5
-    )
-
-    CookieType.Sermon.type -> listOf(
-        R.drawable.img_cookie_sermon_2, R.drawable.img_cookie_sermon_3,
-        R.drawable.img_cookie_sermon_4, R.drawable.img_cookie_sermon_5
-    )
-
-    else -> listOf(R.drawable.img_cookie_deactive)
-}
-
-fun getOpenedImage(type: Int): Int = when (type) {
-    CookieType.Cheering.type -> R.drawable.img_cookie_cheering_6
-    CookieType.Comfort.type -> R.drawable.img_cookie_comfort_6
-    CookieType.Passion.type -> R.drawable.img_cookie_passion_6
-    CookieType.Sermon.type -> R.drawable.img_cookie_sermon_6
-    else -> R.drawable.img_cookie_deactive
-}
 
 @Composable
 fun CookieOpenScreen(
@@ -109,38 +76,13 @@ fun CookieOpenScreen(
     var isOpened by remember { mutableStateOf(isAlreadyOpened) }
     var isAnimating by remember { mutableStateOf(false) }
     var currentFrame by remember { mutableIntStateOf(0) }
-    val animFrames = remember(cookieData.type) { getAnimationFrames(cookieData.type) }
+    val animFrames = remember(cookieData.type) { getCookieAnimationFrames(cookieData.type) }
     var triggerAnimation by remember { mutableStateOf(false) }
-    val typeColor = when (cookieData.type) {
-        CookieType.Cheering.type -> CheeringColor
-        CookieType.Comfort.type -> ComfortColor
-        CookieType.Passion.type -> PassionColor
-        CookieType.Sermon.type -> SermonColor
-        CookieType.Love.type -> LoveColor
-        else -> GrayText
-    }
-    val typeMainText = when (cookieData.type) {
-        CookieType.Cheering.type -> stringResource(R.string.text_open_cookie_cheer_main)
-        CookieType.Comfort.type -> stringResource(R.string.text_open_cookie_comfort_main)
-        CookieType.Passion.type -> stringResource(R.string.text_open_cookie_passion_main)
-        CookieType.Sermon.type -> stringResource(R.string.text_open_cookie_sermon_main)
-        CookieType.Love.type -> stringResource(R.string.text_open_cookie_love_main)
-        else -> stringResource(R.string.text_open_cookie_error_main)
-    }
-
-    val typeSubText = when (cookieData.type) {
-        CookieType.Cheering.type -> stringResource(R.string.text_open_cookie_cheer_sub)
-        CookieType.Comfort.type -> stringResource(R.string.text_open_cookie_comfort_sub)
-        CookieType.Passion.type -> stringResource(R.string.text_open_cookie_passion_sub)
-        CookieType.Sermon.type -> stringResource(R.string.text_open_cookie_sermon_sub)
-        CookieType.Love.type -> stringResource(R.string.text_open_cookie_love_sub)
-        else -> ""
-    }
 
     LaunchedEffect(triggerAnimation) {
         if (!triggerAnimation || isOpened || isAnimating) return@LaunchedEffect
         isAnimating = true
-        for (i in animFrames.indices) {
+        for (i in getCookieAnimationFrames(cookieData.type).indices) {
             currentFrame = i
             delay(800L)
         }
@@ -150,7 +92,7 @@ fun CookieOpenScreen(
     }
 
     val displayImage = when {
-        isOpened -> getOpenedImage(cookieData.type)
+        isOpened -> getOpenedCookieImage(cookieData.type)
         isAnimating -> animFrames.getOrElse(currentFrame) { cookieData.imgRes }
         else -> cookieData.imgRes
     }
@@ -183,7 +125,7 @@ fun CookieOpenScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                SetTypeMessage(typeColor, typeMainText, typeSubText)
+                SetTypeMessage(cookieData.type)
 
                 Spacer(Modifier.height(12.dp))
 
@@ -253,7 +195,7 @@ fun CookieOpenScreen(
                                 .weight(1f)
                                 .height(52.dp),
 
-                            backgroundColor = typeColor,
+                            backgroundColor = getCookieTypeColor(cookieData.type),
                             cornerRadius = 24.dp,
                             textColor = Color.White,
 
@@ -281,7 +223,10 @@ fun CookieOpenScreen(
 }
 
 @Composable
-private fun SetTypeMessage(typeColor: Color, main: String, sub: String) {
+private fun SetTypeMessage(type: Int) {
+    val typeColor = getCookieTypeColor(type)
+    val main = stringResource(getCookieTypeMainTextRes(type))
+    val sub = stringResource(getCookieTypeSubTextRes(type))
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(50.dp))

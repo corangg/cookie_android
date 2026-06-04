@@ -33,4 +33,12 @@
         <item>당신의 결심을 응원해요. 할 수 있어요!</item>
         <item>목표를 향해 한 걸음씩, 그것으로 충분해요.</item>
     </string-array>
+
+    <string-array name="cookie_type_love">
+        <item>오늘의 작은 결심이 내일의 큰 변화를 만들어요.</item>
+        <item>결심한 것을 끝까지 밀어붙여봐요!</item>
+        <item>흔들리더라도 다시 일어나는 것이 진정한 결심입니다.</item>
+        <item>당신의 결심을 응원해요. 할 수 있어요!</item>
+        <item>목표를 향해 한 걸음씩, 그것으로 충분해요.</item>
+    </string-array>
 </resources>
