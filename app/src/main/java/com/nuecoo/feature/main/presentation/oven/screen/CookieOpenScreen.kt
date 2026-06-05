@@ -1,4 +1,4 @@
-package com.nuecoo.ui.screen
+package com.nuecoo.feature.main.presentation.oven.screen
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode

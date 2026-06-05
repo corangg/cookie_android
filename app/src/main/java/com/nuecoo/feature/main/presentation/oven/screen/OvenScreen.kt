@@ -1,4 +1,4 @@
-package com.nuecoo.ui.screen
+package com.nuecoo.feature.main.presentation.oven.screen
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -48,7 +48,7 @@ import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainTitle
 import com.nuecoo.ui.theme.NueCooTheme
-import com.nuecoo.viewmodel.OvenViewModel
+import com.nuecoo.feature.main.presentation.oven.viewmodel.OvenViewModel
 import getCookieMessageResMap
 import kotlinx.coroutines.launch
 import toUiItem

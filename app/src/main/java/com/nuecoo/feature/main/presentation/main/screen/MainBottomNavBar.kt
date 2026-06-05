@@ -1,7 +1,5 @@
-package com.nuecoo.ui.screen
+package com.nuecoo.feature.main.presentation.main.screen
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -20,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,77 +34,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.nuecoo.R
-import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.NavBackground
-import com.nuecoo.ui.theme.White
-
-sealed class BottomNavItem(
-    val route: String,
-    @param:StringRes val title: Int,
-    @param:DrawableRes val icon: Int,
-    val selectedColor: Color
-) {
-    object Oven : BottomNavItem("oven", R.string.menu_main_oven, R.drawable.ic_oven, White)
-    object Collection : BottomNavItem("collection", R.string.menu_main_collection, R.drawable.ic_collection, White)
-
-    object Menu : BottomNavItem("menu", R.string.menu_main_menu, R.drawable.ic_menu, White)
-}
-
-val bottomNavItems = listOf(BottomNavItem.Oven, BottomNavItem.Collection, BottomNavItem.Menu)
-
-@Composable
-fun MainScreen(rootNavController: NavController) {
-    val navController = rememberNavController()
-    Box(modifier = Modifier.fillMaxSize()) {
-
-        Scaffold(
-            containerColor = MainBackground,
-            bottomBar = {
-                MainBottomNavBar(navController = navController)
-            }
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                NavHost(
-                    navController = navController,
-                    startDestination = BottomNavItem.Oven.route
-                ) {
-                    composable(BottomNavItem.Oven.route) {
-                        OvenScreen(
-                            onMoveCollection = {
-                                navController.navigate(BottomNavItem.Collection.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-                        )
-                    }
-                    composable(BottomNavItem.Collection.route) {
-                        CollectionScreen()
-                    }
-                    composable(BottomNavItem.Menu.route) {
-                        MenuScreen(rootNavController = rootNavController)
-                    }
-                }
-
-
-            }
-        }
-    }
-
-}
 
 @Composable
 fun MainBottomNavBar(navController: NavController) {
@@ -186,7 +114,7 @@ private fun RowScope.BottomNavItem(
                 painter = painterResource(item.icon),
                 contentDescription = null,
                 colorFilter = if (selected) ColorFilter.tint(item.selectedColor) else null,
-                modifier = Modifier.size(if(selected)30.dp else 24.dp)
+                modifier = Modifier.size(if (selected) 30.dp else 24.dp)
             )
 
             if (selected) {

@@ -1,4 +1,4 @@
-package com.nuecoo.viewmodel
+package com.nuecoo.feature.main.presentation.oven.viewmodel
 
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -30,10 +30,8 @@ class OvenViewModel @Inject constructor(
     @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
     @IoDispatcher ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel(mainDispatcher, defaultDispatcher, ioDispatcher) {
-    private val _cookieNameMap = MutableStateFlow<Map<Int, List<String>>>(emptyMap())
-
     val remainTime: StateFlow<String> = remainTimeUseCase()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), "00 : 00 : 00")
+        .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5_000), "00 : 00 : 00")
 
     val dailyCookieData = observeDailyCookieData().asLiveData(viewModelScope.coroutineContext)
 

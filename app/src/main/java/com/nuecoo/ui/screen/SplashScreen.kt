@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.nuecoo.R
-import com.nuecoo.ui.navigation.Route
+import com.nuecoo.core.navigation.Route
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.viewmodel.SplashViewModel
 import kotlinx.coroutines.delay

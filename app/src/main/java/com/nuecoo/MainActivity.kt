@@ -1,4 +1,4 @@
-package com.nuecoo.ui.activity
+package com.nuecoo
 
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import com.nuecoo.core.ui.BaseActivity
 import com.nuecoo.core.ui.showSimpleDialog
 import com.nuecoo.core.util.hasNotificationPermission
-import com.nuecoo.ui.navigation.AppNavigation
+import com.nuecoo.navigation.AppNavigation
 import com.nuecoo.ui.theme.NueCooTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,7 +35,10 @@ class MainActivity : BaseActivity() {
             if (!allGranted) {
                 val deniedPermissions = results.filterValues { !it }.keys
                 val permanentlyDenied = deniedPermissions.any { permission ->
-                    ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED
+                    ContextCompat.checkSelfPermission(
+                        this,
+                        permission
+                    ) != PackageManager.PERMISSION_GRANTED
                             && !shouldShowRequestPermissionRationale(permission)
                 }
                 if (permanentlyDenied) {

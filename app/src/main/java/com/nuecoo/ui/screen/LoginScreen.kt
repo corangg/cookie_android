@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -31,10 +30,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.nuecoo.R
+import com.nuecoo.core.navigation.Route
 import com.nuecoo.domain.model.LoginResult
 import com.nuecoo.ui.component.NueCooButton
 import com.nuecoo.ui.component.NueCooTextField
-import com.nuecoo.ui.navigation.Route
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.viewmodel.LoginViewModel
@@ -51,7 +50,11 @@ fun LoginScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    Box(modifier = Modifier.fillMaxSize().background(MainBackground)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MainBackground)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -87,6 +90,7 @@ fun LoginScreen(
                                 LoginResult.Success -> navController.navigate(Route.MAIN) {
                                     popUpTo(Route.LOGIN) { inclusive = true }
                                 }
+
                                 LoginResult.Empty -> snackbarHostState.showSnackbar("이메일과 비밀번호를 입력해주세요")
                                 LoginResult.Failed -> snackbarHostState.showSnackbar("로그인에 실패했습니다")
                             }
