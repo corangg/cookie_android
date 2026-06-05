@@ -1,7 +1,5 @@
-package com.nuecoo.core.viewmodel
+package com.nuecoo.core.base
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nuecoo.core.di.DefaultDispatcher
@@ -9,9 +7,10 @@ import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.MainDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainCoroutineDispatcher
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -27,8 +26,8 @@ abstract class BaseViewModel(
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
-    private val _isLoading = MutableLiveData(false)
-    val isLoading: LiveData<Boolean> = _isLoading
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     /**
      * 연산이 많이 필요한 작업을 실행하는데 사용됩니다.
@@ -38,8 +37,7 @@ abstract class BaseViewModel(
     protected fun onIntensiveWork(
         isLoading: Boolean = true,
         block: suspend CoroutineScope.() -> Unit
-    ) =
-        onWork(isLoading, defaultDispatcher, block)
+    ) = onWork(isLoading, defaultDispatcher, block)
 
     /**
      * 가벼운 계산 작업을 실행하는데 사용됩니다.
@@ -67,48 +65,12 @@ abstract class BaseViewModel(
         isLoading: Boolean = true,
         dispatcher: CoroutineDispatcher,
         block: suspend CoroutineScope.() -> Unit
-    ) =
-        viewModelScope.launch(dispatcher) {
-            if (isLoading) showLoading().join()
+    ) = viewModelScope.launch(dispatcher) {
+        if (isLoading) _isLoading.value = true
+        try {
             block()
-            if (isLoading) hideLoading().join()
+        } finally {
+            if (isLoading) _isLoading.value = false
         }
-
-    protected fun onGlobalIntensiveWork(
-        isLoading: Boolean = true,
-        block: suspend CoroutineScope.() -> Unit
-    ) =
-        onGlobalWork(isLoading, defaultDispatcher, block)
-
-    protected fun onGlobalIoWork(
-        isLoading: Boolean = true,
-        block: suspend CoroutineScope.() -> Unit
-    ) =
-        onGlobalWork(isLoading, ioDispatcher, block)
-
-    protected fun onGlobalUiWork(
-        isLoading: Boolean = true,
-        block: suspend CoroutineScope.() -> Unit
-    ) =
-        onGlobalWork(isLoading, mainDispatcher, block)
-
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun onGlobalWork(
-        isLoading: Boolean = true,
-        dispatcher: CoroutineDispatcher,
-        block: suspend CoroutineScope.() -> Unit
-    ) =
-        GlobalScope.launch(dispatcher) {
-            if (isLoading) showLoading()
-            block()
-            if (isLoading) hideLoading()
-        }
-
-    protected fun showLoading() = viewModelScope.launch(mainDispatcher) {
-        _isLoading.value = true
-    }
-
-    protected fun hideLoading() = viewModelScope.launch(mainDispatcher) {
-        _isLoading.value = false
     }
 }

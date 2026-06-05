@@ -41,9 +41,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.R
-import com.nuecoo.domain.model.CookieType
-import com.nuecoo.domain.model.CookieUIItemData
+import com.nuecoo.feature.main.domain.model.CookieType
+import com.nuecoo.feature.main.domain.model.CookieUIItemData
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainTitle
@@ -55,7 +56,7 @@ import toUiItem
 
 @Composable
 fun OvenScreen(viewModel: OvenViewModel = hiltViewModel(), onMoveCollection: () -> Unit) {
-    val dailyCookieData by viewModel.dailyCookieData.observeAsState()
+    val dailyCookieData by viewModel.dailyCookieData.collectAsStateWithLifecycle()
     val remainTime by viewModel.remainTime.collectAsState()
     val selectedCookie by viewModel.selectedCookie.collectAsState()
 

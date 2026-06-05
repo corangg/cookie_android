@@ -1,9 +1,9 @@
-package com.nuecoo.data.datasource
+package com.nuecoo.feature.main.data.datasource.cookie
 
-import com.nuecoo.data.datasource.local.room.LocalDailyCookieData
+import com.nuecoo.core.database.entity.LocalDailyCookieData
 import kotlinx.coroutines.flow.Flow
 
-interface LocalCookieDataSource {
+interface CookieDataSource {
     suspend fun upsertCookieData(entity: LocalDailyCookieData)
     suspend fun upsertCookieListData(entity: List<LocalDailyCookieData>)
     suspend fun getLastDailyCookieData(): LocalDailyCookieData?

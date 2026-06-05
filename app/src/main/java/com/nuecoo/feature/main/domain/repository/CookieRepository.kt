@@ -1,9 +1,9 @@
-package com.nuecoo.domain.repository
+package com.nuecoo.feature.main.domain.repository
 
-import com.nuecoo.domain.model.DailyCookieItemData
+import com.nuecoo.feature.main.domain.model.DailyCookieItemData
 import kotlinx.coroutines.flow.Flow
 
-interface LocalRepository {
+interface CookieRepository {
     fun getFlowDailyCookieData(): Flow<DailyCookieItemData?>
 
     fun getFlowCookieDataList(): Flow<List<DailyCookieItemData>>

@@ -3,7 +3,7 @@ package com.nuecoo.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nuecoo.core.di.IoDispatcher
-import com.nuecoo.domain.usecase.GetCollectionByTypeUseCase
+import com.nuecoo.feature.main.domain.usecase.GetCollectionByTypeUseCase
 import com.nuecoo.domain.usecase.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher

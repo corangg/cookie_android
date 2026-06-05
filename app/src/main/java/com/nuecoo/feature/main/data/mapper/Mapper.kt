@@ -1,9 +1,9 @@
-package com.nuecoo.data.mapper
+package com.nuecoo.feature.main.data.mapper
 
-import com.nuecoo.data.datasource.local.room.LocalCookieData
-import com.nuecoo.data.datasource.local.room.LocalDailyCookieData
-import com.nuecoo.domain.model.CookieItemData
-import com.nuecoo.domain.model.DailyCookieItemData
+import com.nuecoo.core.database.entity.LocalCookieData
+import com.nuecoo.core.database.entity.LocalDailyCookieData
+import com.nuecoo.feature.main.domain.model.CookieItemData
+import com.nuecoo.feature.main.domain.model.DailyCookieItemData
 
 fun DailyCookieItemData.toLocal() = LocalDailyCookieData(
     date = this.date,

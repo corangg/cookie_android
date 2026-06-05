@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nuecoo.R
 import com.nuecoo.domain.model.CollectionDisplayItem
-import com.nuecoo.domain.model.CookieType
+import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainButton

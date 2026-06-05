@@ -1,24 +1,24 @@
-package com.nuecoo.domain.usecase
+package com.nuecoo.feature.main.domain.usecase
 
 import com.nuecoo.core.util.getLocalTimeToString
-import com.nuecoo.domain.model.CookieItemData
-import com.nuecoo.domain.model.CookieType
-import com.nuecoo.domain.model.DailyCookieItemData
-import com.nuecoo.domain.repository.LocalRepository
+import com.nuecoo.feature.main.domain.model.CookieItemData
+import com.nuecoo.feature.main.domain.model.CookieType
+import com.nuecoo.feature.main.domain.model.DailyCookieItemData
+import com.nuecoo.feature.main.domain.repository.CookieRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ObserveDailyCookieData @Inject constructor(
-    private val repository: LocalRepository
+    private val cookieRepository: CookieRepository
 ) {
     operator fun invoke(): Flow<DailyCookieItemData?> {
-        return repository.getFlowCookieDataList().map { dataList ->
+        return cookieRepository.getFlowCookieDataList().map { dataList ->
             val today = getLocalTimeToString().take(8)
             if (dataList.lastOrNull()?.date == today) {
                 dataList.last()
             } else {
-                repository.upsertDailyCookieData(
+                cookieRepository.upsertDailyCookieData(
                     DailyCookieItemData(
                         date = today,
                         list = createCookieItemDataList()
@@ -41,15 +41,16 @@ class ObserveDailyCookieData @Inject constructor(
             }
     }
 }
+
 class UpdateOpenCookieDataUseCase @Inject constructor(
-    private val repository: LocalRepository
+    private val cookieRepository: CookieRepository
 ) {
     suspend operator fun invoke(
         type: Int,
         newNo: Int
     ) {
         val today = getLocalTimeToString().take(8)
-        val todayData = repository.getCookieDataList().find { it.date == today } ?: return
+        val todayData = cookieRepository.getCookieDataList().find { it.date == today } ?: return
 
         val newData = todayData.copy(
             list = todayData.list.map { item ->
@@ -60,30 +61,7 @@ class UpdateOpenCookieDataUseCase @Inject constructor(
                 }
             }
         )
-        repository.upsertDailyCookieData(newData)
+        cookieRepository.upsertDailyCookieData(newData)
     }
 }
 
-class ObserveCookieListUseCase @Inject constructor(
-    private val repository: LocalRepository
-) {
-    operator fun invoke(): Flow<List<DailyCookieItemData>> = repository.getFlowCookieDataList()
-}
-
-class GetNewCookieNumberUseCase @Inject constructor(
-    private val repository: LocalRepository
-) {
-    suspend operator fun invoke(type: Int, size: Int): Int {
-        val list = repository.getCookieDataList()
-        val openNoList = list.flatMap { it.list }.filter { it.type == type }.mapNotNull { it.no }.distinct()
-
-        return randomExclude(size, openNoList) ?: 0
-
-    }
-
-    private fun randomExclude(cookieLength: Int, excludeList: List<Int>): Int? {
-        val candidates = (1..cookieLength)
-            .filterNot { it in excludeList }
-        return candidates.randomOrNull()
-    }
-}

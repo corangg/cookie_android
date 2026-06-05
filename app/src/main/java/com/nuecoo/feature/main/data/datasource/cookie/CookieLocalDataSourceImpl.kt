@@ -1,14 +1,13 @@
-package com.nuecoo.data.datasource.local
+package com.nuecoo.feature.main.data.datasource.cookie
 
-import com.nuecoo.data.datasource.LocalCookieDataSource
-import com.nuecoo.data.datasource.local.room.CookieDao
-import com.nuecoo.data.datasource.local.room.LocalDailyCookieData
+import com.nuecoo.core.database.dao.CookieDao
+import com.nuecoo.core.database.entity.LocalDailyCookieData
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class CookieLocalDataSource @Inject constructor(
+class CookieLocalDataSourceImpl @Inject constructor(
     private val cookieDao: CookieDao
-) : LocalCookieDataSource {
+) : CookieDataSource {
     override suspend fun upsertCookieData(entity: LocalDailyCookieData) = cookieDao.upsertCookieData(entity)
     override suspend fun upsertCookieListData(entity: List<LocalDailyCookieData>) = cookieDao.upsertCookieListData(entity)
     override suspend fun getLastDailyCookieData(): LocalDailyCookieData? = cookieDao.getLastDailyCookieData()

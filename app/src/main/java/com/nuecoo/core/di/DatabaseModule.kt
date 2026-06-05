@@ -1,9 +1,9 @@
-package com.nuecoo.data.di
+package com.nuecoo.core.di
 
 import android.content.Context
 import androidx.room.Room
-import com.nuecoo.data.datasource.local.room.CookieDao
-import com.nuecoo.data.datasource.local.room.Database
+import com.nuecoo.core.database.NueCooDatabase
+import com.nuecoo.core.database.dao.CookieDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,10 +19,10 @@ object DatabaseModule {
     fun provideDatabase(@ApplicationContext context: Context) =
         Room.databaseBuilder(
             context.applicationContext,
-            com.nuecoo.data.datasource.local.room.Database::class.java,
+            NueCooDatabase::class.java,
             "Database.db"
         ).build()
 
     @Provides
-    fun provideCookieDao(database: Database): CookieDao = database.cookieDao()
+    fun provideCookieDao(database: NueCooDatabase): CookieDao = database.cookieDao()
 }

@@ -1,9 +1,9 @@
 import androidx.compose.ui.graphics.Color
 import com.nuecoo.R
-import com.nuecoo.domain.model.CookieItemData
-import com.nuecoo.domain.model.CookieType
-import com.nuecoo.domain.model.CookieTypeData
-import com.nuecoo.domain.model.CookieUIItemData
+import com.nuecoo.feature.main.domain.model.CookieItemData
+import com.nuecoo.feature.main.domain.model.CookieType
+import com.nuecoo.feature.main.domain.model.CookieTypeData
+import com.nuecoo.feature.main.domain.model.CookieUIItemData
 import com.nuecoo.ui.theme.CheeringColor
 import com.nuecoo.ui.theme.ComfortColor
 import com.nuecoo.ui.theme.GrayText

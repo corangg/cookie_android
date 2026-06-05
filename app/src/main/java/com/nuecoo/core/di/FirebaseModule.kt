@@ -1,4 +1,4 @@
-package com.nuecoo.data.di
+package com.nuecoo.core.di
 
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module

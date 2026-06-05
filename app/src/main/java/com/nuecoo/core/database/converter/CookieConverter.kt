@@ -1,9 +1,9 @@
-package com.nuecoo.data.datasource.local.room.converter
+package com.nuecoo.core.database.converter
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.nuecoo.data.datasource.local.room.LocalCookieData
+import com.nuecoo.core.database.entity.LocalCookieData
 
 class CookieConverter {
 
