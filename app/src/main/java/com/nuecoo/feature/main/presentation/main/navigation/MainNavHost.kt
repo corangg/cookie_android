@@ -7,7 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.nuecoo.feature.main.presentation.main.screen.BottomNavItem
-import com.nuecoo.ui.screen.CollectionScreen
+import com.nuecoo.feature.main.presentation.collection.CollectionScreen
 import com.nuecoo.ui.screen.MenuScreen
 import com.nuecoo.feature.main.presentation.oven.screen.OvenScreen
 

@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 val MainBackground = Color(0xFFEBDEC5)
 
 val MainTitle = Color(0xFF46382A)
+val SubTitle = Color(0xFFAE9E80)
 
 val NavBackground = Color(0xFFFBF5E8)
 val SubBackground = Color(0xFFFFF2CC)

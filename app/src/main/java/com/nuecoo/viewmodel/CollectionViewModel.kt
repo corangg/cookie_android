@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.domain.model.CollectionDisplayItem
+import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.usecase.GetCollectionByTypeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -36,6 +37,10 @@ class CollectionViewModel @Inject constructor(
     val isLoading: StateFlow<Boolean> = _isLoading
 
     private val cookieTotalSizes = mapOf(0 to 6, 1 to 4, 2 to 3, 3 to 5)
+
+    init {
+        loadCollection(CookieType.Cheering.type)
+    }
 
     fun loadCollection(type: Int) {
         _selectedType.value = type

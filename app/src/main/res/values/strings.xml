@@ -26,7 +26,7 @@
     <string name="btn_resend">재전송</string>
 
     <!-- Oven -->
-    <string name="text_oven_title">오늘의 남은 쿠키</string>
+    <string name="text_oven_title">오늘의 쿠키</string>
     <string name="text_oven_sub">남은 쿠키</string>
     <string name="text_oven_sub_unit">개</string>
     <string name="text_oven_tray">쿠키를 열어 당신을 위한 한마디를 확인해 보세요!</string>
@@ -47,8 +47,11 @@
     <string name="text_open_cookie_start_collection">도감으로 이동</string>
 
     <!-- Collection -->
+    <string name="text_collection_title">도감</string>
+    <string name="text_collection_sub_title">COLLECTION</string>
     <string name="text_collection_no">번호순</string>
-    <string name="text_collection_check_text">수집한 쿠키만 보기</string>
+    <string name="text_collection_date">날짜순</string>
+    <string name="text_collection_check_text">수집한 쿠키</string>
 
     <!-- Message -->
     <string name="text_message_open_cookie_error">잘못된 쿠키입니다.</string>
