@@ -6,7 +6,7 @@
 
     <!-- Bottom Nav -->
     <string name="menu_main_oven">오븐</string>
-    <string name="menu_main_collection">수집</string>
+    <string name="menu_main_collection">도감</string>
     <string name="menu_main_menu">메뉴</string>
 
     <!-- Login -->

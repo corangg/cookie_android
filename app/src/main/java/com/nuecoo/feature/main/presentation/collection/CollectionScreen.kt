@@ -24,6 +24,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,9 +33,12 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -52,12 +58,16 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nuecoo.R
+import com.nuecoo.core.ui.component.CollectionDropDown
+import com.nuecoo.core.ui.model.CommonDropDownItem
 import com.nuecoo.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CookieType
+import com.nuecoo.ui.theme.DropDownBackground
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainButton
@@ -65,6 +75,7 @@ import com.nuecoo.ui.theme.MainText
 import com.nuecoo.ui.theme.MainTitle
 import com.nuecoo.ui.theme.SubBackground
 import com.nuecoo.ui.theme.SubTitle
+import com.nuecoo.ui.theme.Transparent
 import com.nuecoo.ui.theme.White
 import com.nuecoo.viewmodel.CollectionSortType
 import com.nuecoo.viewmodel.CollectionViewModel
@@ -113,17 +124,15 @@ fun CollectionScreenContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = 24.dp),
             verticalAlignment = Alignment.Bottom
         ) {
-            CollectionTitle(
-                modifier = Modifier.weight(1f)
-            )
+            CollectionTitle(modifier = Modifier.weight(1f))//타이틀
 
             CollectionCheckBox(
                 showCollectedOnly = showCollectedOnly,
                 onShowCollectedOnlyChange = onShowCollectedOnlyChange
-            )
+            )//체크박스
         }
 
         Row(
@@ -134,7 +143,7 @@ fun CollectionScreenContent(
         ) {
             CollectionSortDropDown(
                 sortType = sortType,
-                onSortTypeChange = onSortTypeChange
+                onSortTypeChange = onSortTypeChange,
             )//드랍다운
 
         }
@@ -261,7 +270,42 @@ private fun CollectionCheckBox(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CollectionSortDropDown(
+    sortType: CollectionSortType,
+    onSortTypeChange: (CollectionSortType) -> Unit,
+    modifier: Modifier = Modifier,
+    width: Dp = 190.dp,
+    height: Dp = 36.dp
+) {
+    val sortOptions = listOf(
+        CommonDropDownItem(
+            label = stringResource(R.string.text_collection_no),
+            value = CollectionSortType.BY_NO
+        ),
+        CommonDropDownItem(
+            label = stringResource(R.string.text_collection_date),
+            value = CollectionSortType.BY_DATE
+        )
+    )
+
+    CollectionDropDown(
+        selectedValue = sortType,
+        items = sortOptions,
+        onItemSelected = onSortTypeChange,
+        modifier = modifier,
+        width = width,
+        height = height,
+        backgroundColor = DropDownBackground,
+        borderColor = Color.Transparent,
+        borderWidth = 0.dp,
+        textColor = MainText,
+        menuTextColor = MainText,
+        iconColor = MainText
+    )
+}
+
+/*@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CollectionSortDropDown(
     sortType: CollectionSortType,
@@ -280,28 +324,35 @@ private fun CollectionSortDropDown(
     ExposedDropdownMenuBox(
         expanded = sortExpanded,
         onExpandedChange = { sortExpanded = it },
-        modifier = Modifier.width(120.dp)
+        modifier = Modifier.width(200.dp).height(60.dp),
     ) {
-        OutlinedTextField(
+        TextField(
             value = selectedSortLabel,
             onValueChange = {},
             readOnly = true,
             singleLine = true,
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(sortExpanded) },
-            colors = OutlinedTextFieldDefaults.colors(
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(sortExpanded)
+            },
+            colors = TextFieldDefaults.colors(
                 focusedTextColor = MainText,
-                unfocusedTextColor = MainBorder,
-                focusedContainerColor = SubBackground,
-                unfocusedContainerColor = SubBackground,
-                focusedBorderColor = MainBorder,
-                unfocusedBorderColor = MainBorder
+                unfocusedTextColor = MainText,
+                focusedContainerColor = DropDownBackground,
+                unfocusedContainerColor = DropDownBackground,
+                focusedIndicatorColor = Transparent,
+                unfocusedIndicatorColor = Transparent,
+                disabledIndicatorColor = Transparent
             ),
             textStyle = TextStyle(
-                fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MainBorder
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp,
+                color = MainText,
+                fontFamily = FontFamily(Font(R.font.cookie_run_regular))
             ),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(30.dp),
             modifier = Modifier
                 .menuAnchor()
+                .width(140.dp)
                 .height(44.dp)
         )
         ExposedDropdownMenu(
@@ -325,7 +376,7 @@ private fun CollectionSortDropDown(
             }
         }
     }
-}
+}*/
 
 @Composable
 private fun CollectionItemCard(item: CollectionDisplayItem, type: Int) {
