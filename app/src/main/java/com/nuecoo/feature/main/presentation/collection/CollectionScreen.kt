@@ -39,9 +39,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -132,10 +134,16 @@ fun CollectionScreenContent(
                 .padding(horizontal = 24.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CollectionCookieSortDropDown(
+            CollectionCookieTypeDropDown(
                 selectedType = selectedType,
                 onTypeSelected = onTypeSelected,
-            )//드랍다운
+            )//타입 드랍다운
+            Spacer(modifier = Modifier.weight(1f))
+            CollectionSortDropDown(
+                sortType = sortType,
+                onSortTypeChange = onSortTypeChange,
+                modifier = Modifier.padding(start = 28.dp)
+            )//정렬 드랍다운
 
         }
 
@@ -262,11 +270,11 @@ private fun CollectionCheckBox(
 }
 
 @Composable
-private fun CollectionCookieSortDropDown(
+private fun CollectionCookieTypeDropDown(
     selectedType: CookieType?,
     onTypeSelected: (CookieType?) -> Unit,
     modifier: Modifier = Modifier,
-    width: Dp = 190.dp
+    width: Dp = 160.dp
 ) {
 
     val cookieTypeItems: List<CommonDropDownItem<CookieType?>> =
@@ -294,6 +302,7 @@ private fun CollectionCookieSortDropDown(
         borderWidth = 0.dp,
         textColor = MainText,
         menuTextColor = MainText,
+        horizontalPadding = 8.dp,
         iconColor = MainText,
         itemHeight = 36.dp,
         selectedLeadingContent = { cookieType ->
@@ -326,6 +335,59 @@ private fun CollectionCookieSortDropDown(
                         color = getCookieTypeColor(it.value?.type),
                         shape = CircleShape
                     )
+            )
+        },
+        selectedTrailingContent = {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = null,
+                tint = MainText,
+                modifier = Modifier.size(16.dp)
+            )
+        },
+        itemBackgroundColor = DropDownBackground,
+        itemSelectedBackgroundColor = DropDownSelectBackground,
+        fontWeight = FontWeight.Medium
+
+    )
+}
+
+@Composable
+private fun CollectionSortDropDown(
+    sortType: CollectionSortType,
+    onSortTypeChange: (CollectionSortType) -> Unit,
+    modifier: Modifier = Modifier,
+    width: Dp = 110.dp
+) {
+
+    val sortItems = CollectionSortType.entries.map {
+        CommonDropDownItem(
+            label = stringResource(it.nameRes),
+            value = it
+        )
+    }
+
+    CommonDropDown(
+        selectedValue = sortType,
+        items = sortItems,
+        onItemSelected = onSortTypeChange,
+        modifier = modifier,
+        width = width,
+        verticalPadding = 4.dp,
+        backgroundColor = DropDownBackground,
+        borderColor = Color.Transparent,
+        borderWidth = 0.dp,
+        textColor = MainText,
+        menuTextColor = MainText,
+        iconColor = MainText,
+        horizontalPadding = 8.dp,
+        itemHeight = 30.dp,
+        selectedLeadingContent = {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_sort),
+                contentDescription = null,
+                tint = MainText,
+                modifier = Modifier.size(14.dp)
             )
         },
         selectedTrailingContent = {

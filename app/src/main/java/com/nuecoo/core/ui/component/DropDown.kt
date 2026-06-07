@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -84,7 +86,8 @@ fun <T> CommonDropDown(
     itemHorizontalPadding: Dp = 8.dp,
     itemVerticalPadding: Dp = 0.dp,
 
-    dropDownIcon: ImageVector = Icons.Default.ArrowDropDown,
+    dropDownIcon: ImageVector = Icons.Default.KeyboardArrowDown,
+    dropUpIcon: ImageVector = Icons.Default.KeyboardArrowUp,
     dropDownIconSize: Dp = 20.dp,
 
     itemLeadingContent: @Composable ((CommonDropDownItem<T>) -> Unit)? = null,
@@ -132,7 +135,8 @@ fun <T> CommonDropDown(
                     color = borderColor,
                     shape = RoundedCornerShape(cornerRadius)
                 )
-                .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+                .padding(horizontal = horizontalPadding, vertical = verticalPadding)
+                .padding(start = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             selectedLeadingContent?.invoke(selectedValue)
@@ -150,7 +154,7 @@ fun <T> CommonDropDown(
             )
 
             Icon(
-                imageVector = dropDownIcon,
+                imageVector = if (expanded) dropUpIcon else dropDownIcon,
                 contentDescription = null,
                 tint = iconColor,
                 modifier = Modifier.size(dropDownIconSize)

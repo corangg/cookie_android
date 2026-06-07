@@ -1,3 +1,10 @@
 package com.nuecoo.feature.main.domain.model
 
-enum class CollectionSortType { BY_NO, BY_DATE }
+import com.nuecoo.R
+
+enum class CollectionSortType(
+    val nameRes: Int
+) {
+    BY_NO(R.string.text_collection_no),
+    BY_DATE(R.string.text_collection_date)
+}
