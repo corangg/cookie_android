@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nuecoo.core.ui.model.CommonDropDownItem
-import com.nuecoo.ui.theme.DropDownBackground
 import com.nuecoo.ui.theme.MainText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,15 +58,16 @@ fun <T> CommonDropDown(
     cornerRadius: Dp = 30.dp,
     itemCornerRadius: Dp = 24.dp,
 
-    backgroundColor: Color = DropDownBackground,
+    backgroundColor: Color = Color.Transparent,
     borderColor: Color = Color.Transparent,
     borderWidth: Dp = 0.dp,
 
-    itemBackgroundColor: Color = DropDownBackground,
+    itemBackgroundColor: Color = Color.Transparent,
     itemBorderColor: Color = Color.Transparent,
+    itemBorderShape: Dp = 0.dp,
     itemBorderWidth: Dp = 0.dp,
 
-    itemSelectedBackgroundColor: Color = Color(0xFFE8DDBF),
+    itemSelectedBackgroundColor: Color = Color.Transparent,
     itemUnselectedBackgroundColor: Color = Color.Transparent,
 
     textColor: Color = MainText,
@@ -82,7 +82,7 @@ fun <T> CommonDropDown(
     verticalPadding: Dp = 12.dp,
 
     itemHorizontalPadding: Dp = 8.dp,
-    itemVerticalPadding: Dp = 12.dp,
+    itemVerticalPadding: Dp = 0.dp,
 
     dropDownIcon: ImageVector = Icons.Default.ArrowDropDown,
     dropDownIconSize: Dp = 20.dp,
@@ -144,7 +144,9 @@ fun <T> CommonDropDown(
                 fontFamily = fontFamily,
                 fontWeight = fontWeight,
                 maxLines = 1,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 8.dp)
             )
 
             Icon(
@@ -169,8 +171,13 @@ fun <T> CommonDropDown(
 
                 DropdownMenuItem(
                     modifier = Modifier
-                        .padding(vertical = 0.dp, horizontal = itemHorizontalPadding)
+                        .padding(vertical = itemVerticalPadding, horizontal = itemHorizontalPadding)
                         .fillMaxWidth()
+                        .border(
+                            itemBorderWidth,
+                            itemBorderColor,
+                            RoundedCornerShape(itemBorderShape)
+                        )
                         .then(
                             if (itemHeight != Dp.Unspecified) {
                                 Modifier.height(itemHeight)

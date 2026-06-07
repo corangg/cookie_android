@@ -1,5 +1,6 @@
 import androidx.compose.ui.graphics.Color
 import com.nuecoo.R
+import com.nuecoo.core.ui.model.CommonDropDownItem
 import com.nuecoo.feature.main.domain.model.CookieItemData
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.CookieTypeData
@@ -10,6 +11,7 @@ import com.nuecoo.ui.theme.GrayText
 import com.nuecoo.ui.theme.LoveColor
 import com.nuecoo.ui.theme.PassionColor
 import com.nuecoo.ui.theme.SermonColor
+import com.nuecoo.ui.theme.UnknownColor
 
 data class CookieTypeResource(
     val type: CookieType,
@@ -19,8 +21,7 @@ data class CookieTypeResource(
     val collectionImages: List<Int>,
     val mainTextRes: Int,
     val subTextRes: Int,
-
-    val color: Color
+    val color: Color,
 )
 
 private val COOKIE_TYPE_RESOURCES = listOf(
@@ -111,7 +112,7 @@ private val COOKIE_TYPE_RESOURCES = listOf(
     )
 )
 
-private fun getCookieTypeResource(type: Int): CookieTypeResource? {
+private fun getCookieTypeResource(type: Int?): CookieTypeResource? {
     return COOKIE_TYPE_RESOURCES.find { it.type.type == type }
 }
 
@@ -142,7 +143,8 @@ fun getCookieTypeList(): List<CookieTypeData> {
     return COOKIE_TYPE_RESOURCES.map { resource ->
         CookieTypeData(
             type = resource.type,
-            imgRes = resource.closedImgRes
+            imgRes = resource.closedImgRes,
+            nameRes = resource.mainTextRes
         )
     }
 }
@@ -170,8 +172,8 @@ fun getOpenedCookieImage(type: Int): Int {
         ?: R.drawable.img_cookie_deactive
 }
 
-fun getCookieTypeColor(type: Int): Color {
-    return getCookieTypeResource(type)?.color ?: GrayText
+fun getCookieTypeColor(type: Int?): Color {
+    return getCookieTypeResource(type)?.color ?: UnknownColor
 }
 
 fun getCookieTypeMainTextRes(type: Int): Int {

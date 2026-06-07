@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.domain.model.CollectionDisplayItem
+import com.nuecoo.feature.main.domain.model.CollectionSortType
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.usecase.GetCollectionByTypeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,13 +14,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class CollectionSortType { BY_NO, BY_DATE }
-
 @HiltViewModel
 class CollectionViewModel @Inject constructor(
     private val getCollectionByTypeUseCase: GetCollectionByTypeUseCase,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
+    private val _selectedCookieType =
+        MutableStateFlow<CookieType?>(null)
+
+    val selectedCookieType: StateFlow<CookieType?> =
+        _selectedCookieType
+
+
+
 
     private val _items = MutableStateFlow<List<CollectionDisplayItem>>(emptyList())
     val items: StateFlow<List<CollectionDisplayItem>> = _items
@@ -41,6 +48,19 @@ class CollectionViewModel @Inject constructor(
     init {
         loadCollection(CookieType.Cheering.type)
     }
+
+
+    fun setSelectedCookieType(type: CookieType?) {
+        _selectedCookieType.value = type
+
+        if (type == null) {
+            // 전체 조회
+            //loadAllCollection()
+        } else {
+            loadCollection(type.type)
+        }
+    }
+
 
     fun loadCollection(type: Int) {
         _selectedType.value = type

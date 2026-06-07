@@ -3,6 +3,7 @@
 
     <!-- Default -->
     <string name="close">닫기</string>
+    <string name="all">전체</string>
 
     <!-- Bottom Nav -->
     <string name="menu_main_oven">오븐</string>

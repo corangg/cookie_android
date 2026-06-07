@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -25,26 +24,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,7 +42,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -63,11 +51,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nuecoo.R
-import com.nuecoo.core.ui.component.CollectionDropDown
+import com.nuecoo.core.ui.component.CommonDropDown
 import com.nuecoo.core.ui.model.CommonDropDownItem
 import com.nuecoo.domain.model.CollectionDisplayItem
+import com.nuecoo.feature.main.domain.model.CollectionSortType
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.ui.theme.DropDownBackground
+import com.nuecoo.ui.theme.DropDownSelectBackground
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainButton
@@ -75,18 +65,18 @@ import com.nuecoo.ui.theme.MainText
 import com.nuecoo.ui.theme.MainTitle
 import com.nuecoo.ui.theme.SubBackground
 import com.nuecoo.ui.theme.SubTitle
-import com.nuecoo.ui.theme.Transparent
 import com.nuecoo.ui.theme.White
-import com.nuecoo.viewmodel.CollectionSortType
 import com.nuecoo.viewmodel.CollectionViewModel
 import getCollectionTypeImages
+import getCookieTypeColor
+import getCookieTypeList
 
 
 @Composable
 fun CollectionScreen(viewModel: CollectionViewModel = hiltViewModel()) {
     val items by viewModel.items.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
-    val selectedType by viewModel.selectedType.collectAsState()
+    val selectedType by viewModel.selectedCookieType.collectAsState()
     val showCollectedOnly by viewModel.showCollectedOnly.collectAsState()
     val sortType by viewModel.sortType.collectAsState()
 
@@ -98,7 +88,7 @@ fun CollectionScreen(viewModel: CollectionViewModel = hiltViewModel()) {
         sortType = sortType,
         onSortTypeChange = viewModel::setSortType,
         onShowCollectedOnlyChange = viewModel::setShowCollectedOnly,
-        onTypeSelected = viewModel::loadCollection
+        onTypeSelected = viewModel::setSelectedCookieType,
     )
 
 }
@@ -108,12 +98,12 @@ fun CollectionScreen(viewModel: CollectionViewModel = hiltViewModel()) {
 fun CollectionScreenContent(
     items: List<CollectionDisplayItem>,
     isLoading: Boolean,
-    selectedType: Int,
+    selectedType: CookieType?,
     showCollectedOnly: Boolean,
     sortType: CollectionSortType,
     onSortTypeChange: (CollectionSortType) -> Unit,
     onShowCollectedOnlyChange: (Boolean) -> Unit,
-    onTypeSelected: (Int) -> Unit
+    onTypeSelected: (CookieType?) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -138,12 +128,13 @@ fun CollectionScreenContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .offset(y = 10.dp)
                 .padding(horizontal = 24.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CollectionSortDropDown(
-                sortType = sortType,
-                onSortTypeChange = onSortTypeChange,
+            CollectionCookieSortDropDown(
+                selectedType = selectedType,
+                onTypeSelected = onTypeSelected,
             )//드랍다운
 
         }
@@ -174,17 +165,17 @@ fun CollectionScreenContent(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(items) { item ->
-                        CollectionItemCard(item = item, type = selectedType)
+                        //CollectionItemCard(item = item, type = selectedType)
                     }
                 }
             }
         }
 
         // Cookie type selector
-        CookieTypeSelector(
+        /*CookieTypeSelector(
             selectedType = selectedType,
             onTypeSelected = onTypeSelected
-        )
+        )*/
     }
 }
 
@@ -204,7 +195,7 @@ private fun CollectionContentPreview() {
             CollectionDisplayItem(no = 4, isCollected = false, type = 1)
         ),
         isLoading = false,
-        selectedType = CookieType.Cheering.type,
+        selectedType = CookieType.Cheering,
         showCollectedOnly = false,
         sortType = CollectionSortType.BY_NO,
         onSortTypeChange = {},
@@ -214,7 +205,7 @@ private fun CollectionContentPreview() {
 }
 
 @Composable
-private fun CollectionTitle( modifier: Modifier = Modifier) {
+private fun CollectionTitle(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
     ) {
@@ -271,112 +262,86 @@ private fun CollectionCheckBox(
 }
 
 @Composable
-private fun CollectionSortDropDown(
-    sortType: CollectionSortType,
-    onSortTypeChange: (CollectionSortType) -> Unit,
+private fun CollectionCookieSortDropDown(
+    selectedType: CookieType?,
+    onTypeSelected: (CookieType?) -> Unit,
     modifier: Modifier = Modifier,
-    width: Dp = 190.dp,
-    height: Dp = 36.dp
+    width: Dp = 190.dp
 ) {
-    val sortOptions = listOf(
-        CommonDropDownItem(
-            label = stringResource(R.string.text_collection_no),
-            value = CollectionSortType.BY_NO
-        ),
-        CommonDropDownItem(
-            label = stringResource(R.string.text_collection_date),
-            value = CollectionSortType.BY_DATE
-        )
-    )
 
-    CollectionDropDown(
-        selectedValue = sortType,
-        items = sortOptions,
-        onItemSelected = onSortTypeChange,
+    val cookieTypeItems: List<CommonDropDownItem<CookieType?>> =
+        listOf(
+            CommonDropDownItem<CookieType?>(
+                label = stringResource(R.string.all),
+                value = null
+            )
+        ) + getCookieTypeList().map {
+            CommonDropDownItem(
+                label = stringResource(it.nameRes),
+                value = it.type
+            )
+        }
+
+    CommonDropDown(
+        selectedValue = selectedType,
+        items = cookieTypeItems,
+        onItemSelected = onTypeSelected,
         modifier = modifier,
         width = width,
-        height = height,
+        verticalPadding = 6.dp,
         backgroundColor = DropDownBackground,
         borderColor = Color.Transparent,
         borderWidth = 0.dp,
         textColor = MainText,
         menuTextColor = MainText,
-        iconColor = MainText
+        iconColor = MainText,
+        itemHeight = 36.dp,
+        selectedLeadingContent = { cookieType ->
+            when (cookieType) {
+                null -> {
+                    Image(
+                        painter = painterResource(R.drawable.ic_drop_down_all),
+                        contentDescription = null,
+                        modifier = Modifier.size(12.dp)
+                    )
+                }
+
+                else -> {
+                    Box(
+                        modifier = Modifier
+                            .size(10.dp)
+                            .background(
+                                color = getCookieTypeColor(cookieType.type),
+                                shape = CircleShape
+                            )
+                    )
+                }
+            }
+        },
+        itemLeadingContent = {
+            Box(
+                modifier = Modifier
+                    .size(10.dp)
+                    .background(
+                        color = getCookieTypeColor(it.value?.type),
+                        shape = CircleShape
+                    )
+            )
+        },
+        selectedTrailingContent = {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = null,
+                tint = MainText,
+                modifier = Modifier.size(16.dp)
+            )
+        },
+        itemBackgroundColor = DropDownBackground,
+        itemSelectedBackgroundColor = DropDownSelectBackground,
+        fontWeight = FontWeight.Medium
+
     )
 }
-
-/*@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun CollectionSortDropDown(
-    sortType: CollectionSortType,
-    onSortTypeChange: (CollectionSortType) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var sortExpanded by remember { mutableStateOf(false) }
-
-    val sortOptions = listOf(
-        stringResource(R.string.text_collection_no) to CollectionSortType.BY_NO,
-        stringResource(R.string.text_collection_date) to CollectionSortType.BY_DATE
-    )
-
-    val selectedSortLabel = sortOptions.first { it.second == sortType }.first
-
-    ExposedDropdownMenuBox(
-        expanded = sortExpanded,
-        onExpandedChange = { sortExpanded = it },
-        modifier = Modifier.width(200.dp).height(60.dp),
-    ) {
-        TextField(
-            value = selectedSortLabel,
-            onValueChange = {},
-            readOnly = true,
-            singleLine = true,
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(sortExpanded)
-            },
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = MainText,
-                unfocusedTextColor = MainText,
-                focusedContainerColor = DropDownBackground,
-                unfocusedContainerColor = DropDownBackground,
-                focusedIndicatorColor = Transparent,
-                unfocusedIndicatorColor = Transparent,
-                disabledIndicatorColor = Transparent
-            ),
-            textStyle = TextStyle(
-                fontWeight = FontWeight.Medium,
-                fontSize = 14.sp,
-                color = MainText,
-                fontFamily = FontFamily(Font(R.font.cookie_run_regular))
-            ),
-            shape = RoundedCornerShape(30.dp),
-            modifier = Modifier
-                .menuAnchor()
-                .width(140.dp)
-                .height(44.dp)
-        )
-        ExposedDropdownMenu(
-            expanded = sortExpanded,
-            onDismissRequest = { sortExpanded = false }
-        ) {
-            sortOptions.forEach { (label, sort) ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            label,
-                            color = MainBorder,
-                            fontWeight = FontWeight.Bold
-                        )
-                    },
-                    onClick = {
-                        onSortTypeChange(sort)
-                        sortExpanded = false
-                    }
-                )
-            }
-        }
-    }
-}*/
 
 @Composable
 private fun CollectionItemCard(item: CollectionDisplayItem, type: Int) {

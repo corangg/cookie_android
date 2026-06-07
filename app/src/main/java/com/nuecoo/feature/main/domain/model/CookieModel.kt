@@ -24,6 +24,7 @@ data class CookieUIItemData(
 
 data class CookieTypeData(
     val type: CookieType,
+    val nameRes: Int,
     @field:DrawableRes val imgRes: Int
 )
 
