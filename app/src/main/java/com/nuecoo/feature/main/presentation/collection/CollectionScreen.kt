@@ -1,8 +1,12 @@
 package com.nuecoo.feature.main.presentation.collection
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +36,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -42,6 +48,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
@@ -52,6 +59,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nuecoo.R
 import com.nuecoo.core.ui.component.CommonDropDown
@@ -74,10 +83,12 @@ import com.nuecoo.ui.theme.UnCollectedText
 import com.nuecoo.ui.theme.White
 import com.nuecoo.viewmodel.CollectionViewModel
 import getCollectionTypeImages
+import getCookieMessageResMap
 import getCookieTypeColor
 import getCookieTypeList
 import getCookieTypeListSize
 import getCookieTypeMainTextRes
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -88,6 +99,7 @@ fun CollectionScreen(viewModel: CollectionViewModel = hiltViewModel()) {
     val selectedType by viewModel.selectedCookieType.collectAsState()
     val showCollectedOnly by viewModel.showCollectedOnly.collectAsState()
     val sortType by viewModel.sortType.collectAsState()
+    val selectedItem by viewModel.selectedItem.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.initCollectionList(context.getCookieTypeListSize())
@@ -102,8 +114,12 @@ fun CollectionScreen(viewModel: CollectionViewModel = hiltViewModel()) {
         onSortTypeChange = viewModel::setSortType,
         onShowCollectedOnlyChange = viewModel::setShowCollectedOnly,
         onTypeSelected = viewModel::setSelectedCookieType,
+        selectedItem = selectedItem,
+        onCollectionClose = viewModel::clearSelectedItem,
+        onItemOpened = { item ->
+            viewModel.onOpenedItem(item)
+        }
     )
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,7 +132,10 @@ fun CollectionScreenContent(
     sortType: CollectionSortType,
     onSortTypeChange: (CollectionSortType) -> Unit,
     onShowCollectedOnlyChange: (Boolean) -> Unit,
-    onTypeSelected: (CookieType?) -> Unit
+    onTypeSelected: (CookieType?) -> Unit,
+    selectedItem: CollectionDisplayItem?,
+    onCollectionClose: () -> Unit,
+    onItemOpened: (CollectionDisplayItem) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -169,14 +188,9 @@ fun CollectionScreenContent(
             }
         } else {
             TextCookieCount(items.size)//쿠키 갯수 표시
-            CollectionItemView(items)//쿠키 콜랙션 표시
+            CollectionItemView(items, onItemOpened)//쿠키 콜랙션 표시
         }
-
-        // Cookie type selector
-        /*CookieTypeSelector(
-            selectedType = selectedType,
-            onTypeSelected = onTypeSelected
-        )*/
+        showOpenedCollectionItem(selectedItem,onCollectionClose)//콜랙션 오픈 다이얼로그
     }
 }
 
@@ -186,24 +200,6 @@ fun CollectionScreenContent(
     widthDp = 360,
     heightDp = 800
 )
-@Composable
-private fun CollectionContentPreview() {
-    CollectionScreenContent(
-        items = listOf(
-            CollectionDisplayItem(no = 1, isCollected = true, type = 1),
-            CollectionDisplayItem(no = 2, isCollected = false, type = 1),
-            CollectionDisplayItem(no = 3, isCollected = true, type = 1),
-            CollectionDisplayItem(no = 4, isCollected = false, type = 1)
-        ),
-        isLoading = false,
-        selectedType = CookieType.Cheering,
-        showCollectedOnly = false,
-        sortType = CollectionSortType.BY_NO,
-        onSortTypeChange = {},
-        onShowCollectedOnlyChange = {},
-        onTypeSelected = {}
-    )
-}
 
 @Composable
 private fun CollectionTitle(modifier: Modifier = Modifier) {
@@ -411,7 +407,10 @@ private fun TextCookieCount(size: Int) {
 }
 
 @Composable
-private fun CollectionItemView(collectionItems: List<CollectionDisplayItem>) {
+private fun CollectionItemView(
+    collectionItems: List<CollectionDisplayItem>,
+    onClick: (CollectionDisplayItem) -> Unit
+) {
     val groupedItems =
         collectionItems
             .groupBy { it.type }
@@ -444,7 +443,12 @@ private fun CollectionItemView(collectionItems: List<CollectionDisplayItem>) {
                         Box(
                             modifier = Modifier.weight(1f)
                         ) {
-                            CollectionItemCard(item)
+                            CollectionItemCard(
+                                item = item,
+                                onClick = {
+                                    onClick(item)
+                                }
+                            )
                         }
                     }
 
@@ -495,13 +499,16 @@ private fun CookieTypeSubTitle(type: Int, items: List<CollectionDisplayItem>) {
 }
 
 @Composable
-private fun CollectionItemCard(item: CollectionDisplayItem) {
+private fun CollectionItemCard(item: CollectionDisplayItem, onClick: () -> Unit) {
     val imgRes = if (item.isCollected) {
         getCollectionTypeImages(item.type)
             .getOrElse(0) { R.drawable.img_cookie_deactive }
     } else {
         R.drawable.img_cookie_deactive
     }
+    val scale = remember { Animatable(1f) }
+    val coroutineScope = rememberCoroutineScope()
+    val interactionSource = remember { MutableInteractionSource() }
 
     Box(
         modifier = Modifier
@@ -514,6 +521,22 @@ private fun CollectionItemCard(item: CollectionDisplayItem) {
                 color = if (item.isCollected) ItemCardBackground else ItemCardUnOpenedBorder
             )
             .padding(8.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) {
+                coroutineScope.launch {
+                    scale.animateTo(
+                        targetValue = 0.9f,
+                        animationSpec = tween(80)
+                    )
+                    scale.animateTo(
+                        targetValue = 1f,
+                        animationSpec = tween(120)
+                    )
+                    onClick()
+                }
+            }
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -575,7 +598,37 @@ private fun CollectionItemCard(item: CollectionDisplayItem) {
                     )
                 }
             }
+        }
+    }
+}
 
+@Composable
+private fun showOpenedCollectionItem(item: CollectionDisplayItem?, onClose: () -> Unit){
+    item?.let { item ->
+        Dialog(
+            onDismissRequest = onClose,
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false
+            )
+        ) {
+            val cookieMessageResMap = getCookieMessageResMap()
+            val cookieNameMap = cookieMessageResMap.mapValues { entry ->
+                stringArrayResource(entry.value).toList()
+            }
+
+            val message = run {
+                val messages = cookieNameMap[item.type] ?: emptyList()
+                val no = item.no
+                if (no > 0 && no <= messages.size) messages[no - 1] else ""
+            }
+
+            CollectionOpenScreen(
+                collectionData = item,
+                onClose = onClose,
+                imgRes = getCollectionTypeImages(item.type).getOrElse(0) { R.drawable.img_cookie_deactive },
+                message = message
+            )
         }
     }
 }

@@ -5,6 +5,10 @@
     <string name="close">닫기</string>
     <string name="all">전체</string>
     <string name="no">No</string>
+    <string name="year">년</string>
+    <string name="month">월</string>
+    <string name="day">일</string>
+    <string name="of">의</string>
 
     <!-- Bottom Nav -->
     <string name="menu_main_oven">오븐</string>

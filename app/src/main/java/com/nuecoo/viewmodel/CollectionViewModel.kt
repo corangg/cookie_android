@@ -29,8 +29,8 @@ class CollectionViewModel @Inject constructor(
     private val _items = MutableStateFlow<List<CollectionDisplayItem>>(emptyList())
     val items: StateFlow<List<CollectionDisplayItem>> = _items
 
-    private val _selectedType = MutableStateFlow(0)
-    val selectedType: StateFlow<Int> = _selectedType
+    private val _selectedItem = MutableStateFlow<CollectionDisplayItem?>(null)
+    val selectedItem: StateFlow<CollectionDisplayItem?> = _selectedItem
 
     private val _sortType = MutableStateFlow(CollectionSortType.BY_NO)
     val sortType: StateFlow<CollectionSortType> = _sortType
@@ -81,5 +81,13 @@ class CollectionViewModel @Inject constructor(
                         .thenBy { it.no }
                 )
         }
+    }
+
+    fun onOpenedItem(item: CollectionDisplayItem) {
+        _selectedItem.value = item
+    }
+
+    fun clearSelectedItem() {
+        _selectedItem.value = null
     }
 }
