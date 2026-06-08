@@ -1,38 +1,34 @@
 package com.nuecoo.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.nuecoo.core.base.BaseViewModel
+import com.nuecoo.core.di.DefaultDispatcher
 import com.nuecoo.core.di.IoDispatcher
+import com.nuecoo.core.di.MainDispatcher
 import com.nuecoo.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CollectionSortType
 import com.nuecoo.feature.main.domain.model.CookieType
-import com.nuecoo.feature.main.domain.usecase.GetCollectionByTypeUseCase
+import com.nuecoo.feature.main.domain.usecase.GetCollectionListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.MainCoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CollectionViewModel @Inject constructor(
-    private val getCollectionByTypeUseCase: GetCollectionByTypeUseCase,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : ViewModel() {
-    private val _selectedCookieType =
-        MutableStateFlow<CookieType?>(null)
+    private val getCollectionListUseCase: GetCollectionListUseCase,
+    @MainDispatcher mainDispatcher: MainCoroutineDispatcher,
+    @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    @IoDispatcher ioDispatcher: CoroutineDispatcher
+) : BaseViewModel(mainDispatcher, defaultDispatcher, ioDispatcher) {
+    private val _selectedCookieType = MutableStateFlow<CookieType?>(null)
+    val selectedCookieType: StateFlow<CookieType?> = _selectedCookieType
 
-    val selectedCookieType: StateFlow<CookieType?> =
-        _selectedCookieType
-
-
-
+    private val allItems = MutableStateFlow<List<CollectionDisplayItem>>(emptyList())
 
     private val _items = MutableStateFlow<List<CollectionDisplayItem>>(emptyList())
     val items: StateFlow<List<CollectionDisplayItem>> = _items
-
-    private val _selectedType = MutableStateFlow(0)
-    val selectedType: StateFlow<Int> = _selectedType
 
     private val _sortType = MutableStateFlow(CollectionSortType.BY_NO)
     val sortType: StateFlow<CollectionSortType> = _sortType
@@ -40,54 +36,50 @@ class CollectionViewModel @Inject constructor(
     private val _showCollectedOnly = MutableStateFlow(false)
     val showCollectedOnly: StateFlow<Boolean> = _showCollectedOnly
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
-    private val cookieTotalSizes = mapOf(0 to 6, 1 to 4, 2 to 3, 3 to 5)
-
-    init {
-        loadCollection(CookieType.Cheering.type)
+    fun initCollectionList(list: List<Pair<CookieType, Int>>) = onIoWork {
+        allItems.value = getCollectionListUseCase(list)
+        _items.value = allItems.value
     }
 
 
     fun setSelectedCookieType(type: CookieType?) {
         _selectedCookieType.value = type
 
-        if (type == null) {
-            // 전체 조회
-            //loadAllCollection()
-        } else {
-            loadCollection(type.type)
-        }
-    }
-
-
-    fun loadCollection(type: Int) {
-        _selectedType.value = type
-        viewModelScope.launch(ioDispatcher) {
-            _isLoading.value = true
-            val totalSize = cookieTotalSizes[type] ?: 4
-            val result = getCollectionByTypeUseCase(type, totalSize)
-            _items.value = applySortAndFilter(result)
-            _isLoading.value = false
-        }
+        val selectList =
+            if (type == null) allItems.value else allItems.value.filter { it.type == type.type }
+        _items.value = applySortAndFilter(selectList, _showCollectedOnly.value, _sortType.value)
     }
 
     fun setSortType(sort: CollectionSortType) {
         _sortType.value = sort
-        _items.value = applySortAndFilter(_items.value)
+        _items.value = applySortAndFilter(_items.value, _showCollectedOnly.value, _sortType.value)
     }
 
     fun setShowCollectedOnly(value: Boolean) {
         _showCollectedOnly.value = value
-        _items.value = applySortAndFilter(_items.value)
+        setSelectedCookieType(selectedCookieType.value)
+        _items.value = applySortAndFilter(_items.value, _showCollectedOnly.value, _sortType.value)
     }
 
-    private fun applySortAndFilter(list: List<CollectionDisplayItem>): List<CollectionDisplayItem> {
-        val filtered = if (_showCollectedOnly.value) list.filter { it.isCollected } else list
-        return when (_sortType.value) {
+    private fun applySortAndFilter(
+        list: List<CollectionDisplayItem>,
+        showCollectedOnly: Boolean,
+        sortType: CollectionSortType
+    ): List<CollectionDisplayItem> {
+        val filtered = if (showCollectedOnly) {
+            list.filter { it.isCollected }
+        } else {
+            list
+        }
+
+        return when (sortType) {
             CollectionSortType.BY_NO -> filtered.sortedBy { it.no }
-            CollectionSortType.BY_DATE -> filtered.sortedByDescending { it.date }
+            CollectionSortType.BY_DATE ->
+                filtered.sortedWith(
+                    compareByDescending<CollectionDisplayItem> { it.date != null }
+                        .thenBy { it.date }
+                        .thenBy { it.no }
+                )
         }
     }
 }

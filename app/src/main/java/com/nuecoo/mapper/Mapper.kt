@@ -1,13 +1,12 @@
+import android.content.Context
 import androidx.compose.ui.graphics.Color
 import com.nuecoo.R
-import com.nuecoo.core.ui.model.CommonDropDownItem
 import com.nuecoo.feature.main.domain.model.CookieItemData
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.CookieTypeData
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
 import com.nuecoo.ui.theme.CheeringColor
 import com.nuecoo.ui.theme.ComfortColor
-import com.nuecoo.ui.theme.GrayText
 import com.nuecoo.ui.theme.LoveColor
 import com.nuecoo.ui.theme.PassionColor
 import com.nuecoo.ui.theme.SermonColor
@@ -183,4 +182,10 @@ fun getCookieTypeMainTextRes(type: Int): Int {
 
 fun getCookieTypeSubTextRes(type: Int): Int {
     return getCookieTypeResource(type)?.subTextRes ?: 0
+}
+
+fun Context.getCookieTypeListSize(): List<Pair<CookieType, Int>> {
+    return COOKIE_TYPE_RESOURCES.map {
+        Pair(it.type, resources.getStringArray(it.messageArrayRes).size)
+    }
 }

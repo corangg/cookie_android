@@ -1,6 +1,7 @@
 package com.nuecoo.feature.main.domain.usecase
 
 import com.nuecoo.domain.model.CollectionDisplayItem
+import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.DailyCookieItemData
 import com.nuecoo.feature.main.domain.repository.CookieRepository
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +28,46 @@ class GetCollectionByTypeUseCase @Inject constructor(
                 type = type,
                 date = collectedMap[no]
             )
+        }
+    }
+}
+
+class GetCollectionListUseCase @Inject constructor(
+    private val repository: CookieRepository
+) {
+    suspend operator fun invoke(collectionSize: List<Pair<CookieType, Int>>): List<CollectionDisplayItem> {
+        val allData = repository.getCookieDataList()
+
+        val collectedMap = allData
+            .flatMap { daily ->
+                daily.list
+                    .filter { it.isOpened == true && it.no != null }
+                    .map { cookie ->
+                        Triple(
+                            cookie.type,
+                            cookie.no!!,
+                            daily.date
+                        )
+                    }
+            }
+            .distinctBy { it.first to it.second }
+            .associate { (type, no, date) ->
+                (type to no) to date
+            }
+
+        return collectionSize.flatMap { (cookieType, size) ->
+
+            (1..size).map { no ->
+
+                val date = collectedMap[cookieType.type to no]
+
+                CollectionDisplayItem(
+                    no = no,
+                    type = cookieType.type,
+                    isCollected = date != null,
+                    date = date
+                )
+            }
         }
     }
 }

@@ -5,8 +5,8 @@ import com.nuecoo.core.base.BaseViewModel
 import com.nuecoo.core.di.DefaultDispatcher
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.MainDispatcher
-import com.nuecoo.feature.main.domain.usecase.GetNewCookieNumberUseCase
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
+import com.nuecoo.feature.main.domain.usecase.GetNewCookieNumberUseCase
 import com.nuecoo.feature.main.domain.usecase.ObserveDailyCookieData
 import com.nuecoo.feature.main.domain.usecase.RemainTimeUseCase
 import com.nuecoo.feature.main.domain.usecase.UpdateOpenCookieDataUseCase
@@ -49,7 +49,7 @@ class OvenViewModel @Inject constructor(
         _selectedCookie.value = null
     }
 
-    fun updateOpenCookieData(type: Int, size: Int) = onUiWork {
+    fun updateOpenCookieData(type: Int, size: Int) = onIoWork {
         val newNo = getNewCookieNumberUseCase(type, size)
         updateOpenCookieDataUseCase(type = type, newNo = newNo)
         _selectedCookie.value = _selectedCookie.value?.copy(

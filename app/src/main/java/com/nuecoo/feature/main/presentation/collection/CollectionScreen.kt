@@ -1,6 +1,5 @@
 package com.nuecoo.feature.main.presentation.collection
 
-import android.R.attr.fontWeight
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,8 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,6 +40,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -77,16 +76,22 @@ import com.nuecoo.viewmodel.CollectionViewModel
 import getCollectionTypeImages
 import getCookieTypeColor
 import getCookieTypeList
+import getCookieTypeListSize
 import getCookieTypeMainTextRes
 
 
 @Composable
 fun CollectionScreen(viewModel: CollectionViewModel = hiltViewModel()) {
+    val context = LocalContext.current
     val items by viewModel.items.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val selectedType by viewModel.selectedCookieType.collectAsState()
     val showCollectedOnly by viewModel.showCollectedOnly.collectAsState()
     val sortType by viewModel.sortType.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.initCollectionList(context.getCookieTypeListSize())
+    }
 
     CollectionScreenContent(
         items = items,
@@ -414,12 +419,14 @@ private fun CollectionItemView(collectionItems: List<CollectionDisplayItem>) {
             .values
             .toList()
 
-    LazyColumn( modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 24.dp)
-        .offset(y = 6.dp),
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .offset(y = 6.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(bottom = 24.dp)) {
+        contentPadding = PaddingValues(bottom = 24.dp)
+    ) {
         groupedItems.forEach { typeItems ->
 
             item {
@@ -540,7 +547,7 @@ private fun CollectionItemCard(item: CollectionDisplayItem) {
 
             if (item.isCollected) {
                 Text(
-                    text = item.date?.toDisplayDate()?:"0000.00.00",
+                    text = item.date?.toDisplayDate() ?: "0000.00.00",
                     color = MainText,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
