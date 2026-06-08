@@ -26,9 +26,11 @@ class CollectionViewModel @Inject constructor(
     val selectedCookieType: StateFlow<CookieType?> = _selectedCookieType
 
     private val allItems = MutableStateFlow<List<CollectionDisplayItem>>(emptyList())
-
     private val _items = MutableStateFlow<List<CollectionDisplayItem>>(emptyList())
     val items: StateFlow<List<CollectionDisplayItem>> = _items
+
+    private val _selectedType = MutableStateFlow(0)
+    val selectedType: StateFlow<Int> = _selectedType
 
     private val _sortType = MutableStateFlow(CollectionSortType.BY_NO)
     val sortType: StateFlow<CollectionSortType> = _sortType
@@ -45,8 +47,7 @@ class CollectionViewModel @Inject constructor(
     fun setSelectedCookieType(type: CookieType?) {
         _selectedCookieType.value = type
 
-        val selectList =
-            if (type == null) allItems.value else allItems.value.filter { it.type == type.type }
+        val selectList = if (type == null) allItems.value else allItems.value.filter { it.type == type.type }
         _items.value = applySortAndFilter(selectList, _showCollectedOnly.value, _sortType.value)
     }
 
@@ -58,7 +59,6 @@ class CollectionViewModel @Inject constructor(
     fun setShowCollectedOnly(value: Boolean) {
         _showCollectedOnly.value = value
         setSelectedCookieType(selectedCookieType.value)
-        _items.value = applySortAndFilter(_items.value, _showCollectedOnly.value, _sortType.value)
     }
 
     private fun applySortAndFilter(
