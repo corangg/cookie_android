@@ -190,7 +190,7 @@ fun CollectionScreenContent(
             TextCookieCount(items.size)//쿠키 갯수 표시
             CollectionItemView(items, onItemOpened)//쿠키 콜랙션 표시
         }
-        showOpenedCollectionItem(selectedItem,onCollectionClose)//콜랙션 오픈 다이얼로그
+        showOpenedCollectionItem(selectedItem, onCollectionClose)//콜랙션 오픈 다이얼로그
     }
 }
 
@@ -446,7 +446,11 @@ private fun CollectionItemView(
                             CollectionItemCard(
                                 item = item,
                                 onClick = {
-                                    onClick(item)
+                                    if(item.isCollected){
+                                        onClick(item)
+                                    }else{
+                                        //커스텀 토스트 만들어서 실행
+                                    }
                                 }
                             )
                         }
@@ -603,7 +607,7 @@ private fun CollectionItemCard(item: CollectionDisplayItem, onClick: () -> Unit)
 }
 
 @Composable
-private fun showOpenedCollectionItem(item: CollectionDisplayItem?, onClose: () -> Unit){
+private fun showOpenedCollectionItem(item: CollectionDisplayItem?, onClose: () -> Unit) {
     item?.let { item ->
         Dialog(
             onDismissRequest = onClose,
