@@ -2,7 +2,7 @@ package com.nuecoo.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val MainBackground = Color(0xFFEBDEC5)
+val MainBackground = Color(0xFFF3EAD8)
 
 val MainTitle = Color(0xFF46382A)
 val SubTitle = Color(0xFFAE9E80)
@@ -11,9 +11,13 @@ val NavBackground = Color(0xFFFBF5E8)
 val SubBackground = Color(0xFFFFF2CC)
 val DropDownBackground = Color(0xFFFBF5E8)
 val DropDownSelectBackground = Color(0xFFE8DDBF)
+val ItemCardBackground = Color(0xFFFBF5E8)
+val ItemCardUnOpenedBackground = Color(0xFFECE0C8)
+val ItemCardUnOpenedBorder = Color(0xFFDFD3BC)
 val MainBorder = Color(0xFF4D310E)
 //val MainText = Color(0xFF3F352A)
 val MainText = Color(0xFF4A3F32)
+val UnCollectedText = Color(0xFFB4A586)
 val MainButton = Color(0xFFEEB85E)
 val SubBorder = Color(0xFFFFF4D8)
 val SelectIconBackground = Color(0xFF4D310E)
@@ -24,7 +28,7 @@ val CollectionBackground = Color(0xFF4D310E)
 val CollectionItemBackground = Color(0xFFFFF2CC)
 
 val CheeringColor = Color(0xFF3DA9FE)
-val ComfortColor = Color(0xFFECDCB7)
+val ComfortColor = Color(0xFFECDDB8)
 val PassionColor = Color(0xFFFF9D46)
 val SermonColor = Color(0xFF8A5A33)
 val LoveColor = Color(0xFFE58599)

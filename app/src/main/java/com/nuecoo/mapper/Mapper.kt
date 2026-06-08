@@ -134,7 +134,7 @@ fun CookieItemData.toUiItem(): CookieUIItemData {
     )
 }
 
-fun getCollectionTypeImages(type: Int): List<Int> {
+fun getCollectionTypeImages(type: Int?): List<Int> {
     return getCookieTypeResource(type)?.collectionImages
         ?: listOf(R.drawable.img_cookie_deactive)
 }

@@ -4,6 +4,7 @@
     <!-- Default -->
     <string name="close">닫기</string>
     <string name="all">전체</string>
+    <string name="no">No</string>
 
     <!-- Bottom Nav -->
     <string name="menu_main_oven">오븐</string>
@@ -53,6 +54,11 @@
     <string name="text_collection_no">번호순</string>
     <string name="text_collection_date">날짜순</string>
     <string name="text_collection_check_text">수집한 쿠키</string>
+    <string name="text_collection_all">총</string>
+    <string name="text_collection_cookie_unit">개</string>
+    <string name="text_collection_un_collected">미수집</string>
+
+
 
     <!-- Message -->
     <string name="text_message_open_cookie_error">잘못된 쿠키입니다.</string>

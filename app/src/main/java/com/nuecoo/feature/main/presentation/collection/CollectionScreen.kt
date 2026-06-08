@@ -1,9 +1,9 @@
 package com.nuecoo.feature.main.presentation.collection
 
+import android.R.attr.fontWeight
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,10 +16,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -47,6 +48,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -55,23 +57,27 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.nuecoo.R
 import com.nuecoo.core.ui.component.CommonDropDown
 import com.nuecoo.core.ui.model.CommonDropDownItem
+import com.nuecoo.core.util.toDisplayDate
 import com.nuecoo.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CollectionSortType
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.ui.theme.DropDownBackground
 import com.nuecoo.ui.theme.DropDownSelectBackground
+import com.nuecoo.ui.theme.ItemCardBackground
+import com.nuecoo.ui.theme.ItemCardUnOpenedBackground
+import com.nuecoo.ui.theme.ItemCardUnOpenedBorder
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
-import com.nuecoo.ui.theme.MainButton
 import com.nuecoo.ui.theme.MainText
 import com.nuecoo.ui.theme.MainTitle
-import com.nuecoo.ui.theme.SubBackground
 import com.nuecoo.ui.theme.SubTitle
+import com.nuecoo.ui.theme.UnCollectedText
 import com.nuecoo.ui.theme.White
 import com.nuecoo.viewmodel.CollectionViewModel
 import getCollectionTypeImages
 import getCookieTypeColor
 import getCookieTypeList
+import getCookieTypeMainTextRes
 
 
 @Composable
@@ -144,10 +150,10 @@ fun CollectionScreenContent(
                 onSortTypeChange = onSortTypeChange,
                 modifier = Modifier.padding(start = 28.dp)
             )//정렬 드랍다운
-
         }
 
-        // Collection grid
+        Spacer(modifier = Modifier.height(16.dp))
+
         if (isLoading) {
             Box(
                 Modifier
@@ -157,26 +163,8 @@ fun CollectionScreenContent(
                 CircularProgressIndicator(color = MainBorder)
             }
         } else {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MainBorder.copy(alpha = 0.08f))
-            ) {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    contentPadding = PaddingValues(24.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(items) { item ->
-                        //CollectionItemCard(item = item, type = selectedType)
-                    }
-                }
-            }
+            TextCookieCount(items.size)//쿠키 갯수 표시
+            CollectionItemView(items)//쿠키 콜랙션 표시
         }
 
         // Cookie type selector
@@ -401,85 +389,186 @@ private fun CollectionSortDropDown(
         itemBackgroundColor = DropDownBackground,
         itemSelectedBackgroundColor = DropDownSelectBackground,
         fontWeight = FontWeight.Medium
-
     )
 }
 
 @Composable
-private fun CollectionItemCard(item: CollectionDisplayItem, type: Int) {
+private fun TextCookieCount(size: Int) {
+    Text(
+        modifier = Modifier.padding(start = 28.dp),
+        color = SubTitle,
+        fontSize = 16.sp,
+        fontFamily = FontFamily(Font(R.font.montserrat_semi_bold)),
+        fontWeight = FontWeight.Bold,
+        lineHeight = 16.sp,
+        text = "${stringResource(R.string.text_collection_all)} ${size}${stringResource(R.string.text_collection_cookie_unit)}"
+    )
+}
+
+@Composable
+private fun CollectionItemView(collectionItems: List<CollectionDisplayItem>) {
+    val groupedItems =
+        collectionItems
+            .groupBy { it.type }
+            .toSortedMap()
+            .values
+            .toList()
+
+    LazyColumn( modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 24.dp)
+        .offset(y = 6.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(bottom = 24.dp)) {
+        groupedItems.forEach { typeItems ->
+
+            item {
+                CookieTypeSubTitle(
+                    type = typeItems.first().type,
+                    items = typeItems
+                )
+            }
+
+            items(typeItems.chunked(2)) { rowItems ->
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    rowItems.forEach { item ->
+                        Box(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            CollectionItemCard(item)
+                        }
+                    }
+
+                    if (rowItems.size == 1) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CookieTypeSubTitle(type: Int, items: List<CollectionDisplayItem>) {
+    val openCount = items.count { it.isCollected }
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(12.dp)
+                .background(
+                    color = getCookieTypeColor(type),
+                    shape = CircleShape
+                )
+        )
+
+        Text(
+            modifier = Modifier.padding(start = 8.dp),
+            color = MainText,
+            fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.montserrat_semi_bold)),
+            fontWeight = FontWeight.Bold,
+            lineHeight = 16.sp,
+            text = stringResource(getCookieTypeMainTextRes(type))
+        )
+
+        Text(
+            modifier = Modifier.padding(start = 6.dp),
+            color = SubTitle,
+            fontSize = 12.sp,
+            fontFamily = FontFamily(Font(R.font.montserrat_semi_bold)),
+            fontWeight = FontWeight.Medium,
+            lineHeight = 12.sp,
+            text = "${openCount}/${items.size}"
+        )
+    }
+}
+
+@Composable
+private fun CollectionItemCard(item: CollectionDisplayItem) {
     val imgRes = if (item.isCollected) {
-        getCollectionTypeImages(type).getOrElse(5) { R.drawable.img_cookie_deactive }
+        getCollectionTypeImages(item.type)
+            .getOrElse(0) { R.drawable.img_cookie_deactive }
     } else {
         R.drawable.img_cookie_deactive
     }
 
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(SubBackground)
-            .border(2.dp, MainBorder, RoundedCornerShape(12.dp))
-            .padding(8.dp),
-        contentAlignment = Alignment.Center
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(if (item.isCollected) ItemCardBackground else ItemCardUnOpenedBackground)
+            .border(
+                width = 1.dp,
+                shape = RoundedCornerShape(16.dp),
+                color = if (item.isCollected) ItemCardBackground else ItemCardUnOpenedBorder
+            )
+            .padding(8.dp)
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 6.dp),
+                textAlign = TextAlign.Start,
+                color = SubTitle,
+                fontSize = 12.sp,
+                fontFamily = FontFamily(Font(R.font.montserrat_semi_bold)),
+                fontWeight = FontWeight.Medium,
+                lineHeight = 12.sp,
+                text = "${stringResource(R.string.no)}.${item.no}"
+            )
+
+            Spacer(Modifier.height(4.dp))
+
             Image(
                 painter = painterResource(imgRes),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.size(80.dp)
+                modifier = Modifier
+                    .size(80.dp)
+                    .alpha(if (item.isCollected) 1f else 0.45f)
             )
+
             Spacer(Modifier.height(4.dp))
-            Text(
-                text = "No.${item.no}",
-                color = MainBorder,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-    }
-}
 
-@Composable
-private fun CookieTypeSelector(selectedType: Int, onTypeSelected: (Int) -> Unit) {
-    val types = listOf(
-        CookieType.Cheering.type to R.drawable.img_cookie_cheering_1,
-        CookieType.Comfort.type to R.drawable.img_cookie_comfort_1,
-        CookieType.Passion.type to R.drawable.img_cookie_passion_1,
-        CookieType.Sermon.type to R.drawable.img_cookie_sermon_1
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(MainButton.copy(alpha = 0.3f))
-            .border(width = 4.dp, color = MainBorder, shape = RoundedCornerShape(16.dp))
-            .padding(horizontal = 8.dp, vertical = 6.dp)
-    ) {
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(horizontal = 8.dp)
-        ) {
-            items(types) { (type, imgRes) ->
-                val isSelected = type == selectedType
-                Box(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clip(CircleShape)
-                        .background(if (isSelected) MainBorder else MainBackground)
-                        .border(3.dp, MainBorder, CircleShape)
-                        .clickable { onTypeSelected(type) },
-                    contentAlignment = Alignment.Center
+            if (item.isCollected) {
+                Text(
+                    text = item.date?.toDisplayDate()?:"0000.00.00",
+                    color = MainText,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            } else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(imgRes),
+                        painter = painterResource(R.drawable.ic_lock),
                         contentDescription = null,
                         contentScale = ContentScale.Fit,
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier
+                            .size(12.dp)
+                            .alpha(0.45f)
+                    )
+
+                    Spacer(Modifier.width(4.dp))
+
+                    Text(
+                        text = stringResource(R.string.text_collection_un_collected),
+                        color = UnCollectedText,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
+
         }
     }
 }
