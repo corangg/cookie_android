@@ -44,12 +44,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.R
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
+import com.nuecoo.feature.main.presentation.main.component.MainTitleItem
 import com.nuecoo.feature.main.presentation.oven.viewmodel.OvenViewModel
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainTitle
 import com.nuecoo.ui.theme.NueCooTheme
-import com.nuecoo.ui.theme.SubTitle
 import getCookieMessageResMap
 import kotlinx.coroutines.launch
 import toUiItem
@@ -105,7 +105,11 @@ fun OvenScreenContent(
             .fillMaxSize()
             .background(MainBackground)
     ) {
-        OvenTitle(modifier = Modifier.padding(horizontal = 24.dp))//메인 타이틀
+        MainTitleItem(
+            modifier = Modifier.padding(horizontal = 24.dp),
+            subTitle = stringResource(R.string.text_oven_sub_title),
+            mainTitle = stringResource(R.string.text_oven_title)
+        )//메인 타이틀
 
         Row(
             modifier = Modifier
@@ -137,32 +141,6 @@ fun OvenScreenContent(
                 onClose = onCookieClose
             )//쿠키 오픈 다이얼로그
         }
-    }
-}
-
-@Composable
-private fun OvenTitle(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-    ) {
-        Text(
-            text = stringResource(R.string.text_oven_sub_title),
-            color = SubTitle,
-            fontSize = 12.sp,
-            fontFamily = FontFamily(Font(R.font.montserrat_semi_bold)),
-            letterSpacing = 2.sp,
-            fontWeight = FontWeight.Bold,
-            lineHeight = 12.sp,
-            modifier = Modifier.padding(top = 16.dp)
-        )
-        Text(
-            text = stringResource(R.string.text_oven_title),
-            color = MainTitle,
-            fontSize = 28.sp,
-            lineHeight = 28.sp,
-            fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
-            fontWeight = FontWeight.Light,
-        )
     }
 }
 
