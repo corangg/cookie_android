@@ -1,4 +1,4 @@
-package com.nuecoo.feature.main.presentation.collection
+package com.nuecoo.feature.main.presentation.collection.screen
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -55,7 +55,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,6 +68,8 @@ import com.nuecoo.core.util.toDisplayDate
 import com.nuecoo.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CollectionSortType
 import com.nuecoo.feature.main.domain.model.CookieType
+import com.nuecoo.feature.main.presentation.collection.viewmodel.CollectionViewModel
+import com.nuecoo.feature.main.presentation.main.component.MainTitleItem
 import com.nuecoo.ui.theme.DropDownBackground
 import com.nuecoo.ui.theme.DropDownSelectBackground
 import com.nuecoo.ui.theme.ItemCardBackground
@@ -77,11 +78,9 @@ import com.nuecoo.ui.theme.ItemCardUnOpenedBorder
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainText
-import com.nuecoo.ui.theme.MainTitle
 import com.nuecoo.ui.theme.SubTitle
 import com.nuecoo.ui.theme.UnCollectedText
 import com.nuecoo.ui.theme.White
-import com.nuecoo.viewmodel.CollectionViewModel
 import getCollectionTypeImages
 import getCookieMessageResMap
 import getCookieTypeColor
@@ -149,7 +148,11 @@ fun CollectionScreenContent(
                 .padding(horizontal = 24.dp),
             verticalAlignment = Alignment.Bottom
         ) {
-            CollectionTitle(modifier = Modifier.weight(1f))//타이틀
+            MainTitleItem(
+                modifier = Modifier.weight(1f),
+                subTitle = stringResource(R.string.text_collection_sub_title),
+                mainTitle = stringResource(R.string.text_collection_title)
+            )//메인 타이틀
 
             CollectionCheckBox(
                 showCollectedOnly = showCollectedOnly,
@@ -191,39 +194,6 @@ fun CollectionScreenContent(
             CollectionItemView(items, onItemOpened)//쿠키 콜랙션 표시
         }
         showOpenedCollectionItem(selectedItem, onCollectionClose)//콜랙션 오픈 다이얼로그
-    }
-}
-
-@Preview(
-    name = "CollectionContent Preview",
-    showBackground = true,
-    widthDp = 360,
-    heightDp = 800
-)
-
-@Composable
-private fun CollectionTitle(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-    ) {
-        Text(
-            text = stringResource(R.string.text_collection_sub_title),
-            color = SubTitle,
-            fontSize = 12.sp,
-            fontFamily = FontFamily(Font(R.font.montserrat_semi_bold)),
-            letterSpacing = 2.sp,
-            fontWeight = FontWeight.Bold,
-            lineHeight = 12.sp,
-            modifier = Modifier.padding(top = 16.dp)
-        )
-        Text(
-            text = stringResource(R.string.text_collection_title),
-            color = MainTitle,
-            fontSize = 28.sp,
-            lineHeight = 28.sp,
-            fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
-            fontWeight = FontWeight.Light,
-        )
     }
 }
 
@@ -446,9 +416,9 @@ private fun CollectionItemView(
                             CollectionItemCard(
                                 item = item,
                                 onClick = {
-                                    if(item.isCollected){
+                                    if (item.isCollected) {
                                         onClick(item)
-                                    }else{
+                                    } else {
                                         //커스텀 토스트 만들어서 실행
                                     }
                                 }

@@ -1,4 +1,4 @@
-package com.nuecoo.feature.main.presentation.collection
+package com.nuecoo.feature.main.presentation.collection.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -48,7 +48,6 @@ import com.nuecoo.ui.theme.MainText
 import com.nuecoo.ui.theme.NueCooTheme
 import getCookieTypeColor
 import getCookieTypeMainTextRes
-import getCookieTypeSubTextRes
 import kotlin.math.hypot
 
 @Composable
@@ -127,7 +126,8 @@ private fun SetTypeMessage(data: CollectionDisplayItem) {
     val typeColor = getCookieTypeColor(data.type)
     val context = LocalContext.current
     val dateText = data.date?.toDateUnit(context) ?: ""
-    val main = "${dateText}${stringResource(R.string.of)} ${stringResource(getCookieTypeMainTextRes(data.type))}"
+    val main =
+        "${dateText}${stringResource(R.string.of)} ${stringResource(getCookieTypeMainTextRes(data.type))}"
     val sub = "${stringResource(R.string.no)}.${data.no}"
     Row(
         modifier = Modifier

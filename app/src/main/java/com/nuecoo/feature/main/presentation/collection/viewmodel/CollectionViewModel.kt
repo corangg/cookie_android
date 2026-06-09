@@ -1,4 +1,4 @@
-package com.nuecoo.viewmodel
+package com.nuecoo.feature.main.presentation.collection.viewmodel
 
 import com.nuecoo.core.base.BaseViewModel
 import com.nuecoo.core.di.DefaultDispatcher
