@@ -22,10 +22,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -35,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,11 +44,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.R
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
+import com.nuecoo.feature.main.presentation.oven.viewmodel.OvenViewModel
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainTitle
 import com.nuecoo.ui.theme.NueCooTheme
-import com.nuecoo.feature.main.presentation.oven.viewmodel.OvenViewModel
+import com.nuecoo.ui.theme.SubTitle
 import getCookieMessageResMap
 import kotlinx.coroutines.launch
 import toUiItem
@@ -100,108 +100,168 @@ fun OvenScreenContent(
     onMoveCollection: () -> Unit,
 
     ) {
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MainBackground)
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+        OvenTitle(modifier = Modifier.padding(horizontal = 24.dp))//메인 타이틀
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = stringResource(R.string.text_oven_title),
-                color = MainTitle,
-                fontSize = 40.sp,
-                fontFamily = FontFamily(Font(R.font.cookie_run_bold)),
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 16.dp)
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "${stringResource(R.string.text_oven_title)} ${3}${stringResource(R.string.text_oven_sub_unit)}",
-                    color = MainTitle,
-                    fontSize = 13.sp,
-                    fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
-                    fontWeight = FontWeight.Thin,
-                    modifier = Modifier.padding(start = 28.dp)
-                )
-
-                Text(
-                    text = remainTime,
-                    color = MainBorder,
-                    fontSize = 13.sp,
-                    fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
-                    modifier = Modifier.padding(end = 28.dp)
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(horizontal = 12.dp)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.img_tray),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier.fillMaxSize()
-                )
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 40.dp, vertical = 80.dp),
-                    contentPadding = PaddingValues(20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(36.dp)
-                ) {
-                    items(cookieList, key = { it.type }) { item ->
-                        CookieItem(
-                            data = item,
-                            onClick = { onCookieClick(item) }
-                        )
-                    }
-                }
-            }
-
-            Text(
-                text = stringResource(R.string.text_oven_tray),
-                color = MainTitle,
-                fontSize = 14.sp,
-                fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
-                fontWeight = FontWeight.Thin
-            )
+            LeftoverCookie()//남은 쿠키
+            TimerInitCookie(remainTime)//쿠키 초기화 시간
         }
+
+        CookieTray(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 12.dp),
+            list = cookieList,
+            openCookie = onCookieClick
+        )//쿠키 트레이
+
+        CookieBottomMessage()//쿠키 하단 메세지
 
         selectedCookie?.let { cookie ->
-            Dialog(
-                onDismissRequest = onCookieClose,
-                properties = DialogProperties(
-                    usePlatformDefaultWidth = false,
-                    decorFitsSystemWindows = false
-                )
-            ) {
-                CookieOpenScreen(
-                    cookieData = cookie,
-                    cookieMessages = cookieNameMap,
-                    onClose = onCookieClose,
-                    onCookieOpened = onCookieOpened,
-                    onMoveCollection = {
-                        onCookieClose()
-                        onMoveCollection()
-                    }
+            showOpenedCookie(
+                item = cookie,
+                cookieNameMap = cookieNameMap,
+                onCookieOpened = onCookieOpened,
+                onMoveCollection = onMoveCollection,
+                onClose = onCookieClose
+            )//쿠키 오픈 다이얼로그
+        }
+    }
+}
+
+@Composable
+private fun OvenTitle(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            text = stringResource(R.string.text_oven_sub_title),
+            color = SubTitle,
+            fontSize = 12.sp,
+            fontFamily = FontFamily(Font(R.font.montserrat_semi_bold)),
+            letterSpacing = 2.sp,
+            fontWeight = FontWeight.Bold,
+            lineHeight = 12.sp,
+            modifier = Modifier.padding(top = 16.dp)
+        )
+        Text(
+            text = stringResource(R.string.text_oven_title),
+            color = MainTitle,
+            fontSize = 28.sp,
+            lineHeight = 28.sp,
+            fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
+            fontWeight = FontWeight.Light,
+        )
+    }
+}
+
+@Composable
+private fun LeftoverCookie() {
+    Text(
+        text = "${stringResource(R.string.text_oven_title)} ${3}${stringResource(R.string.text_oven_sub_unit)}",
+        color = MainTitle,
+        fontSize = 13.sp,
+        fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
+        fontWeight = FontWeight.Thin,
+        modifier = Modifier.padding(start = 28.dp)
+    )
+}
+
+@Composable
+private fun TimerInitCookie(time: String) {
+    Text(
+        text = time,
+        color = MainBorder,
+        fontSize = 13.sp,
+        fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
+        modifier = Modifier.padding(end = 28.dp)
+    )
+}
+
+@Composable
+private fun CookieTray(
+    modifier: Modifier,
+    list: List<CookieUIItemData>,
+    openCookie: (CookieUIItemData) -> Unit
+) {
+    Box(
+        modifier = modifier
+    ) {
+        Image(
+            painter = painterResource(R.drawable.img_tray),
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 40.dp, vertical = 80.dp),
+            contentPadding = PaddingValues(20.dp),
+            horizontalArrangement = Arrangement.spacedBy(24.dp),
+            verticalArrangement = Arrangement.spacedBy(36.dp)
+        ) {
+            items(list, key = { it.type }) { item ->
+                CookieItem(
+                    data = item,
+                    onClick = { openCookie(item) }
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun CookieBottomMessage() {
+    Text(
+        modifier = Modifier.fillMaxWidth(),
+        text = stringResource(R.string.text_oven_tray),
+        color = MainTitle,
+        fontSize = 14.sp,
+        textAlign = TextAlign.Center,
+        fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
+        fontWeight = FontWeight.Thin
+    )
+}
+
+@Composable
+private fun showOpenedCookie(
+    item: CookieUIItemData,
+    cookieNameMap: Map<Int, List<String>>,
+    onCookieOpened: (Int) -> Unit,
+    onMoveCollection: () -> Unit,
+    onClose: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onClose,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false
+        )
+    ) {
+        CookieOpenScreen(
+            cookieData = item,
+            cookieMessages = cookieNameMap,
+            onClose = onClose,
+            onCookieOpened = onCookieOpened,
+            onMoveCollection = {
+                onClose()
+                onMoveCollection()
+            }
+        )
     }
 }
 

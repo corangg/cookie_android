@@ -33,6 +33,7 @@
 
     <!-- Oven -->
     <string name="text_oven_title">오늘의 쿠키</string>
+    <string name="text_oven_sub_title">TODAY COOKIE</string>
     <string name="text_oven_sub">남은 쿠키</string>
     <string name="text_oven_sub_unit">개</string>
     <string name="text_oven_tray">쿠키를 열어 당신을 위한 한마디를 확인해 보세요!</string>
