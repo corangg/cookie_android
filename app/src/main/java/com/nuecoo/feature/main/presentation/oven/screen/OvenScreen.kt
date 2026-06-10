@@ -89,7 +89,7 @@ fun OvenScreen(viewModel: OvenViewModel = hiltViewModel(), onMoveCollection: () 
 }
 
 @Composable
-fun OvenScreenContent(
+private fun OvenScreenContent(
     remainTime: String,
     cookieList: List<CookieUIItemData>,
     selectedCookie: CookieUIItemData?,
@@ -98,7 +98,6 @@ fun OvenScreenContent(
     onCookieClose: () -> Unit,
     onCookieOpened: (Int) -> Unit,
     onMoveCollection: () -> Unit,
-
     ) {
     Column(
         modifier = Modifier

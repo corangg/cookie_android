@@ -27,7 +27,7 @@ val OverlayBackground = Color(0x88000000)
 val CollectionBackground = Color(0xFF4D310E)
 val CollectionItemBackground = Color(0xFFFFF2CC)
 
-val CheeringColor = Color(0xFF3DA9FE)
+val CheeringColor = Color(0xFFFFC83D)
 val ComfortColor = Color(0xFFECDDB8)
 val PassionColor = Color(0xFFFF9D46)
 val SermonColor = Color(0xFF8A5A33)

@@ -1,10 +1,10 @@
-package com.nuecoo.ui.screen
+package com.nuecoo.feature.main.presentation.menu.screen
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,48 +12,168 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.nuecoo.R
-import com.nuecoo.core.navigation.Route
+import com.nuecoo.feature.main.presentation.main.component.MainTitleItem
+import com.nuecoo.ui.theme.ItemCardBackground
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainButton
+import com.nuecoo.ui.theme.MainText
 import com.nuecoo.ui.theme.SubBackground
+import com.nuecoo.ui.theme.SubTitle
 import com.nuecoo.viewmodel.CollectionProgress
 import com.nuecoo.viewmodel.MenuViewModel
-import kotlinx.coroutines.launch
 
 @Composable
-fun MenuScreen(
+fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
+    val progress by viewModel.collectionProgress.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+
+    MenuScreenContent(
+        progress = progress,
+        isLoading = isLoading
+    )
+}
+
+@Composable
+private fun MenuScreenContent(
+    progress: List<CollectionProgress>,
+    isLoading: Boolean,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MainBackground)
+            .padding(horizontal = 24.dp)
+    ) {
+        MainTitleItem(
+            subTitle = stringResource(R.string.text_menu_sub_title),
+            mainTitle = stringResource(R.string.text_menu_title)
+        )//메인 타이틀
+        Spacer(Modifier.height(16.dp))
+        CollectionProgressItem()
+
+    }
+}
+
+@Composable
+private fun CollectionProgressItem() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(32.dp))
+            .background(ItemCardBackground)
+            .padding(horizontal = 28.dp, vertical = 20.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            CookieCircleProgress(64, 12, 64)
+        }
+
+    }
+}
+
+@Composable
+fun CookieCircleProgress(
+    percent: Int,
+    current: Int,
+    total: Int,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.size(100.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val strokeWidth = 12.dp.toPx()
+            val arcSize = size.minDimension - strokeWidth
+
+            drawArc(
+                color = Color(0xFFEFE6D3),
+                startAngle = 0f,
+                sweepAngle = 360f,
+                useCenter = false,
+                topLeft = Offset(strokeWidth / 2, strokeWidth / 2),
+                size = Size(arcSize, arcSize),
+                style = Stroke(
+                    width = strokeWidth,
+                    cap = StrokeCap.Round
+                )
+            )
+
+            drawArc(
+                color = Color(0xFFD17834),
+                startAngle = -90f,
+                sweepAngle = 360f * (percent / 100f),
+                useCenter = false,
+                topLeft = Offset(strokeWidth / 2, strokeWidth / 2),
+                size = Size(arcSize, arcSize),
+                style = Stroke(
+                    width = strokeWidth,
+                    cap = StrokeCap.Round
+                )
+            )
+        }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = " $percent%",
+                color = MainText,
+                fontSize = 22.sp,
+                lineHeight = 22.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = FontFamily(Font(R.font.cookie_run_bold)),
+            )
+
+            Text(
+                text = "$current/$total",
+                color = SubTitle,
+                fontFamily = FontFamily(Font(R.font.montserrat_semi_bold)),
+                fontWeight = FontWeight.Bold,
+                fontSize = 10.sp,
+                lineHeight = 10.sp
+            )
+        }
+    }
+}
+
+
+/*@Composable
+fun MenuScreena(
     rootNavController: NavController,
     viewModel: MenuViewModel = hiltViewModel()
 ) {
@@ -81,7 +201,7 @@ fun MenuScreen(
         Spacer(Modifier.height(40.dp))
 
         menuItems.forEach { (iconRes, label, onClick) ->
-            MenuItem(iconRes = iconRes, label = label, onClick = onClick)
+            android.view.MenuItem(iconRes = iconRes, label = label, onClick = onClick)
         }
 
         Spacer(Modifier.weight(1f))
@@ -132,7 +252,7 @@ fun MenuScreen(
             }
         )
     }
-}
+}*/
 
 @Composable
 private fun MenuItem(iconRes: Int, label: String, onClick: () -> Unit) {
@@ -194,7 +314,10 @@ private fun CollectionProgressDialog(
             Spacer(Modifier.height(16.dp))
 
             if (isLoading) {
-                CircularProgressIndicator(color = MainBorder, modifier = Modifier.align(Alignment.CenterHorizontally))
+                CircularProgressIndicator(
+                    color = MainBorder,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             } else {
                 progress.forEachIndexed { index, (collected, total) ->
                     Row(

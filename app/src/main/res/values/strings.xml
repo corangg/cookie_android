@@ -63,6 +63,10 @@
     <string name="text_collection_cookie_unit">개</string>
     <string name="text_collection_un_collected">미수집</string>
 
+    <!-- Menu -->
+    <string name="text_menu_title">메뉴</string>
+    <string name="text_menu_sub_title">MENU</string>
+
 
 
     <!-- Message -->

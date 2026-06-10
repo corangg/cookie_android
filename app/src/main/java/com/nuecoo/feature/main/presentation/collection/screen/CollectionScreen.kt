@@ -123,7 +123,7 @@ fun CollectionScreen(viewModel: CollectionViewModel = hiltViewModel()) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CollectionScreenContent(
+private fun CollectionScreenContent(
     items: List<CollectionDisplayItem>,
     isLoading: Boolean,
     selectedType: CookieType?,

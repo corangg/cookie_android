@@ -34,6 +34,6 @@ fun MainNavHost(
             )
         }
         composable(BottomNavItem.Collection.route) { CollectionScreen() }
-        composable(BottomNavItem.Menu.route) { MenuScreen(rootNavController = rootNavController) }
+        composable(BottomNavItem.Menu.route) { MenuScreen(/*rootNavController = rootNavController*/) }
     }
 }
