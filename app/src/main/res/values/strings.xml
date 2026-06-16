@@ -66,6 +66,8 @@
     <!-- Menu -->
     <string name="text_menu_title">메뉴</string>
     <string name="text_menu_sub_title">MENU</string>
+    <string name="text_menu_profile_edit">편집</string>
+
 
 
 

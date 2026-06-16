@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -39,6 +38,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -50,7 +50,11 @@ import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainButton
 import com.nuecoo.ui.theme.MainText
+import com.nuecoo.ui.theme.MenuSubBoxBackground
+import com.nuecoo.ui.theme.ProfileBackground
+import com.nuecoo.ui.theme.ProfileBorder
 import com.nuecoo.ui.theme.SubBackground
+import com.nuecoo.ui.theme.SubText
 import com.nuecoo.ui.theme.SubTitle
 import com.nuecoo.viewmodel.CollectionProgress
 import com.nuecoo.viewmodel.MenuViewModel
@@ -82,8 +86,95 @@ private fun MenuScreenContent(
             mainTitle = stringResource(R.string.text_menu_title)
         )//메인 타이틀
         Spacer(Modifier.height(16.dp))
-        CollectionProgressItem()
+        ProfileItem()//프로필 뷰
 
+        Spacer(Modifier.height(16.dp))
+        CollectionProgressItem()
+    }
+}
+
+@Composable
+private fun ProfileItem() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(32.dp))
+            .background(ItemCardBackground)
+            .padding(horizontal = 16.dp, vertical = 20.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.Top,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .background(ProfileBackground)
+                    .border(
+                        width = 3.dp,
+                        color = ProfileBorder,
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.img_cookie_passion_1),//추후 데이터로 이미지 변경
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+
+                )
+            }
+            Spacer(Modifier.width(20.dp))
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 16.dp)
+            ) {
+                Text(
+                    text = "이강현",//추후 데이터로 이름변경
+                    color = MainText,
+                    fontFamily = FontFamily(Font(R.font.title_font)),
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp,
+                    lineHeight = 16.sp,
+                    letterSpacing = 2.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    modifier = Modifier.padding(top = 14.dp)
+                )
+                Text(
+                    text = "상태 메세지sfafawfwafajlfjwalfjwaljflawjflksajlkfjsaljfsalkjflksajflksajflkjsalkfjslakjflsajflksajflsjal",//추후 데이터로 상태 메세지 변경
+                    color = SubText,
+                    modifier = Modifier.padding(top = 6.dp),
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp,
+                    maxLines = 2,
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .size(width = 56.dp, height = 32.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(MenuSubBoxBackground)
+                    .align(Alignment.CenterVertically),
+            ) {
+                Text(
+                    text = stringResource(R.string.text_menu_profile_edit),
+                    color = SubText,
+                    fontSize = 12.sp,
+                    fontFamily = FontFamily(Font(R.font.title_font)),
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Center),
+                    letterSpacing = 2.sp
+                )
+            }
+        }
     }
 }
 

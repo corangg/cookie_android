@@ -20,22 +20,23 @@ fun MainTitleItem(modifier: Modifier = Modifier, subTitle: String, mainTitle: St
         modifier = modifier
     ) {
         Text(
-            text = subTitle,
-            color = SubTitle,
-            fontSize = 12.sp,
-            fontFamily = FontFamily(Font(R.font.montserrat_semi_bold)),
-            letterSpacing = 2.sp,
-            fontWeight = FontWeight.Bold,
-            lineHeight = 12.sp,
-            modifier = Modifier.padding(top = 16.dp)
-        )
-        Text(
             text = mainTitle,
             color = MainTitle,
             fontSize = 28.sp,
             lineHeight = 28.sp,
-            fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
+            modifier = Modifier.padding(top = 16.dp),
+            fontFamily = FontFamily(Font(R.font.title_font)),
             fontWeight = FontWeight.Light,
+        )
+        Text(
+            text = subTitle,
+            color = SubTitle,
+            fontSize = 12.sp,
+            fontFamily = FontFamily(Font(R.font.title_font)),
+            letterSpacing = 2.sp,
+            modifier = Modifier.padding(top = 8.dp),
+            fontWeight = FontWeight.Bold,
+            lineHeight = 12.sp,
         )
     }
 }
