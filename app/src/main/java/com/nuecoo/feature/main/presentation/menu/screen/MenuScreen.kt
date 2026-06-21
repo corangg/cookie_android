@@ -291,7 +291,7 @@ private fun CollectionList(modifier: Modifier, progressList: List<CollectionProg
             val data = progressList.find { progress -> progress.type == it.type.type } ?: return@forEach
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
             ) {
                 Text(
                     text = stringResource(it.nameRes),
