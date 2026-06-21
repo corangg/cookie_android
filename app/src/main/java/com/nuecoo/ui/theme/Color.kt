@@ -32,6 +32,9 @@ val ProfileBackground = Color(0xFFF2D8B2)
 val ProfileBorder = Color(0xFFF8EBD7)
 val MenuSubBoxBackground = Color(0xFFECE0C8)
 
+val progressBackground = Color(0xFFEFE6D3)
+val mainProgress = Color(0xFFD17834)
+
 
 val CheeringColor = Color(0xFFFFC83D)
 val ComfortColor = Color(0xFFECDDB8)

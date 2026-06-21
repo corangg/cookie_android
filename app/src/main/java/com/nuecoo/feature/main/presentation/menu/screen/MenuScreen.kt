@@ -21,6 +21,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -56,13 +58,23 @@ import com.nuecoo.ui.theme.ProfileBorder
 import com.nuecoo.ui.theme.SubBackground
 import com.nuecoo.ui.theme.SubText
 import com.nuecoo.ui.theme.SubTitle
+import com.nuecoo.ui.theme.mainProgress
+import com.nuecoo.ui.theme.progressBackground
 import com.nuecoo.viewmodel.CollectionProgress
 import com.nuecoo.viewmodel.MenuViewModel
+import getCookieTypeColor
+import getCookieTypeList
+import getCookieTypeListSize
 
 @Composable
 fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
+    val context = LocalContext.current
     val progress by viewModel.collectionProgress.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadCollectionProgress(context.getCookieTypeListSize())
+    }
 
     MenuScreenContent(
         progress = progress,
@@ -85,18 +97,20 @@ private fun MenuScreenContent(
             subTitle = stringResource(R.string.text_menu_sub_title),
             mainTitle = stringResource(R.string.text_menu_title)
         )//메인 타이틀
-        Spacer(Modifier.height(16.dp))
-        ProfileItem()//프로필 뷰
 
-        Spacer(Modifier.height(16.dp))
-        CollectionProgressItem()
+        ProfileItem(modifier = Modifier.padding(top = 16.dp))//프로필 컴포넌트
+
+        CollectionProgressItem(
+            modifier = Modifier.padding(top = 16.dp),
+            progressList = progress
+        )//콜랙션 컴포넌트
     }
 }
 
 @Composable
-private fun ProfileItem() {
+private fun ProfileItem(modifier: Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(32.dp))
             .background(ItemCardBackground)
@@ -179,30 +193,37 @@ private fun ProfileItem() {
 }
 
 @Composable
-private fun CollectionProgressItem() {
+private fun CollectionProgressItem(modifier: Modifier, progressList: List<CollectionProgress>) {
+    val total = progressList.sumOf { it.total }
+    val colleted = progressList.sumOf { it.collected }
+
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(32.dp))
             .background(ItemCardBackground)
-            .padding(horizontal = 28.dp, vertical = 20.dp)
+            .padding(horizontal = 20.dp, vertical = 20.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            CookieCircleProgress(64, 12, 64)
-        }
+            CookieCircleProgress(colleted, total)//전체 쿠키 수집률 컴포넌트
 
+            CollectionList(
+                modifier = Modifier.padding(start = 20.dp),
+                progressList = progressList
+            )//각 쿠키 수집률 컴포넌트
+        }
     }
 }
 
 @Composable
 fun CookieCircleProgress(
-    percent: Int,
     current: Int,
     total: Int,
     modifier: Modifier = Modifier
 ) {
+    val percent = (current.toFloat() / total.toFloat() * 100).toInt()
     Box(
         modifier = modifier.size(100.dp),
         contentAlignment = Alignment.Center
@@ -212,7 +233,7 @@ fun CookieCircleProgress(
             val arcSize = size.minDimension - strokeWidth
 
             drawArc(
-                color = Color(0xFFEFE6D3),
+                color = progressBackground,
                 startAngle = 0f,
                 sweepAngle = 360f,
                 useCenter = false,
@@ -225,7 +246,7 @@ fun CookieCircleProgress(
             )
 
             drawArc(
-                color = Color(0xFFD17834),
+                color = mainProgress,
                 startAngle = -90f,
                 sweepAngle = 360f * (percent / 100f),
                 useCenter = false,
@@ -260,6 +281,88 @@ fun CookieCircleProgress(
             )
         }
     }
+}
+
+@Composable
+private fun CollectionList(modifier: Modifier, progressList: List<CollectionProgress>) {
+    Column(modifier = modifier) {
+        val cookies = getCookieTypeList()
+        cookies.forEach {
+            val data = progressList.find { progress -> progress.type == it.type.type } ?: return@forEach
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(it.nameRes),
+                    color = MainText,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    lineHeight = 16.sp
+                )//개별 콜랙션 타입 명
+
+                CollectionProgressLine(
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .weight(1f),
+                    progressData = data
+                )//직선 프로그래스 컴포넌트
+
+                CollectionProgressText(
+                    modifier = Modifier.padding(start = 12.dp),
+                    progressData = data
+                )//개별 콜랙션 텍스트 컴포넌트
+            }
+        }
+    }
+}
+
+@Composable
+private fun CollectionProgressLine(modifier: Modifier, progressData: CollectionProgress) {
+    val progress = progressData.collected.toFloat() / progressData.total.toFloat()
+
+    Canvas(
+        modifier = modifier
+            .height(10.dp)
+            .fillMaxWidth()
+    ) {
+        val strokeWidth = size.height
+        val radius = strokeWidth / 2
+
+        drawLine(
+            color = progressBackground,
+            start = Offset(radius, center.y),
+            end = Offset(size.width - radius, center.y),
+            strokeWidth = strokeWidth,
+            cap = StrokeCap.Round
+        )
+
+        drawLine(
+            color = getCookieTypeColor(progressData.type),
+            start = Offset(radius, center.y),
+            end = Offset(
+                x = radius + (size.width - strokeWidth) * progress.coerceIn(0f, 1f),
+                y = center.y
+            ),
+            strokeWidth = strokeWidth,
+            cap = StrokeCap.Round
+        )
+    }
+}
+
+@Composable
+private fun CollectionProgressText(modifier: Modifier, progressData: CollectionProgress) {
+    val colleted = progressData.collected
+    val total = progressData.total
+    Text(
+        modifier = modifier,
+        text = "${colleted}/${total}",
+        color = SubText,
+        fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 12.sp,
+        lineHeight = 16.sp
+    )
 }
 
 
