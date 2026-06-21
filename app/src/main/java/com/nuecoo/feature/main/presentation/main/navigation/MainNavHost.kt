@@ -34,6 +34,18 @@ fun MainNavHost(
             )
         }
         composable(BottomNavItem.Collection.route) { CollectionScreen() }
-        composable(BottomNavItem.Menu.route) { MenuScreen(/*rootNavController = rootNavController*/) }
+        composable(BottomNavItem.Menu.route) {
+            MenuScreen(
+                onMoveOven = {
+                    navController.navigate(BottomNavItem.Oven.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
     }
 }

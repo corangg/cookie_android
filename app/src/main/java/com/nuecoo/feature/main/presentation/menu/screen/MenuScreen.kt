@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
@@ -45,21 +47,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.R
+import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
 import com.nuecoo.feature.main.presentation.main.component.MainTitleItem
+import com.nuecoo.ui.theme.AttendanceActive
+import com.nuecoo.ui.theme.AttendanceComplete
+import com.nuecoo.ui.theme.AttendanceInActive
+import com.nuecoo.ui.theme.CheckAttendance
+import com.nuecoo.ui.theme.CheckNonAttendance
 import com.nuecoo.ui.theme.ItemCardBackground
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainButton
+import com.nuecoo.ui.theme.MainProgress
 import com.nuecoo.ui.theme.MainText
 import com.nuecoo.ui.theme.MenuSubBoxBackground
 import com.nuecoo.ui.theme.ProfileBackground
 import com.nuecoo.ui.theme.ProfileBorder
+import com.nuecoo.ui.theme.ProgressBackground
 import com.nuecoo.ui.theme.SubBackground
 import com.nuecoo.ui.theme.SubText
 import com.nuecoo.ui.theme.SubTitle
-import com.nuecoo.ui.theme.mainProgress
-import com.nuecoo.ui.theme.progressBackground
+import com.nuecoo.ui.theme.UnknownColor
+import com.nuecoo.ui.theme.White
 import com.nuecoo.viewmodel.CollectionProgress
 import com.nuecoo.viewmodel.MenuViewModel
 import getCookieTypeColor
@@ -67,10 +78,13 @@ import getCookieTypeList
 import getCookieTypeListSize
 
 @Composable
-fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
+fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), onMoveOven: () -> Unit) {
     val context = LocalContext.current
     val progress by viewModel.collectionProgress.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val attendanceCount by viewModel.attendanceCount.collectAsStateWithLifecycle()
+    val isTodayAttendance by viewModel.isTodayAttendance.collectAsStateWithLifecycle()
+    val weeklyAttendance by viewModel.weeklyAttendance.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.loadCollectionProgress(context.getCookieTypeListSize())
@@ -78,7 +92,11 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
 
     MenuScreenContent(
         progress = progress,
-        isLoading = isLoading
+        isLoading = isLoading,
+        attendanceCount = attendanceCount ?: 0,
+        isTodayAttendance = isTodayAttendance,
+        weeklyAttendance = weeklyAttendance,
+        onMoveOven = onMoveOven
     )
 }
 
@@ -86,6 +104,10 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel()) {
 private fun MenuScreenContent(
     progress: List<CollectionProgress>,
     isLoading: Boolean,
+    attendanceCount: Int,
+    isTodayAttendance: Boolean,
+    weeklyAttendance: List<WeeklyAttendanceModel>,
+    onMoveOven: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -99,6 +121,14 @@ private fun MenuScreenContent(
         )//메인 타이틀
 
         ProfileItem(modifier = Modifier.padding(top = 16.dp))//프로필 컴포넌트
+
+        CheckInDayItem(
+            modifier = Modifier.padding(top = 16.dp),
+            attendanceCount = attendanceCount,
+            isTodayAttendance = isTodayAttendance,
+            onClick = onMoveOven,
+            weeklyAttendance = weeklyAttendance
+        )//출석체크 컴포넌트
 
         CollectionProgressItem(
             modifier = Modifier.padding(top = 16.dp),
@@ -193,6 +223,146 @@ private fun ProfileItem(modifier: Modifier) {
 }
 
 @Composable
+private fun CheckInDayItem(
+    modifier: Modifier,
+    attendanceCount: Int,
+    isTodayAttendance: Boolean,
+    weeklyAttendance: List<WeeklyAttendanceModel>,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(32.dp))
+            .background(ItemCardBackground)
+            .padding(horizontal = 20.dp, vertical = 20.dp)
+    ) {
+        Column() {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AttendanceStreakText(attendanceCount = attendanceCount)//연속 출석일 수 컴포넌트
+                Spacer(modifier = Modifier.weight(1f))
+                AttendanceCard(
+                    modifier = Modifier.padding(start = 16.dp),
+                    isAttended = isTodayAttendance,
+                    onClick = onClick
+                )//출석 여부 표시
+            }
+            WeeklyAttendanceCard(
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(),
+                list = weeklyAttendance
+            )//주간 출석 컴포넌트
+        }
+    }
+}
+
+@Composable
+private fun AttendanceStreakText(attendanceCount: Int) {
+    val isAttended = (attendanceCount != 0)
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(28.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(if (isAttended) AttendanceActive else AttendanceInActive),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(if (isAttended) R.drawable.ic_attendance_active else R.drawable.ic_attendance_in_active),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(20.dp)
+                    .clip(CircleShape)
+
+            )
+        }
+
+        Text(
+            modifier = Modifier.padding(start = 8.dp),
+            color = MainText,
+            fontWeight = FontWeight.SemiBold,
+            fontFamily = FontFamily(Font(R.font.title_font)),
+            fontSize = 16.sp,
+            text = "${attendanceCount}${stringResource(R.string.text_menu_attendance)}"
+        )
+    }
+}
+
+@Composable
+private fun AttendanceCard(modifier: Modifier, isAttended: Boolean, onClick: () -> Unit) {
+    Box(
+        modifier = modifier
+            .size(width = 90.dp, height = 28.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(if (isAttended) AttendanceActive else AttendanceInActive)
+            .clickable(onClick = onClick, enabled = !isAttended)
+    ) {
+        Text(
+            text = stringResource(if (isAttended) R.string.text_menu_attendance_complete else R.string.text_menu_attend),
+            color = if (isAttended) AttendanceComplete else White,
+            fontSize = 12.sp,
+            fontFamily = FontFamily(Font(R.font.title_font)),
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.align(Alignment.Center),
+        )
+    }
+}
+
+@Composable
+private fun WeeklyAttendanceCard(modifier: Modifier, list: List<WeeklyAttendanceModel>) {
+    val weekDays = LocalContext.current.resources.getStringArray(R.array.week_days)
+
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        list.forEach {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(if (it.isAttendance) CheckAttendance else CheckNonAttendance),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (it.isAttendance) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_check),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(Color.White),
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    } else {
+                        Text(
+                            text = "-",
+                            color = UnknownColor,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
+                }
+                Text(
+                    modifier = Modifier.padding(top = 6.dp),
+                    text = weekDays[it.dayIndex],
+                    color = SubText,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.title_font)),
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun CollectionProgressItem(modifier: Modifier, progressList: List<CollectionProgress>) {
     val total = progressList.sumOf { it.total }
     val colleted = progressList.sumOf { it.collected }
@@ -233,7 +403,7 @@ fun CookieCircleProgress(
             val arcSize = size.minDimension - strokeWidth
 
             drawArc(
-                color = progressBackground,
+                color = ProgressBackground,
                 startAngle = 0f,
                 sweepAngle = 360f,
                 useCenter = false,
@@ -246,7 +416,7 @@ fun CookieCircleProgress(
             )
 
             drawArc(
-                color = mainProgress,
+                color = MainProgress,
                 startAngle = -90f,
                 sweepAngle = 360f * (percent / 100f),
                 useCenter = false,
@@ -288,10 +458,13 @@ private fun CollectionList(modifier: Modifier, progressList: List<CollectionProg
     Column(modifier = modifier) {
         val cookies = getCookieTypeList()
         cookies.forEach {
-            val data = progressList.find { progress -> progress.type == it.type.type } ?: return@forEach
+            val data =
+                progressList.find { progress -> progress.type == it.type.type } ?: return@forEach
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
             ) {
                 Text(
                     text = stringResource(it.nameRes),
@@ -330,7 +503,7 @@ private fun CollectionProgressLine(modifier: Modifier, progressData: CollectionP
         val radius = strokeWidth / 2
 
         drawLine(
-            color = progressBackground,
+            color = ProgressBackground,
             start = Offset(radius, center.y),
             end = Offset(size.width - radius, center.y),
             strokeWidth = strokeWidth,

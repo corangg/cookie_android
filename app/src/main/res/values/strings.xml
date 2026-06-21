@@ -67,6 +67,9 @@
     <string name="text_menu_title">메뉴</string>
     <string name="text_menu_sub_title">MENU</string>
     <string name="text_menu_profile_edit">편집</string>
+    <string name="text_menu_attendance">일 연속 출석</string>
+    <string name="text_menu_attendance_complete">출석 완료</string>
+    <string name="text_menu_attend">출석 하기</string>
 
 
 
@@ -83,4 +86,15 @@
     <string name="text_message_permission_refusal">이 기능을 사용하려면 권한이 필요합니다. 권한을 허용해 주세요.</string>
     <string name="text_move_setting">설정으로 이동</string>
     <string name="text_retry">다시 시도</string>
+
+    <!--Week-->
+    <string-array name="week_days">
+        <item>일</item>
+        <item>월</item>
+        <item>화</item>
+        <item>수</item>
+        <item>목</item>
+        <item>금</item>
+        <item>토</item>
+    </string-array>
 </resources>
