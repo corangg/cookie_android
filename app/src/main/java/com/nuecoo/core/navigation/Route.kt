@@ -4,6 +4,7 @@ object Route {
     const val SPLASH = "splash"
     const val LOGIN = "login"
     const val MAIN = "main"
+    const val APP_INFO = "app_info"
 
     object SignUp {
         const val GRAPH = "signup"

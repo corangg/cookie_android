@@ -51,7 +51,9 @@ val WidgetOff = Color(0xFFece0c8)
 val LogoutBackground = Color(0xFFf3ddd6)
 val LogoutText = Color(0xFFb5573f)
 
+val BackButtonBackground = Color(0xFFfbf5e8)
 
+val DefaultIconBackground = Color(0xFFece0c8)
 
 
 val CheeringColor = Color(0xFFFFC83D)

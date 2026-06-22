@@ -5,19 +5,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.nuecoo.core.navigation.Route
 import com.nuecoo.feature.main.presentation.main.navigation.MainNavHost
 import com.nuecoo.ui.theme.MainBackground
+
+private val bottomBarHiddenRoutes = setOf(Route.APP_INFO)
 
 @Composable
 fun MainScreen(rootNavController: NavController) {
     val navController = rememberNavController()
+    val currentEntry by navController.currentBackStackEntryAsState()
+    val showBottomBar = currentEntry?.destination?.route !in bottomBarHiddenRoutes
+
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             containerColor = MainBackground,
-            bottomBar = { MainBottomNavBar(navController = navController) }
+            bottomBar = { if (showBottomBar) MainBottomNavBar(navController = navController) }
         ) { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()

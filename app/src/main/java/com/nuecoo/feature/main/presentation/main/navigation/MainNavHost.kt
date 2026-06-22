@@ -6,8 +6,10 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.nuecoo.core.navigation.Route
 import com.nuecoo.feature.main.presentation.main.screen.BottomNavItem
 import com.nuecoo.feature.main.presentation.collection.screen.CollectionScreen
+import com.nuecoo.feature.main.presentation.menu.screen.AppInfoScreen
 import com.nuecoo.feature.main.presentation.menu.screen.MenuScreen
 import com.nuecoo.feature.main.presentation.oven.screen.OvenScreen
 
@@ -44,8 +46,12 @@ fun MainNavHost(
                         launchSingleTop = true
                         restoreState = true
                     }
-                }
+                },
+                onMoveAppInfo = { navController.navigate(Route.APP_INFO) }
             )
+        }
+        composable(Route.APP_INFO) {
+            AppInfoScreen(onBack = { navController.popBackStack() })
         }
     }
 }

@@ -24,7 +24,6 @@ fun MainTitleItem(modifier: Modifier = Modifier, subTitle: String, mainTitle: St
             color = MainTitle,
             fontSize = 28.sp,
             lineHeight = 28.sp,
-            modifier = Modifier.padding(top = 16.dp),
             fontFamily = FontFamily(Font(R.font.title_font)),
             fontWeight = FontWeight.Light,
         )

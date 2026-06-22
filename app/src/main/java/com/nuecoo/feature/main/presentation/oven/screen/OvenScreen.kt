@@ -105,7 +105,7 @@ private fun OvenScreenContent(
             .background(MainBackground)
     ) {
         MainTitleItem(
-            modifier = Modifier.padding(horizontal = 24.dp),
+            modifier = Modifier.padding(horizontal = 24.dp).padding(top = 16.dp),
             subTitle = stringResource(R.string.text_oven_sub_title),
             mainTitle = stringResource(R.string.text_oven_title)
         )//메인 타이틀

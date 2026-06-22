@@ -1,13 +1,10 @@
 package com.nuecoo.feature.main.presentation.menu.screen
 
-import android.R.attr.version
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,13 +16,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -51,11 +48,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.nuecoo.BuildConfig
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.nuecoo.BuildConfig
 import com.nuecoo.R
+import com.nuecoo.core.ui.component.DefaultItemBox
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
 import com.nuecoo.feature.main.presentation.main.component.MainTitleItem
 import com.nuecoo.ui.theme.AttendanceActive
@@ -63,19 +60,17 @@ import com.nuecoo.ui.theme.AttendanceComplete
 import com.nuecoo.ui.theme.AttendanceInActive
 import com.nuecoo.ui.theme.CheckAttendance
 import com.nuecoo.ui.theme.CheckNonAttendance
+import com.nuecoo.ui.theme.DefaultIconBackground
 import com.nuecoo.ui.theme.ItemCardBackground
 import com.nuecoo.ui.theme.LogoutBackground
 import com.nuecoo.ui.theme.LogoutText
 import com.nuecoo.ui.theme.MainBackground
-import com.nuecoo.ui.theme.MainBorder
-import com.nuecoo.ui.theme.MainButton
 import com.nuecoo.ui.theme.MainProgress
 import com.nuecoo.ui.theme.MainText
 import com.nuecoo.ui.theme.MenuSubBoxBackground
 import com.nuecoo.ui.theme.ProfileBackground
 import com.nuecoo.ui.theme.ProfileBorder
 import com.nuecoo.ui.theme.ProgressBackground
-import com.nuecoo.ui.theme.SubBackground
 import com.nuecoo.ui.theme.SubText
 import com.nuecoo.ui.theme.SubTitle
 import com.nuecoo.ui.theme.UnknownColor
@@ -93,7 +88,11 @@ import getCookieTypeList
 import getCookieTypeListSize
 
 @Composable
-fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), onMoveOven: () -> Unit) {
+fun MenuScreen(
+    viewModel: MenuViewModel = hiltViewModel(),
+    onMoveOven: () -> Unit,
+    onMoveAppInfo: () -> Unit,
+) {
     val context = LocalContext.current
     val progress by viewModel.collectionProgress.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -114,6 +113,7 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), onMoveOven: () -> Uni
         weeklyAttendance = weeklyAttendance,
         isWidgetEnabled = widgetEnabled,
         onMoveOven = onMoveOven,
+        onMoveAppInfo = onMoveAppInfo,
         onSaveWidgetEnabled = {
             viewModel.saveWidgetEnabled(it)
         }
@@ -129,6 +129,7 @@ private fun MenuScreenContent(
     weeklyAttendance: List<WeeklyAttendanceModel>,
     isWidgetEnabled: Boolean,
     onMoveOven: () -> Unit,
+    onMoveAppInfo: () -> Unit,
     onSaveWidgetEnabled: (Boolean) -> Unit,
 ) {
     Column(
@@ -139,6 +140,7 @@ private fun MenuScreenContent(
             .padding(horizontal = 24.dp)
     ) {
         MainTitleItem(
+            modifier = Modifier.padding(top = 16.dp),
             subTitle = stringResource(R.string.text_menu_sub_title),
             mainTitle = stringResource(R.string.text_menu_title)
         )//메인 타이틀
@@ -165,7 +167,8 @@ private fun MenuScreenContent(
         )//위젯 컴포넌트
 
         AppInfoItem(
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(top = 16.dp),
+            onClick = onMoveAppInfo
         )//앱 정보 컴포넌트
 
         LogOutItem(
@@ -179,13 +182,7 @@ private fun MenuScreenContent(
 
 @Composable
 private fun ProfileItem(modifier: Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(32.dp))
-            .background(ItemCardBackground)
-            .padding(horizontal = 16.dp, vertical = 20.dp)
-    ) {
+    DefaultItemBox(modifier = modifier) {
         Row(
             verticalAlignment = Alignment.Top,
             modifier = Modifier.fillMaxWidth()
@@ -270,14 +267,8 @@ private fun CheckInDayItem(
     weeklyAttendance: List<WeeklyAttendanceModel>,
     onClick: () -> Unit
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(32.dp))
-            .background(ItemCardBackground)
-            .padding(horizontal = 20.dp, vertical = 20.dp)
-    ) {
-        Column() {
+    DefaultItemBox(modifier = modifier) {
+        Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -407,13 +398,7 @@ private fun CollectionProgressItem(modifier: Modifier, progressList: List<Collec
     val total = progressList.sumOf { it.total }
     val colleted = progressList.sumOf { it.collected }
 
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(32.dp))
-            .background(ItemCardBackground)
-            .padding(horizontal = 20.dp, vertical = 20.dp)
-    ) {
+    DefaultItemBox(modifier = modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -584,13 +569,7 @@ private fun WidgetItem(
     isWidget: Boolean,
     onSaveWidgetEnabled: (Boolean) -> Unit
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(32.dp))
-            .background(ItemCardBackground)
-            .padding(horizontal = 20.dp, vertical = 20.dp)
-    ) {
+    DefaultItemBox(modifier = modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -658,14 +637,8 @@ private fun WidgetText(isWidget: Boolean) {
 }
 
 @Composable
-private fun AppInfoItem(modifier: Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(32.dp))
-            .background(ItemCardBackground)
-            .padding(horizontal = 20.dp, vertical = 20.dp)
-    ) {
+private fun AppInfoItem(modifier: Modifier, onClick: () -> Unit) {
+    DefaultItemBox(modifier = modifier, onClick = onClick) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -673,7 +646,7 @@ private fun AppInfoItem(modifier: Modifier) {
                 modifier = Modifier
                     .size(40.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(WidgetInActiveBackground),
+                    .background(DefaultIconBackground),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -710,13 +683,7 @@ private fun AppInfoItem(modifier: Modifier) {
 
 @Composable
 private fun LogOutItem(modifier: Modifier){
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(32.dp))
-            .background(ItemCardBackground)
-            .padding(horizontal = 20.dp, vertical = 20.dp)
-    ) {
+    DefaultItemBox(modifier = modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -756,7 +723,6 @@ private fun LogOutItem(modifier: Modifier){
         }
     }
 }
-
 
 @Composable
 private fun AppVersionItem(modifier: Modifier){

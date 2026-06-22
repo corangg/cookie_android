@@ -77,6 +77,23 @@
     <string name="text_menu_app_logout">로그아웃</string>
 
 
+    <!--AppInfo-->
+    <string name="text_app_info_title">앱 정보</string>
+    <string name="text_app_info_sub_title">APP INFO</string>
+    <string name="text_app_info_version">버전</string>
+    <string name="text_app_info_rate_title">앱 평가하기</string>
+    <string name="text_app_info_rate_body">별점으로 응원해 주세요</string>
+    <string name="text_app_info_cs_title">문의하기</string>
+    <string name="text_app_info_cs_body">도움이 필요하면 알려주세요</string>
+    <string name="text_app_info_privacy_title">개인정보 처리방침</string>
+    <string name="text_app_info_terms_title">이용약관</string>
+    <string name="text_app_info_bottom_text">© 2026</string>
+
+
+
+    <string name="text_app_info_build">빌드 번호</string>
+
+
 
 
     <!-- Message -->
