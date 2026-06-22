@@ -13,6 +13,7 @@ fun DailyCookieItemData.toLocal() = LocalDailyCookieData(
 fun CookieItemData.toLocal() = LocalCookieData(
     time = this.time,
     type = this.type,
+    isFull = this.isFull,
     no = this.no,
     isOpened = this.isOpened
 )
@@ -25,6 +26,7 @@ fun LocalDailyCookieData.toExternal() = DailyCookieItemData(
 fun LocalCookieData.toExternal() = CookieItemData(
     time = this.time,
     type = this.type,
+    isFull = this.isFull,
     no = this.no,
     isOpened = this.isOpened
 )

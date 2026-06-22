@@ -10,6 +10,7 @@ data class DailyCookieItemData(
 data class CookieItemData(
     val time: String? = null,
     val type: Int,
+    val isFull: Boolean = false,
     val no: Int? = null,
     val isOpened: Boolean? = false,
 )
@@ -17,6 +18,7 @@ data class CookieItemData(
 data class CookieUIItemData(
     val time: String? = null,
     val type: Int,
+    val isFull: Boolean = false,
     val no: Int? = null,
     val isOpened: Boolean? = false,
     @field:DrawableRes val imgRes: Int

@@ -118,15 +118,20 @@ private fun getCookieTypeResource(type: Int?): CookieTypeResource? {
 fun CookieItemData.toUiItem(): CookieUIItemData {
     val resource = getCookieTypeResource(this.type)
 
-    val img = when (this.isOpened) {
-        null -> R.drawable.img_cookie_deactive
-        true -> resource?.openedImgRes ?: R.drawable.img_cookie_deactive
-        false -> resource?.closedImgRes ?: R.drawable.img_cookie_deactive
+    val img = if (!this.isFull) {
+        when (this.isOpened) {
+            null -> R.drawable.img_cookie_deactive
+            true -> resource?.openedImgRes ?: R.drawable.img_cookie_deactive
+            false -> resource?.closedImgRes ?: R.drawable.img_cookie_deactive
+        }
+    } else {
+        R.drawable.img_cookie_deactive
     }
 
     return CookieUIItemData(
         time = this.time,
         type = this.type,
+        isFull = this.isFull,
         no = this.no,
         isOpened = this.isOpened,
         imgRes = img

@@ -1,4 +1,4 @@
-package com.nuecoo.viewmodel
+package com.nuecoo.feature.main.presentation.menu.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.nuecoo.core.base.BaseViewModel

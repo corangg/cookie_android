@@ -37,7 +37,7 @@ import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainText
 import com.nuecoo.ui.theme.MenuSubBoxBackground
 import com.nuecoo.ui.theme.SubText
-import com.nuecoo.viewmodel.MenuViewModel
+import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
 
 
 @Composable

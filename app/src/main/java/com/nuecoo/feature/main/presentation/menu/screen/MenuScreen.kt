@@ -61,7 +61,6 @@ import com.nuecoo.ui.theme.AttendanceInActive
 import com.nuecoo.ui.theme.CheckAttendance
 import com.nuecoo.ui.theme.CheckNonAttendance
 import com.nuecoo.ui.theme.DefaultIconBackground
-import com.nuecoo.ui.theme.ItemCardBackground
 import com.nuecoo.ui.theme.LogoutBackground
 import com.nuecoo.ui.theme.LogoutText
 import com.nuecoo.ui.theme.MainBackground
@@ -81,8 +80,8 @@ import com.nuecoo.ui.theme.WidgetInActive
 import com.nuecoo.ui.theme.WidgetInActiveBackground
 import com.nuecoo.ui.theme.WidgetOff
 import com.nuecoo.ui.theme.WidgetOn
-import com.nuecoo.viewmodel.CollectionProgress
-import com.nuecoo.viewmodel.MenuViewModel
+import com.nuecoo.feature.main.presentation.menu.viewmodel.CollectionProgress
+import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
 import getCookieTypeColor
 import getCookieTypeList
 import getCookieTypeListSize
