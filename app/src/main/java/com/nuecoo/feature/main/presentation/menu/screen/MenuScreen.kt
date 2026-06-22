@@ -1,5 +1,8 @@
 package com.nuecoo.feature.main.presentation.menu.screen
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -418,6 +421,15 @@ fun CookieCircleProgress(
     modifier: Modifier = Modifier
 ) {
     val percent = (current.toFloat() / total.toFloat() * 100).toInt()
+    val animatedProgress by animateFloatAsState(
+        targetValue = percent / 100f,
+        animationSpec = tween(
+            durationMillis = 1000,
+            easing = FastOutSlowInEasing
+        ),
+        label = "circleProgressAnimation"
+    )
+
     Box(
         modifier = modifier.size(100.dp),
         contentAlignment = Alignment.Center
@@ -442,7 +454,7 @@ fun CookieCircleProgress(
             drawArc(
                 color = MainProgress,
                 startAngle = -90f,
-                sweepAngle = 360f * (percent / 100f),
+                sweepAngle = 360f * animatedProgress,
                 useCenter = false,
                 topLeft = Offset(strokeWidth / 2, strokeWidth / 2),
                 size = Size(arcSize, arcSize),
