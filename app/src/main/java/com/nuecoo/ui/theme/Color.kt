@@ -48,6 +48,11 @@ val WidgetInActive = Color(0xFFa89878)
 val WidgetOn = Color(0xFFcf7639)
 val WidgetOff = Color(0xFFece0c8)
 
+val LogoutBackground = Color(0xFFf3ddd6)
+val LogoutText = Color(0xFFb5573f)
+
+
+
 
 val CheeringColor = Color(0xFFFFC83D)
 val ComfortColor = Color(0xFFECDDB8)
