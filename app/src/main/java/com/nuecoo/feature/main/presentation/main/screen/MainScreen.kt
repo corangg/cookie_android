@@ -14,7 +14,13 @@ import com.nuecoo.core.navigation.Route
 import com.nuecoo.feature.main.presentation.main.navigation.MainNavHost
 import com.nuecoo.ui.theme.MainBackground
 
-private val bottomBarHiddenRoutes = setOf(Route.APP_INFO)
+private val bottomBarHiddenRoutes = setOf(
+    Route.APP_INFO,
+    Route.APP_RATE,
+    Route.APP_CS,
+    Route.APP_PRIVACY,
+    Route.APP_TERMS,
+)
 
 @Composable
 fun MainScreen(rootNavController: NavController) {

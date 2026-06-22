@@ -43,15 +43,29 @@ import com.nuecoo.viewmodel.MenuViewModel
 @Composable
 fun AppInfoScreen(
     viewModel: MenuViewModel = hiltViewModel(),
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onMoveRate: () -> Unit,
+    onMoveCs: () -> Unit,
+    onMovePrivacy: () -> Unit,
+    onMoveTerms: () -> Unit,
 ) {
     AppInfoScreenContent(
-        onBack = onBack
+        onBack = onBack,
+        onMoveRate = onMoveRate,
+        onMoveCs = onMoveCs,
+        onMovePrivacy = onMovePrivacy,
+        onMoveTerms = onMoveTerms,
     )
 }
 
 @Composable
-fun AppInfoScreenContent(onBack: () -> Unit) {
+fun AppInfoScreenContent(
+    onBack: () -> Unit,
+    onMoveRate: () -> Unit,
+    onMoveCs: () -> Unit,
+    onMovePrivacy: () -> Unit,
+    onMoveTerms: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -65,10 +79,10 @@ fun AppInfoScreenContent(onBack: () -> Unit) {
             modifier = Modifier.padding(top = 24.dp)
         )
 
-        AppRateItem(modifier = Modifier.padding(top = 16.dp), onClick = {})//앱 평가 컴포넌트
-        AppCsItem(modifier = Modifier.padding(top = 16.dp), onClick = {})//문의하기 컴포넌트
-        AppPrivacyItem(modifier = Modifier.padding(top = 16.dp), onClick = {})//개인정보 컴포넌트
-        AppTermsItem(modifier = Modifier.padding(top = 16.dp), onClick = {})//이용약관 컴포넌트
+        AppRateItem(modifier = Modifier.padding(top = 16.dp), onClick = {}/*onMoveRate*/)//앱 평가 컴포넌트, 화면은 추후 추가
+        AppCsItem(modifier = Modifier.padding(top = 16.dp), onClick = {}/*onMoveCs*/)//문의하기 컴포넌트, 화면은 추후 추가
+        AppPrivacyItem(modifier = Modifier.padding(top = 16.dp), onClick = onMovePrivacy)//개인정보 컴포넌트
+        AppTermsItem(modifier = Modifier.padding(top = 16.dp), onClick = onMoveTerms)//이용약관 컴포넌트
 
         AppTextItem(modifier = Modifier.padding(vertical = 20.dp))//바텀 앱 정보 컴포넌트
     }
