@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NueCoo</string>
+    <string name="app_name">nuecoo</string>
 
     <!-- Default -->
     <string name="close">닫기</string>

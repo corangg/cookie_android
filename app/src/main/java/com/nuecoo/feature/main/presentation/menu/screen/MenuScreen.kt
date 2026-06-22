@@ -1,5 +1,6 @@
 package com.nuecoo.feature.main.presentation.menu.screen
 
+import android.R.attr.version
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -52,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.nuecoo.BuildConfig
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.R
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
@@ -169,6 +171,9 @@ private fun MenuScreenContent(
         LogOutItem(
             modifier = Modifier.padding(top = 16.dp)
         )//로그아웃 컴포넌트
+
+        AppVersionItem(
+            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp))//앱 버전 컴포넌트
     }
 }
 
@@ -653,7 +658,7 @@ private fun WidgetText(isWidget: Boolean) {
 }
 
 @Composable
-private fun AppInfoItem(modifier: Modifier){
+private fun AppInfoItem(modifier: Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -695,7 +700,9 @@ private fun AppInfoItem(modifier: Modifier){
                 painter = painterResource(R.drawable.ic_next),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .size(28.dp)
             )
         }
     }
@@ -748,4 +755,18 @@ private fun LogOutItem(modifier: Modifier){
             )
         }
     }
+}
+
+
+@Composable
+private fun AppVersionItem(modifier: Modifier){
+    Text(
+        modifier = modifier.fillMaxWidth(),
+        text = "${stringResource(R.string.app_name)} · ${BuildConfig.VERSION_NAME}",
+        color = SubText,
+        fontSize = 12.sp,
+        fontFamily = FontFamily(Font(R.font.title_font)),
+        fontWeight = FontWeight.Medium,
+        textAlign = TextAlign.Center
+    )
 }
