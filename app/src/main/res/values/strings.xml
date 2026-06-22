@@ -70,6 +70,9 @@
     <string name="text_menu_attendance">일 연속 출석</string>
     <string name="text_menu_attendance_complete">출석 완료</string>
     <string name="text_menu_attend">출석 하기</string>
+    <string name="text_menu_widget">위젯</string>
+    <string name="text_menu_widget_on">홈 화면에서 쿠키 준비 중</string>
+    <string name="text_menu_widget_off">위젯이 꺼져 있어요</string>
 
 
 

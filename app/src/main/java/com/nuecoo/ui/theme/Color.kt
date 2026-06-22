@@ -41,6 +41,13 @@ val AttendanceComplete = Color(0xFFe0750f)
 val CheckAttendance = Color(0xFFcf7639)
 val CheckNonAttendance = Color(0xFFece0c8)
 
+val WidgetActiveBackground = Color(0xFFfbe6cf)
+val WidgetInActiveBackground = Color(0xFFece0c8)
+val WidgetActive = Color(0xFFe0750f)
+val WidgetInActive = Color(0xFFa89878)
+val WidgetOn = Color(0xFFcf7639)
+val WidgetOff = Color(0xFFece0c8)
+
 
 val CheeringColor = Color(0xFFFFC83D)
 val ComfortColor = Color(0xFFECDDB8)

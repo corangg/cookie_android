@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -71,6 +74,12 @@ import com.nuecoo.ui.theme.SubText
 import com.nuecoo.ui.theme.SubTitle
 import com.nuecoo.ui.theme.UnknownColor
 import com.nuecoo.ui.theme.White
+import com.nuecoo.ui.theme.WidgetActive
+import com.nuecoo.ui.theme.WidgetActiveBackground
+import com.nuecoo.ui.theme.WidgetInActive
+import com.nuecoo.ui.theme.WidgetInActiveBackground
+import com.nuecoo.ui.theme.WidgetOff
+import com.nuecoo.ui.theme.WidgetOn
 import com.nuecoo.viewmodel.CollectionProgress
 import com.nuecoo.viewmodel.MenuViewModel
 import getCookieTypeColor
@@ -134,6 +143,8 @@ private fun MenuScreenContent(
             modifier = Modifier.padding(top = 16.dp),
             progressList = progress
         )//콜랙션 컴포넌트
+
+        WidgetItem(modifier = Modifier.padding(top = 16.dp), isWidget = true)//위젯 컴포넌트
     }
 }
 
@@ -537,6 +548,83 @@ private fun CollectionProgressText(modifier: Modifier, progressData: CollectionP
         lineHeight = 16.sp
     )
 }
+
+@Composable
+private fun WidgetItem(modifier: Modifier, isWidget: Boolean) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(32.dp))
+            .background(ItemCardBackground)
+            .padding(horizontal = 20.dp, vertical = 20.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            WidgetIcon(isWidget)//위젯 아이콘
+            WidgetText(isWidget)//위젯 텍스트
+            Spacer(modifier = Modifier.weight(1f))
+
+            Switch(
+                modifier = Modifier.scale(1.15f),
+                checked = true,
+                onCheckedChange = { checked ->
+                    //viewModel.changeEnabled(checked)
+                },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedTrackColor = WidgetOn,
+                    uncheckedThumbColor = Color.White,
+                    uncheckedTrackColor = WidgetOff,
+                    uncheckedBorderColor = Color.Transparent,
+                    checkedBorderColor = Color.Transparent
+                ),
+            )
+        }
+    }
+}
+
+@Composable
+private fun WidgetIcon(isWidget: Boolean) {
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(if (isWidget) WidgetActiveBackground else WidgetInActiveBackground),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_widget),
+            colorFilter = if(isWidget) ColorFilter.tint(WidgetActive) else ColorFilter.tint(WidgetInActive),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.size(24.dp)
+        )
+    }
+}
+
+@Composable
+private fun WidgetText(isWidget: Boolean) {
+    Column(modifier = Modifier.padding(start = 16.dp)) {
+        Text(
+            text = stringResource(R.string.text_menu_widget),
+            color = MainText,
+            fontFamily = FontFamily(Font(R.font.title_font)),
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            lineHeight = 16.sp
+        )
+        Text(
+            modifier = Modifier.padding(top = 2.dp),
+            text = stringResource(if (isWidget) R.string.text_menu_widget_on else R.string.text_menu_widget_off),
+            color = SubText,
+            fontWeight = FontWeight.Medium,
+            fontSize = 12.sp,
+            lineHeight = 12.sp
+        )
+    }
+}
+
 
 
 /*@Composable
