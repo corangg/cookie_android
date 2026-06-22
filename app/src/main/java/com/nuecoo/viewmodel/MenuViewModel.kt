@@ -11,6 +11,8 @@ import com.nuecoo.feature.main.domain.usecase.CheckTodayAttendance
 import com.nuecoo.feature.main.domain.usecase.GetAttendanceCount
 import com.nuecoo.feature.main.domain.usecase.GetCollectionByTypeUseCase
 import com.nuecoo.feature.main.domain.usecase.GetWeeklyAttendance
+import com.nuecoo.feature.widget.domain.usecase.GetWidgetEnabledUseCase
+import com.nuecoo.feature.widget.domain.usecase.SaveWidgetEnabledUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.MainCoroutineDispatcher
@@ -26,9 +28,11 @@ data class CollectionProgress(val type: Int, val collected: Int, val total: Int)
 class MenuViewModel @Inject constructor(
     private val getCollectionByTypeUseCase: GetCollectionByTypeUseCase,
     private val logoutUseCase: LogoutUseCase,
+    private val saveWidgetEnabledUseCase: SaveWidgetEnabledUseCase,
     getAttendanceCount: GetAttendanceCount,
     checkTodayAttendance: CheckTodayAttendance,
     getWeeklyAttendance: GetWeeklyAttendance,
+    getWidgetEnabledUseCase: GetWidgetEnabledUseCase,
     @MainDispatcher mainDispatcher: MainCoroutineDispatcher,
     @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
     @IoDispatcher ioDispatcher: CoroutineDispatcher
@@ -41,6 +45,7 @@ class MenuViewModel @Inject constructor(
     val isTodayAttendance = checkTodayAttendance().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     val weeklyAttendance = getWeeklyAttendance().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val widgetEnabled = getWidgetEnabledUseCase().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     fun loadCollectionProgress(list: List<Pair<CookieType, Int>>) = onIoWork {
         val progressList = list.map { cookieData ->
             val items = getCollectionByTypeUseCase(cookieData.first.type, cookieData.second)
@@ -53,6 +58,10 @@ class MenuViewModel @Inject constructor(
         }
 
         _collectionProgress.value = progressList
+    }
+
+    fun saveWidgetEnabled(enabled: Boolean) = onIoWork {
+        saveWidgetEnabledUseCase(enabled)
     }
 
     suspend fun logout(): Boolean = logoutUseCase()

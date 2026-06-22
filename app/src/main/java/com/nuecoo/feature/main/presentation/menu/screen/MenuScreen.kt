@@ -94,6 +94,7 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), onMoveOven: () -> Uni
     val attendanceCount by viewModel.attendanceCount.collectAsStateWithLifecycle()
     val isTodayAttendance by viewModel.isTodayAttendance.collectAsStateWithLifecycle()
     val weeklyAttendance by viewModel.weeklyAttendance.collectAsStateWithLifecycle()
+    val widgetEnabled by viewModel.widgetEnabled.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.loadCollectionProgress(context.getCookieTypeListSize())
@@ -105,7 +106,11 @@ fun MenuScreen(viewModel: MenuViewModel = hiltViewModel(), onMoveOven: () -> Uni
         attendanceCount = attendanceCount ?: 0,
         isTodayAttendance = isTodayAttendance,
         weeklyAttendance = weeklyAttendance,
-        onMoveOven = onMoveOven
+        isWidgetEnabled = widgetEnabled,
+        onMoveOven = onMoveOven,
+        onSaveWidgetEnabled = {
+            viewModel.saveWidgetEnabled(it)
+        }
     )
 }
 
@@ -116,7 +121,9 @@ private fun MenuScreenContent(
     attendanceCount: Int,
     isTodayAttendance: Boolean,
     weeklyAttendance: List<WeeklyAttendanceModel>,
-    onMoveOven: () -> Unit
+    isWidgetEnabled: Boolean,
+    onMoveOven: () -> Unit,
+    onSaveWidgetEnabled: (Boolean) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -144,7 +151,11 @@ private fun MenuScreenContent(
             progressList = progress
         )//콜랙션 컴포넌트
 
-        WidgetItem(modifier = Modifier.padding(top = 16.dp), isWidget = true)//위젯 컴포넌트
+        WidgetItem(
+            modifier = Modifier.padding(top = 16.dp),
+            isWidget = isWidgetEnabled,
+            onSaveWidgetEnabled = onSaveWidgetEnabled
+        )//위젯 컴포넌트
     }
 }
 
@@ -550,7 +561,11 @@ private fun CollectionProgressText(modifier: Modifier, progressData: CollectionP
 }
 
 @Composable
-private fun WidgetItem(modifier: Modifier, isWidget: Boolean) {
+private fun WidgetItem(
+    modifier: Modifier,
+    isWidget: Boolean,
+    onSaveWidgetEnabled: (Boolean) -> Unit
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -567,9 +582,9 @@ private fun WidgetItem(modifier: Modifier, isWidget: Boolean) {
 
             Switch(
                 modifier = Modifier.scale(1.15f),
-                checked = true,
+                checked = isWidget,
                 onCheckedChange = { checked ->
-                    //viewModel.changeEnabled(checked)
+                    onSaveWidgetEnabled(checked)
                 },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color.White,
