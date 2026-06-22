@@ -42,9 +42,9 @@ class InitDailyCookieUseCase @Inject constructor(
             .filter { it != CookieType.Unknown }
             .map { cookieType ->
                 val cookieItemList = dailyList.flatMap { dailyData ->
-                    dailyData.list.filter { it.type == cookieType.type }
+                    dailyData.list.filter { it.type == cookieType.type && it.no != null }
                 }
-                val isFull = cookieItemList.size == list.find { it.first == cookieType }?.second
+                val isFull = cookieItemList.size >= (list.find { it.first == cookieType }?.second ?: 0)
 
                 CookieItemData(
                     type = cookieType.type,
