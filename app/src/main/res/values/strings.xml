@@ -9,6 +9,7 @@
     <string name="month">월</string>
     <string name="day">일</string>
     <string name="of">의</string>
+    <string name="cookie">쿠키</string>
 
     <!-- Bottom Nav -->
     <string name="menu_main_oven">오븐</string>
@@ -52,6 +53,18 @@
     <string name="text_open_cookie_love_sub">마음을 전하는 한마디</string>
     <string name="text_open_cookie_error_main">오류</string>
     <string name="text_open_cookie_start_collection">도감으로 이동</string>
+
+    <string name="text_open_all_colleted_cheering">CHEER COMPLETE</string>
+    <string name="text_open_all_colleted_comfort">Comfort Complete</string>
+    <string name="text_open_all_colleted_passion">Passion Complete</string>
+    <string name="text_open_all_colleted_sermon">Sermon Complete</string>
+    <string name="text_open_all_colleted_love">Love Complete</string>
+    <string name="text_open_all_colleted_error">Error</string>
+    <string name="text_open_all_colleted_main">쿠키 수집 완료</string>
+    <string name="text_open_all_colleted_sub">쿠키를 모두 모았어요!</string>
+    <string name="text_open_all_colleted_cookie">완성 쿠키</string>
+    <string name="text_open_all_colleted_cookie_continue">다음 쿠키를 기대해 주세요!</string>
+    <string name="text_open_all_colleted_move_collection">도감 열기</string>
 
     <!-- Collection -->
     <string name="text_collection_title">도감</string>

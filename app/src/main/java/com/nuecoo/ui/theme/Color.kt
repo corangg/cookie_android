@@ -63,6 +63,12 @@ val SermonColor = Color(0xFF8A5A33)
 val LoveColor = Color(0xFFE58599)
 val UnknownColor = Color(0xFF9CA3AF)
 
+val CheeringBackgroundColor = Color(0xFFFFF0C2)
+val ComfortBackgroundColor = Color(0xFFFAF4E6)
+val PassionBackgroundColor = Color(0xFFFFE5CC)
+val SermonBackgroundColor = Color(0xFFE8D9CB)
+val LoveBackgroundColor = Color(0xFFFFE3E8)
+
 val ErrorRed = Color(0xFFEF4444)
 val GrayText = Color(0xFF9CA3AF)
 val White = Color(0xFFFFFFFF)

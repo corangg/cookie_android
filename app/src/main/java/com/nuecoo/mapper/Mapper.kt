@@ -5,10 +5,15 @@ import com.nuecoo.feature.main.domain.model.CookieItemData
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.CookieTypeData
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
+import com.nuecoo.ui.theme.CheeringBackgroundColor
 import com.nuecoo.ui.theme.CheeringColor
+import com.nuecoo.ui.theme.ComfortBackgroundColor
 import com.nuecoo.ui.theme.ComfortColor
+import com.nuecoo.ui.theme.LoveBackgroundColor
 import com.nuecoo.ui.theme.LoveColor
+import com.nuecoo.ui.theme.PassionBackgroundColor
 import com.nuecoo.ui.theme.PassionColor
+import com.nuecoo.ui.theme.SermonBackgroundColor
 import com.nuecoo.ui.theme.SermonColor
 import com.nuecoo.ui.theme.UnknownColor
 
@@ -21,6 +26,8 @@ data class CookieTypeResource(
     val mainTextRes: Int,
     val subTextRes: Int,
     val color: Color,
+    val backgroundColor: Color,
+    val allCollectedTextRes: Int
 )
 
 private val COOKIE_TYPE_RESOURCES = listOf(
@@ -39,7 +46,9 @@ private val COOKIE_TYPE_RESOURCES = listOf(
         ),
         mainTextRes = R.string.text_open_cookie_cheer_main,
         subTextRes = R.string.text_open_cookie_cheer_sub,
-        color = CheeringColor
+        color = CheeringColor,
+        backgroundColor = CheeringBackgroundColor,
+        allCollectedTextRes = R.string.text_open_all_colleted_cheering
     ),
     CookieTypeResource(
         type = CookieType.Comfort,
@@ -56,7 +65,9 @@ private val COOKIE_TYPE_RESOURCES = listOf(
         ),
         mainTextRes = R.string.text_open_cookie_comfort_main,
         subTextRes = R.string.text_open_cookie_comfort_sub,
-        color = ComfortColor
+        color = ComfortColor,
+        backgroundColor = ComfortBackgroundColor,
+        allCollectedTextRes = R.string.text_open_all_colleted_comfort
     ),
     CookieTypeResource(
         type = CookieType.Passion,
@@ -73,7 +84,9 @@ private val COOKIE_TYPE_RESOURCES = listOf(
         ),
         mainTextRes = R.string.text_open_cookie_passion_main,
         subTextRes = R.string.text_open_cookie_passion_sub,
-        color = PassionColor
+        color = PassionColor,
+        backgroundColor = PassionBackgroundColor,
+        allCollectedTextRes = R.string.text_open_all_colleted_passion
     ),
     CookieTypeResource(
         type = CookieType.Sermon,
@@ -90,7 +103,9 @@ private val COOKIE_TYPE_RESOURCES = listOf(
         ),
         mainTextRes = R.string.text_open_cookie_sermon_main,
         subTextRes = R.string.text_open_cookie_sermon_sub,
-        color = SermonColor
+        color = SermonColor,
+        backgroundColor = SermonBackgroundColor,
+        allCollectedTextRes = R.string.text_open_all_colleted_sermon
     ),
     CookieTypeResource(
         type = CookieType.Love,
@@ -107,7 +122,9 @@ private val COOKIE_TYPE_RESOURCES = listOf(
         ),
         mainTextRes = R.string.text_open_cookie_love_main,
         subTextRes = R.string.text_open_cookie_love_sub,
-        color = LoveColor
+        color = LoveColor,
+        backgroundColor = LoveBackgroundColor,
+        allCollectedTextRes = R.string.text_open_all_colleted_love
     )
 )
 
@@ -180,13 +197,22 @@ fun getCookieTypeColor(type: Int?): Color {
     return getCookieTypeResource(type)?.color ?: UnknownColor
 }
 
+fun getCookieTypeBackgroundColor(type: Int?): Color {
+    return getCookieTypeResource(type)?.backgroundColor ?: UnknownColor
+}
+
 fun getCookieTypeMainTextRes(type: Int): Int {
     return getCookieTypeResource(type)?.mainTextRes
         ?: R.string.text_open_cookie_error_main
 }
 
+fun getCookieTypeAllCollectedTextRes(type: Int): Int {
+    return getCookieTypeResource(type)?.allCollectedTextRes
+        ?: R.string.text_open_all_colleted_error
+}
+
 fun getCookieTypeSubTextRes(type: Int): Int {
-    return getCookieTypeResource(type)?.subTextRes ?: 0
+    return getCookieTypeResource(type)?.subTextRes ?: R.string.text_open_cookie_error_main
 }
 
 fun Context.getCookieTypeListSize(): List<Pair<CookieType, Int>> {

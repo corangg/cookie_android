@@ -1,7 +1,10 @@
 package com.nuecoo.feature.main.presentation.oven.screen
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,13 +17,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,7 +32,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -49,21 +58,26 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.R
+import com.nuecoo.core.ui.component.DefaultItemBox
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
 import com.nuecoo.feature.main.presentation.main.component.MainTitleItem
 import com.nuecoo.feature.main.presentation.oven.viewmodel.OvenViewModel
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
-import com.nuecoo.ui.theme.MainButton
 import com.nuecoo.ui.theme.MainText
 import com.nuecoo.ui.theme.MainTitle
-import com.nuecoo.ui.theme.ItemCardBackground
 import com.nuecoo.ui.theme.NueCooTheme
+import com.nuecoo.ui.theme.ProgressBackground
 import com.nuecoo.ui.theme.SubText
+import com.nuecoo.ui.theme.SubTitle
 import com.nuecoo.ui.theme.White
 import getCookieMessageResMap
+import getCookieTypeAllCollectedTextRes
+import getCookieTypeBackgroundColor
+import getCookieTypeColor
 import getCookieTypeListSize
+import getCookieTypeMainTextRes
 import kotlinx.coroutines.launch
 import toUiItem
 
@@ -119,7 +133,7 @@ private fun OvenScreenContent(
     onCookieClose: () -> Unit,
     onCookieOpened: (Int) -> Unit,
     onMoveCollection: () -> Unit,
-    ) {
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -149,6 +163,7 @@ private fun OvenScreenContent(
                 .weight(1f)
                 .padding(horizontal = 12.dp),
             list = cookieList,
+            onMoveCollection = onMoveCollection,
             openCookie = onCookieClick
         )//쿠키 트레이
 
@@ -193,6 +208,7 @@ private fun TimerInitCookie(time: String) {
 private fun CookieTray(
     modifier: Modifier,
     list: List<CookieUIItemData>,
+    onMoveCollection: () -> Unit,
     openCookie: (CookieUIItemData) -> Unit
 ) {
     Box(
@@ -217,6 +233,7 @@ private fun CookieTray(
             items(list, key = { it.type }) { item ->
                 CookieItem(
                     data = item,
+                    onMoveCollection = onMoveCollection,
                     onClick = { openCookie(item) }
                 )
             }
@@ -266,14 +283,17 @@ private fun showOpenedCookie(
 }
 
 @Composable
-fun CookieItem(data: CookieUIItemData, onClick: () -> Unit) {
+fun CookieItem(data: CookieUIItemData, onMoveCollection: () -> Unit, onClick: () -> Unit) {
     val scale = remember { Animatable(1f) }
     val coroutineScope = rememberCoroutineScope()
     val interactionSource = remember { MutableInteractionSource() }
     var showFullDialog by remember { mutableStateOf(false) }
 
     if (showFullDialog) {
-        AllCookieOpenedDialog(onDismiss = { showFullDialog = false })
+        AllCookieOpenedDialog(
+            type = data.type,
+            onMoveCollection = onMoveCollection,
+            onDismiss = { showFullDialog = false })
     }
 
     Image(
@@ -301,50 +321,6 @@ fun CookieItem(data: CookieUIItemData, onClick: () -> Unit) {
                 }
             }
     )
-}
-
-@Composable
-private fun AllCookieOpenedDialog(onDismiss: () -> Unit) {
-    Dialog(onDismissRequest = onDismiss) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(32.dp))
-                .background(ItemCardBackground)
-                .padding(horizontal = 24.dp, vertical = 28.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(R.string.text_toast_cookie_all_collect),
-                color = MainText,
-                fontFamily = FontFamily(Font(R.font.title_font)),
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 16.sp,
-                lineHeight = 24.sp,
-                textAlign = TextAlign.Center
-            )
-
-            Box(
-                modifier = Modifier
-                    .padding(top = 20.dp)
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MainButton)
-                    .clickable(onClick = onDismiss)
-                    .padding(vertical = 14.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.btn_ok),
-                    color = White,
-                    fontFamily = FontFamily(Font(R.font.title_font)),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-    }
 }
 
 @Preview(
@@ -387,6 +363,285 @@ private fun OvenScreenPreview() {
             onCookieOpened = {},
             onMoveCollection = {},
             notOpenedCookies = 1
+        )
+    }
+}
+
+@Composable
+private fun AllCookieOpenedDialog(type: Int, onMoveCollection: () -> Unit, onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val defaultColor = getCookieTypeColor(type)
+    val backgroundColor = getCookieTypeBackgroundColor(type)
+    val cookieText = stringResource(getCookieTypeMainTextRes(type))
+    val allCollectedText = stringResource(getCookieTypeAllCollectedTextRes(type))
+    val totalCount = context.getCookieTypeListSize().find { it.first.type == type }?.second ?: 0
+
+    Dialog(onDismissRequest = onDismiss) {
+        DefaultItemBox {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                DialogCard(
+                    modifier = Modifier.padding(top = 10.dp),
+                    mainColor = defaultColor,
+                    subColor = backgroundColor,
+                    title = allCollectedText
+                )//상단 타이틀 카드
+
+                CookieCircleProgress(
+                    color = defaultColor,
+                    total = totalCount,
+                    modifier = Modifier.padding(top = 20.dp)
+                )//원형 프로그래스
+
+                DialogTitle(
+                    modifier = Modifier.padding(top = 20.dp),
+                    color = defaultColor,
+                    text = cookieText,
+                )//다이얼로그 타이틀
+
+                DialogSub(
+                    modifier = Modifier.padding(top = 16.dp),
+                    text = cookieText,
+                )//다이얼로그 바디
+
+                DialogBottomCard(
+                    modifier = Modifier.padding(top = 20.dp),
+                    mainColor = defaultColor,
+                    subColor = backgroundColor
+                )//하단 카드
+
+                DialogCollectionButton(
+                    modifier = Modifier.padding(top = 24.dp),
+                    onMove = onMoveCollection,
+                    onDismiss = onDismiss,
+                    color = defaultColor
+                )//콜렉션 이동 버튼
+
+                DialogClose(
+                    modifier = Modifier.padding(top = 16.dp, bottom = 20.dp),
+                    onDismiss = onDismiss
+                )//닫기 버튼
+            }
+        }
+    }
+}
+
+@Composable
+private fun DialogCard(modifier: Modifier, mainColor: Color, subColor: Color, title: String) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(subColor)
+            .padding(vertical = 4.dp, horizontal = 24.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = title,
+            color = mainColor,
+            fontFamily = FontFamily(Font(R.font.title_font)),
+            fontWeight = FontWeight.Bold,
+            fontSize = 12.sp,
+            letterSpacing = 2.sp,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun CookieCircleProgress(
+    color: Color,
+    total: Int,
+    modifier: Modifier = Modifier
+) {
+    val animatedProgress by animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(
+            durationMillis = 1000,
+            easing = FastOutSlowInEasing
+        ),
+        label = "circleProgressAnimation"
+    )
+
+    Box(
+        modifier = modifier.size(80.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val strokeWidth = 9.dp.toPx()
+            val arcSize = size.minDimension - strokeWidth
+
+            drawArc(
+                color = ProgressBackground,
+                startAngle = 0f,
+                sweepAngle = 360f,
+                useCenter = false,
+                topLeft = Offset(strokeWidth / 2, strokeWidth / 2),
+                size = Size(arcSize, arcSize),
+                style = Stroke(
+                    width = strokeWidth,
+                    cap = StrokeCap.Round
+                )
+            )
+
+            drawArc(
+                color = color,
+                startAngle = -90f,
+                sweepAngle = 360f * animatedProgress,
+                useCenter = false,
+                topLeft = Offset(strokeWidth / 2, strokeWidth / 2),
+                size = Size(arcSize, arcSize),
+                style = Stroke(
+                    width = strokeWidth,
+                    cap = StrokeCap.Round
+                )
+            )
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "$total",
+                color = color,
+                fontSize = 14.sp,
+                lineHeight = 14.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = FontFamily(Font(R.font.cookie_run_bold)),
+            )
+
+            Text(
+                text = "/$total",
+                color = SubTitle,
+                fontFamily = FontFamily(Font(R.font.cookie_run_bold)),
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                lineHeight = 14.sp
+            )
+        }
+    }
+}
+
+@Composable
+private fun DialogTitle(modifier: Modifier, color: Color, text: String) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            color = color,
+            fontFamily = FontFamily(Font(R.font.title_font)),
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            lineHeight = 26.sp,
+            textAlign = TextAlign.Center
+        )
+
+        Text(
+            modifier = Modifier.padding(start = 8.dp),
+            text = stringResource(R.string.text_open_all_colleted_main),
+            color = MainText,
+            fontFamily = FontFamily(Font(R.font.title_font)),
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            lineHeight = 26.sp,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun DialogSub(modifier: Modifier, text: String) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.padding(start = 8.dp),
+            text = "$text ${stringResource(R.string.text_open_all_colleted_sub)}",
+            color = SubText,
+            fontWeight = FontWeight.Medium,
+            fontSize = 16.sp,
+            lineHeight = 18.sp,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun DialogBottomCard(modifier: Modifier, mainColor: Color, subColor: Color) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(subColor)
+            .padding(vertical = 14.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(R.string.text_open_all_colleted_cookie_continue),
+            color = mainColor,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp,
+            lineHeight = 18.sp,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun DialogCollectionButton(
+    modifier: Modifier,
+    onMove: () -> Unit,
+    onDismiss: () -> Unit,
+    color: Color
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(color)
+            .clickable(onClick = {
+                //onDismiss()
+                onMove()
+            })
+            .padding(vertical = 16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(R.string.text_open_all_colleted_move_collection),
+            color = White,
+            fontFamily = FontFamily(Font(R.font.title_font)),
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun DialogClose(
+    modifier: Modifier,
+    onDismiss: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(50))
+            .clickable(onClick = onDismiss)
+            .padding(vertical = 8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier,
+            text = stringResource(R.string.close),
+            color = SubText,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp
         )
     }
 }
