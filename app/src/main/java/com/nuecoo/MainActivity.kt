@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import com.nuecoo.core.ui.BaseActivity
 import com.nuecoo.core.ui.showSimpleDialog
 import com.nuecoo.core.util.hasNotificationPermission
-import com.nuecoo.navigation.AppNavigation
+import com.nuecoo.core.navigation.AppNavigation
 import com.nuecoo.ui.theme.NueCooTheme
 import dagger.hilt.android.AndroidEntryPoint
 

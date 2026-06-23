@@ -1,4 +1,4 @@
-package com.nuecoo.viewmodel
+package com.nuecoo.feature.splash.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -7,12 +7,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.nuecoo.core.navigation.Route
-import com.nuecoo.ui.screen.LoginScreen
+import com.nuecoo.feature.auth.presentation.login.screen.LoginScreen
 import com.nuecoo.ui.screen.SignUpBirthScreen
 import com.nuecoo.ui.screen.SignUpEmailScreen
 import com.nuecoo.ui.screen.SignUpPhoneScreen
 import com.nuecoo.ui.screen.SignUpPwScreen
-import com.nuecoo.ui.screen.SplashScreen
+import com.nuecoo.feature.splash.presentation.screen.SplashScreen
 import com.nuecoo.viewmodel.SignUpViewModel
 
 fun NavGraphBuilder.authNavGraph(navController: NavHostController) {

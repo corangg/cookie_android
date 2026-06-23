@@ -1,4 +1,4 @@
-package com.nuecoo.ui.screen
+package com.nuecoo.feature.splash.presentation.screen
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -27,7 +27,7 @@ import androidx.navigation.NavController
 import com.nuecoo.R
 import com.nuecoo.core.navigation.Route
 import com.nuecoo.ui.theme.MainBackground
-import com.nuecoo.viewmodel.SplashViewModel
+import com.nuecoo.feature.splash.presentation.viewmodel.SplashViewModel
 import kotlinx.coroutines.delay
 
 @Composable
@@ -66,7 +66,7 @@ fun SplashScreen(
 
     LaunchedEffect(isLoggedIn) {
         isLoggedIn?.let { loggedIn ->
-            if (loggedIn) {
+            if (!loggedIn) {//로그인 ui를 위해 잠시 반전
                 navController.navigate(Route.MAIN) {
                     popUpTo(Route.SPLASH) { inclusive = true }
                 }
