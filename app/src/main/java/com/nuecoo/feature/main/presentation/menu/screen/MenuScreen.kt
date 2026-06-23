@@ -28,7 +28,6 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +57,8 @@ import com.nuecoo.R
 import com.nuecoo.core.ui.component.DefaultItemBox
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
 import com.nuecoo.feature.main.presentation.main.component.MainTitleItem
+import com.nuecoo.feature.main.presentation.menu.viewmodel.CollectionProgress
+import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
 import com.nuecoo.ui.theme.AttendanceActive
 import com.nuecoo.ui.theme.AttendanceComplete
 import com.nuecoo.ui.theme.AttendanceInActive
@@ -83,8 +84,6 @@ import com.nuecoo.ui.theme.WidgetInActive
 import com.nuecoo.ui.theme.WidgetInActiveBackground
 import com.nuecoo.ui.theme.WidgetOff
 import com.nuecoo.ui.theme.WidgetOn
-import com.nuecoo.feature.main.presentation.menu.viewmodel.CollectionProgress
-import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
 import getCookieTypeColor
 import getCookieTypeList
 import getCookieTypeListSize
@@ -96,8 +95,8 @@ fun MenuScreen(
     onMoveAppInfo: () -> Unit,
 ) {
     val context = LocalContext.current
-    val progress by viewModel.collectionProgress.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+    val progress by viewModel.collectionProgress.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val attendanceCount by viewModel.attendanceCount.collectAsStateWithLifecycle()
     val isTodayAttendance by viewModel.isTodayAttendance.collectAsStateWithLifecycle()
     val weeklyAttendance by viewModel.weeklyAttendance.collectAsStateWithLifecycle()
@@ -178,7 +177,8 @@ private fun MenuScreenContent(
         )//로그아웃 컴포넌트
 
         AppVersionItem(
-            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp))//앱 버전 컴포넌트
+            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
+        )//앱 버전 컴포넌트
     }
 }
 
@@ -617,7 +617,9 @@ private fun WidgetIcon(isWidget: Boolean) {
     ) {
         Image(
             painter = painterResource(R.drawable.ic_widget),
-            colorFilter = if(isWidget) ColorFilter.tint(WidgetActive) else ColorFilter.tint(WidgetInActive),
+            colorFilter = if (isWidget) ColorFilter.tint(WidgetActive) else ColorFilter.tint(
+                WidgetInActive
+            ),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.size(24.dp)
@@ -693,7 +695,7 @@ private fun AppInfoItem(modifier: Modifier, onClick: () -> Unit) {
 }
 
 @Composable
-private fun LogOutItem(modifier: Modifier){
+private fun LogOutItem(modifier: Modifier) {
     DefaultItemBox(modifier = modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -736,7 +738,7 @@ private fun LogOutItem(modifier: Modifier){
 }
 
 @Composable
-private fun AppVersionItem(modifier: Modifier){
+private fun AppVersionItem(modifier: Modifier) {
     Text(
         modifier = modifier.fillMaxWidth(),
         text = "${stringResource(R.string.app_name)} · ${BuildConfig.VERSION_NAME}",

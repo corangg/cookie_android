@@ -86,8 +86,8 @@ fun OvenScreen(viewModel: OvenViewModel = hiltViewModel(), onMoveCollection: () 
     val context = LocalContext.current
     val dailyCookieData by viewModel.dailyCookieData.collectAsStateWithLifecycle()
     val notOpenedCookies by viewModel.notOpenedCookies.collectAsStateWithLifecycle()
-    val remainTime by viewModel.remainTime.collectAsState()
-    val selectedCookie by viewModel.selectedCookie.collectAsState()
+    val remainTime by viewModel.remainTime.collectAsStateWithLifecycle()
+    val selectedCookie by viewModel.selectedCookie.collectAsStateWithLifecycle()
 
     val cookieMessageResMap = getCookieMessageResMap()
 

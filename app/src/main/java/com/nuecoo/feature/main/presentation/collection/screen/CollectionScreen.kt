@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.R
 import com.nuecoo.core.ui.component.CommonDropDown
 import com.nuecoo.core.ui.model.CommonDropDownItem
@@ -93,12 +94,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun CollectionScreen(viewModel: CollectionViewModel = hiltViewModel()) {
     val context = LocalContext.current
-    val items by viewModel.items.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val selectedType by viewModel.selectedCookieType.collectAsState()
-    val showCollectedOnly by viewModel.showCollectedOnly.collectAsState()
-    val sortType by viewModel.sortType.collectAsState()
-    val selectedItem by viewModel.selectedItem.collectAsState()
+    val items by viewModel.items.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val selectedType by viewModel.selectedCookieType.collectAsStateWithLifecycle()
+    val showCollectedOnly by viewModel.showCollectedOnly.collectAsStateWithLifecycle()
+    val sortType by viewModel.sortType.collectAsStateWithLifecycle()
+    val selectedItem by viewModel.selectedItem.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.initCollectionList(context.getCookieTypeListSize())
