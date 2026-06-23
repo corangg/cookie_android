@@ -71,7 +71,7 @@ fun SplashScreen(
                     popUpTo(Route.SPLASH) { inclusive = true }
                 }
             } else {
-                navController.navigate(Route.LOGIN) {
+                navController.navigate(Route.Login.GRAPH) {
                     popUpTo(Route.SPLASH) { inclusive = true }
                 }
             }

@@ -133,7 +133,9 @@ private fun EmailInputRow(
 ) {
     var expanded by remember { mutableStateOf(false) }
     Row(
-        modifier = Modifier.fillMaxWidth().height(56.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -148,7 +150,9 @@ private fun EmailInputRow(
                 focusedBorderColor = MainBorder, unfocusedBorderColor = MainBorder.copy(0.6f)
             ),
             shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.weight(4f).fillMaxWidth()
+            modifier = Modifier
+                .weight(4f)
+                .fillMaxWidth()
         )
         Text("@", color = MainBorder, fontSize = 16.sp)
         ExposedDropdownMenuBox(
@@ -163,12 +167,17 @@ private fun EmailInputRow(
                 singleLine = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MainBorder, unfocusedTextColor = MainBorder,
-                    focusedContainerColor = MainBackground, unfocusedContainerColor = MainBackground,
-                    focusedBorderColor = MainBorder, unfocusedBorderColor = MainBorder.copy(0.6f)
+                    focusedTextColor = MainBorder,
+                    unfocusedTextColor = MainBorder,
+                    focusedContainerColor = MainBackground,
+                    unfocusedContainerColor = MainBackground,
+                    focusedBorderColor = MainBorder,
+                    unfocusedBorderColor = MainBorder.copy(0.6f)
                 ),
                 shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.menuAnchor().fillMaxWidth()
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
             )
             ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 domains.forEach { domain ->
@@ -214,12 +223,17 @@ fun SignUpPwScreen(
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MainBorder, unfocusedTextColor = MainBorder,
-                    focusedContainerColor = MainBackground, unfocusedContainerColor = MainBackground,
-                    focusedBorderColor = MainBorder, unfocusedBorderColor = MainBorder.copy(0.6f)
+                    focusedTextColor = MainBorder,
+                    unfocusedTextColor = MainBorder,
+                    focusedContainerColor = MainBackground,
+                    unfocusedContainerColor = MainBackground,
+                    focusedBorderColor = MainBorder,
+                    unfocusedBorderColor = MainBorder.copy(0.6f)
                 ),
                 shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth().height(56.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
             )
             if (!isPwValid && pwInput.isNotEmpty()) {
                 Text(
@@ -236,12 +250,17 @@ fun SignUpPwScreen(
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MainBorder, unfocusedTextColor = MainBorder,
-                    focusedContainerColor = MainBackground, unfocusedContainerColor = MainBackground,
-                    focusedBorderColor = MainBorder, unfocusedBorderColor = MainBorder.copy(0.6f)
+                    focusedTextColor = MainBorder,
+                    unfocusedTextColor = MainBorder,
+                    focusedContainerColor = MainBackground,
+                    unfocusedContainerColor = MainBackground,
+                    focusedBorderColor = MainBorder,
+                    unfocusedBorderColor = MainBorder.copy(0.6f)
                 ),
                 shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth().height(56.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
             )
             Spacer(Modifier.weight(1f))
             NueCooButton(
@@ -253,6 +272,7 @@ fun SignUpPwScreen(
                         PwCheckResult.NotAccordance -> scope.launch {
                             snackbarHostState.showSnackbar("비밀번호가 일치하지 않습니다")
                         }
+
                         PwCheckResult.NotValid -> scope.launch {
                             snackbarHostState.showSnackbar("비밀번호 형식을 확인해주세요")
                         }
@@ -299,12 +319,17 @@ fun SignUpPhoneScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MainBorder, unfocusedTextColor = MainBorder,
-                    focusedContainerColor = MainBackground, unfocusedContainerColor = MainBackground,
-                    focusedBorderColor = MainBorder, unfocusedBorderColor = MainBorder.copy(0.6f)
+                    focusedTextColor = MainBorder,
+                    unfocusedTextColor = MainBorder,
+                    focusedContainerColor = MainBackground,
+                    unfocusedContainerColor = MainBackground,
+                    focusedBorderColor = MainBorder,
+                    unfocusedBorderColor = MainBorder.copy(0.6f)
                 ),
                 shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth().height(56.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
             )
             Spacer(Modifier.height(12.dp))
             Row(
@@ -319,12 +344,17 @@ fun SignUpPhoneScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = MainBorder, unfocusedTextColor = MainBorder,
-                        focusedContainerColor = MainBackground, unfocusedContainerColor = MainBackground,
-                        focusedBorderColor = MainBorder, unfocusedBorderColor = MainBorder.copy(0.6f)
+                        focusedTextColor = MainBorder,
+                        unfocusedTextColor = MainBorder,
+                        focusedContainerColor = MainBackground,
+                        unfocusedContainerColor = MainBackground,
+                        focusedBorderColor = MainBorder,
+                        unfocusedBorderColor = MainBorder.copy(0.6f)
                     ),
                     shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.weight(7f).height(56.dp)
+                    modifier = Modifier
+                        .weight(7f)
+                        .height(56.dp)
                 )
                 Button(
                     onClick = {
@@ -341,10 +371,16 @@ fun SignUpPhoneScreen(
                         containerColor = MainButton, contentColor = MainBorder
                     ),
                     shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.weight(3f).height(56.dp)
+                    modifier = Modifier
+                        .weight(3f)
+                        .height(56.dp)
                         .border(2.dp, MainBorder, RoundedCornerShape(8.dp))
                 ) {
-                    Text(if (isCodeSent) "재전송" else "인증", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        if (isCodeSent) "재전송" else "인증",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
             if (isCodeSent) {
@@ -371,7 +407,10 @@ fun SignUpPhoneScreen(
             )
             Spacer(Modifier.height(20.dp))
         }
-        SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
 
@@ -401,11 +440,23 @@ fun SignUpBirthScreen(
             Text("성별", color = MainBorder, fontSize = 20.sp)
             Spacer(Modifier.height(16.dp))
             Row(
-                modifier = Modifier.fillMaxWidth().height(52.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                GenderButton(text = "남성", isSelected = isGender, onClick = { viewModel.setGender(true) }, modifier = Modifier.weight(1f))
-                GenderButton(text = "여성", isSelected = !isGender, onClick = { viewModel.setGender(false) }, modifier = Modifier.weight(1f))
+                GenderButton(
+                    text = "남성",
+                    isSelected = isGender,
+                    onClick = { viewModel.setGender(true) },
+                    modifier = Modifier.weight(1f)
+                )
+                GenderButton(
+                    text = "여성",
+                    isSelected = !isGender,
+                    onClick = { viewModel.setGender(false) },
+                    modifier = Modifier.weight(1f)
+                )
             }
             Spacer(Modifier.height(32.dp))
             Text("생년월일", color = MainBorder, fontSize = 20.sp)
@@ -420,7 +471,10 @@ fun SignUpBirthScreen(
             )
             Spacer(Modifier.weight(1f))
             if (isLoading) {
-                CircularProgressIndicator(color = MainBorder, modifier = Modifier.align(Alignment.CenterHorizontally))
+                CircularProgressIndicator(
+                    color = MainBorder,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             } else {
                 NueCooButton(
                     text = "가입 완료",
@@ -431,7 +485,7 @@ fun SignUpBirthScreen(
                             val ok = viewModel.trySignUp()
                             if (ok) {
                                 snackbarHostState.showSnackbar("회원가입이 완료되었습니다")
-                                navController.navigate(Route.LOGIN) {
+                                navController.navigate(Route.Login) {
                                     popUpTo(Route.SignUp.GRAPH) { inclusive = true }
                                 }
                             } else {
@@ -443,12 +497,20 @@ fun SignUpBirthScreen(
             }
             Spacer(Modifier.height(20.dp))
         }
-        SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
 
 @Composable
-private fun GenderButton(text: String, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun GenderButton(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
@@ -473,9 +535,27 @@ private fun BirthPicker(
     val days = (1..31).toList()
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        PickerDropdown("년도", years.map { "${it}년" }, years.indexOf(year), { onYearChange(years[it]) }, Modifier.weight(3f))
-        PickerDropdown("월", months.map { "${it}월" }, months.indexOf(month), { onMonthChange(months[it]) }, Modifier.weight(2f))
-        PickerDropdown("일", days.map { "${it}일" }, days.indexOf(day), { onDayChange(days[it]) }, Modifier.weight(2f))
+        PickerDropdown(
+            "년도",
+            years.map { "${it}년" },
+            years.indexOf(year),
+            { onYearChange(years[it]) },
+            Modifier.weight(3f)
+        )
+        PickerDropdown(
+            "월",
+            months.map { "${it}월" },
+            months.indexOf(month),
+            { onMonthChange(months[it]) },
+            Modifier.weight(2f)
+        )
+        PickerDropdown(
+            "일",
+            days.map { "${it}일" },
+            days.indexOf(day),
+            { onDayChange(days[it]) },
+            Modifier.weight(2f)
+        )
     }
 }
 
@@ -486,7 +566,11 @@ private fun PickerDropdown(
     onSelect: (Int) -> Unit, modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }, modifier = modifier) {
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = modifier
+    ) {
         OutlinedTextField(
             value = if (selectedIndex >= 0) items[selectedIndex] else label,
             onValueChange = {},
@@ -499,7 +583,9 @@ private fun PickerDropdown(
                 focusedBorderColor = MainBorder, unfocusedBorderColor = MainBorder.copy(0.6f)
             ),
             shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.menuAnchor().fillMaxWidth()
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
         )
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             items.forEachIndexed { i, item ->
@@ -512,7 +598,9 @@ private fun PickerDropdown(
 @Composable
 fun SignUpTopBar(title: String, onBack: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         androidx.compose.material3.IconButton(onClick = onBack) {
