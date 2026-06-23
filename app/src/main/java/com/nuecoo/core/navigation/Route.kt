@@ -10,10 +10,12 @@ object Route {
     const val APP_TERMS = "app_terms"
 
     object Login {
-        const val GRAPH = "login"
-        const val HOME  = "login/home"
-        const val KAKAO = "login/kakao"
-        const val EMAIL = "login/email"
+        const val GRAPH      = "login"
+        const val HOME       = "login/home"
+        const val KAKAO      = "login/kakao"
+        const val EMAIL      = "login/email"
+        const val FIND_EMAIL = "login/find-email"
+        const val FIND_PW    = "login/find-pw"
     }
 
     object SignUp {

@@ -7,6 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.nuecoo.core.navigation.Route
+import com.nuecoo.feature.auth.presentation.login.screen.FindEmailScreen
+import com.nuecoo.feature.auth.presentation.login.screen.FindPwScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginEmailScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginHomeScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginKaKaoScreen
@@ -29,7 +31,13 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
             LoginKaKaoScreen()
         }
         composable(Route.Login.EMAIL) {
-            LoginEmailScreen()
+            LoginEmailScreen(navController = navController)
+        }
+        composable(Route.Login.FIND_EMAIL) {
+            FindEmailScreen(navController = navController)
+        }
+        composable(Route.Login.FIND_PW) {
+            FindPwScreen(navController = navController)
         }
     }
 
