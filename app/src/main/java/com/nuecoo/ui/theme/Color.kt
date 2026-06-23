@@ -74,3 +74,5 @@ val GrayText = Color(0xFF9CA3AF)
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)
 val Transparent= Color(0x00FFFFFF)
+
+val kakao = Color(0xFFfee500)
