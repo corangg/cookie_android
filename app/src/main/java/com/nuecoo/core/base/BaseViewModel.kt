@@ -7,6 +7,7 @@ import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.MainDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainCoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +29,13 @@ abstract class BaseViewModel(
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private var currentJob: Job? = null
+
+    fun cancelCurrentWork() {
+        currentJob?.cancel()
+        _isLoading.value = false
+    }
 
     /**
      * 연산이 많이 필요한 작업을 실행하는데 사용됩니다.
@@ -72,5 +80,5 @@ abstract class BaseViewModel(
         } finally {
             if (isLoading) _isLoading.value = false
         }
-    }
+    }.also { currentJob = it }
 }
