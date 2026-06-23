@@ -51,6 +51,11 @@ val WidgetOff = Color(0xFFece0c8)
 val LogoutBackground = Color(0xFFf3ddd6)
 val LogoutText = Color(0xFFb5573f)
 
+val TextFieldText = Color(0xFF5C3720)
+val TextFieldBorder = Color(0xFFcf7639)
+val TextFieldBackground = Color(0xFFFFFAF0)
+val TextFieldHint = Color(0xFF9B8A6A)
+
 val BackButtonBackground = Color(0xFFfbf5e8)
 
 val DefaultIconBackground = Color(0xFFece0c8)

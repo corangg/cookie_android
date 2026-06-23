@@ -17,8 +17,8 @@
     <string name="menu_main_menu">메뉴</string>
 
     <!-- Login -->
-    <string name="hint_email">이메일</string>
-    <string name="hint_pw">비밀번호</string>
+    <string name="login_hint_email">이메일</string>
+    <string name="login_hint_pw">비밀번호</string>
     <string name="btn_login">로그인</string>
     <string name="btn_signup">회원가입</string>
     <string name="login_start">시작하기</string>

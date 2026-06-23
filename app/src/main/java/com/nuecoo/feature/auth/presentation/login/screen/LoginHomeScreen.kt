@@ -75,20 +75,20 @@ private fun LoginHomeScreenContent(
             Spacer(Modifier.weight(1f))
 
             DefaultAuthButton(
-                title = stringResource(R.string.login_start),
-                background = MainButton,
-                titleColor = White,
-                onClick = onEmailLogin
-            )//시작하기 버튼
-
-            DefaultAuthButton(
-                modifier = Modifier.padding(top = 16.dp),
                 title = stringResource(R.string.login_kakao),
                 background = kakao,
                 icon = painterResource(R.drawable.ic_kakao),
                 titleColor = Black,
                 onClick = onKakaoLogin
             )//카카오 시작하기 버튼
+
+            DefaultAuthButton(
+                modifier = Modifier.padding(top = 16.dp),
+                title = stringResource(R.string.login_start),
+                background = MainButton,
+                titleColor = White,
+                onClick = onEmailLogin
+            )//시작하기 버튼
 
             DefaultAuthButton(
                 modifier = Modifier.padding(vertical = 16.dp),
