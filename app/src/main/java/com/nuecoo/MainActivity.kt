@@ -9,10 +9,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import com.nuecoo.core.navigation.AppNavigation
 import com.nuecoo.core.ui.BaseActivity
 import com.nuecoo.core.ui.showSimpleDialog
 import com.nuecoo.core.util.hasNotificationPermission
-import com.nuecoo.core.navigation.AppNavigation
 import com.nuecoo.ui.theme.NueCooTheme
 import dagger.hilt.android.AndroidEntryPoint
 
