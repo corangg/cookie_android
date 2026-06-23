@@ -23,7 +23,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
         route = Route.Login.GRAPH
     ) {
         composable(Route.Login.HOME) {
-            LoginHomeScreen()
+            LoginHomeScreen(navController = navController)
         }
         composable(Route.Login.KAKAO) {
             LoginKaKaoScreen()

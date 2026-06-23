@@ -17,28 +17,36 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.nuecoo.R
+import com.nuecoo.core.navigation.Route
 import com.nuecoo.core.ui.component.DefaultAuthButton
 import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
-import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
 import com.nuecoo.ui.theme.Black
+import com.nuecoo.ui.theme.MainBackground
+import com.nuecoo.ui.theme.MainButton
 import com.nuecoo.ui.theme.MainText
-import com.nuecoo.ui.theme.NueCooTheme
+import com.nuecoo.ui.theme.SubText
+import com.nuecoo.ui.theme.White
 import com.nuecoo.ui.theme.kakao
 
 @Composable
-fun LoginHomeScreen(
-    viewModel: MenuViewModel = hiltViewModel()
-) {
-    LoginHomeScreenContent()
+fun LoginHomeScreen(navController: NavHostController) {
+    LoginHomeScreenContent(
+        onEmailLogin = { navController.navigate(Route.Login.EMAIL) },
+        onKakaoLogin = { navController.navigate(Route.Login.KAKAO) },
+        onSignUp = { navController.navigate(Route.SignUp.GRAPH) }
+    )
 }
 
 @Composable
-private fun LoginHomeScreenContent() {
+private fun LoginHomeScreenContent(
+    onEmailLogin: () -> Unit = {},
+    onKakaoLogin: () -> Unit = {},
+    onSignUp: () -> Unit = {}
+) {
     AuthScreenWrapper {
         Column(
             modifier = Modifier
@@ -67,24 +75,28 @@ private fun LoginHomeScreenContent() {
             Spacer(Modifier.weight(1f))
 
             DefaultAuthButton(
-                modifier = Modifier.padding(bottom = 16.dp),
+                title = stringResource(R.string.login_start),
+                background = MainButton,
+                titleColor = White,
+                onClick = onEmailLogin
+            )//시작하기 버튼
+
+            DefaultAuthButton(
+                modifier = Modifier.padding(top = 16.dp),
                 title = stringResource(R.string.login_kakao),
                 background = kakao,
                 icon = painterResource(R.drawable.ic_kakao),
                 titleColor = Black,
-                onClick = {}
-            )
+                onClick = onKakaoLogin
+            )//카카오 시작하기 버튼
+
+            DefaultAuthButton(
+                modifier = Modifier.padding(vertical = 16.dp),
+                title = stringResource(R.string.login_start_sign_up),
+                background = MainBackground,
+                titleColor = SubText,
+                onClick = onSignUp
+            )//회원가입
         }
-    }
-}
-
-
-
-
-@Preview(showBackground = true)
-@Composable
-private fun LoginHomeScreenPreview() {
-    NueCooTheme {
-        LoginHomeScreenContent()
     }
 }

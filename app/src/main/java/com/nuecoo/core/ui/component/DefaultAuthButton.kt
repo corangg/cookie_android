@@ -35,7 +35,7 @@ fun DefaultAuthButton(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null
 ) {
-    val shape = RoundedCornerShape(16.dp)
+    val shape = RoundedCornerShape(20.dp)
 
     Box(
         modifier = modifier
@@ -49,7 +49,7 @@ fun DefaultAuthButton(
                     Modifier
                 }
             )
-            .padding(horizontal = 20.dp, vertical = 20.dp),
+            .padding(horizontal = 20.dp, vertical = 18.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
