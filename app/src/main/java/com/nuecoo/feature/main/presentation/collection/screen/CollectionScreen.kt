@@ -65,7 +65,7 @@ import com.nuecoo.R
 import com.nuecoo.core.ui.component.CommonDropDown
 import com.nuecoo.core.ui.model.CommonDropDownItem
 import com.nuecoo.core.util.toDisplayDate
-import com.nuecoo.domain.model.CollectionDisplayItem
+import com.nuecoo.feature.auth.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CollectionSortType
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.presentation.collection.viewmodel.CollectionViewModel

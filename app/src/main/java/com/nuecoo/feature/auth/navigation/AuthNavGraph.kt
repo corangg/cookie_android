@@ -19,12 +19,12 @@ import com.nuecoo.feature.auth.presentation.login.screen.LoginHomeScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginKaKaoScreen
 import com.nuecoo.feature.auth.presentation.signup.screen.SignUpEmailScreen
 import com.nuecoo.feature.auth.presentation.signup.screen.SignUpPhoneScreen
+import com.nuecoo.feature.auth.presentation.signup.screen.SignUpPwScreen
 import com.nuecoo.feature.auth.presentation.signup.screen.SignUpTermsScreen
 import com.nuecoo.feature.auth.presentation.signup.viewmodel.SignUpViewModel
 import com.nuecoo.feature.main.presentation.menu.screen.AppPrivacyScreen
 import com.nuecoo.feature.main.presentation.menu.screen.AppTermsScreen
 import com.nuecoo.ui.screen.SignUpBirthScreen
-import com.nuecoo.ui.screen.SignUpPwScreen
 import com.nuecoo.ui.theme.MainBackground
 
 fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
@@ -51,7 +51,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
     }
 
     navigation(
-        startDestination = Route.SignUp.TERMS,
+        startDestination = Route.SignUp.PW,
         route = Route.SignUp.GRAPH
     ) {
         composable(Route.SignUp.TERMS) { entry ->
@@ -75,11 +75,6 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
             val viewModel: SignUpViewModel = hiltViewModel(parentEntry)
             SignUpEmailScreen(navController = navController, viewModel = viewModel)
         }
-
-
-
-
-
         composable(Route.SignUp.PW) { entry ->
             val parentEntry = remember(entry) {
                 navController.getBackStackEntry(Route.SignUp.GRAPH)
@@ -87,6 +82,18 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
             val viewModel: SignUpViewModel = hiltViewModel(parentEntry)
             SignUpPwScreen(navController = navController, viewModel = viewModel)
         }
+        composable(Route.SignUp.NICKNAME) { entry ->
+            val parentEntry = remember(entry) {
+                navController.getBackStackEntry(Route.SignUp.GRAPH)
+            }
+            val viewModel: SignUpViewModel = hiltViewModel(parentEntry)
+            SignUpBirthScreen(navController = navController,
+                viewModel = viewModel)
+        }
+
+
+
+
 
         composable(Route.SignUp.BIRTH) { entry ->
             val parentEntry = remember(entry) {

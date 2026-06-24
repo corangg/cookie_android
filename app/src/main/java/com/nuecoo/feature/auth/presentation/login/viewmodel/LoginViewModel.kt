@@ -4,7 +4,7 @@ import com.nuecoo.core.base.BaseViewModel
 import com.nuecoo.core.di.DefaultDispatcher
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.MainDispatcher
-import com.nuecoo.domain.model.LoginResult
+import com.nuecoo.feature.auth.domain.model.LoginResult
 import com.nuecoo.domain.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher

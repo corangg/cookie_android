@@ -6,12 +6,11 @@ import com.nuecoo.core.base.BaseViewModel
 import com.nuecoo.core.di.DefaultDispatcher
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.MainDispatcher
-import com.nuecoo.domain.model.EmailCheckResult
-import com.nuecoo.domain.model.PwCheckResult
 import com.nuecoo.domain.usecase.CheckEmailExistsUseCase
 import com.nuecoo.domain.usecase.SendVerificationCodeUseCase
 import com.nuecoo.domain.usecase.SignUpUseCase
 import com.nuecoo.domain.usecase.VerifySmsCodeUseCase
+import com.nuecoo.feature.auth.domain.model.PwCheckResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.MainCoroutineDispatcher
@@ -112,21 +111,40 @@ class SignUpViewModel @Inject constructor(
         _isEmailResult.value = Patterns.EMAIL_ADDRESS.matcher(_email.value).matches()
     }
 
-
-
-
-
-
-
     // Password step
-    private var _pw = ""
-    private var _pwCheck = ""
+    private val _pw = MutableStateFlow("")
+    val pw: StateFlow<String> = _pw
+    private val _pwCheck = MutableStateFlow("")
+    val pwCheck: StateFlow<String> = _pwCheck
+
+    private val _isPwResult = MutableStateFlow<PwCheckResult?>(null)
+    val isPwResult: StateFlow<PwCheckResult?> =_isPwResult
+
+    fun setPw(value: String){
+        _pw.value = value
+    }
+
+    fun setPwCheck(value: String){
+        _pwCheck.value = value
+    }
+
+    fun checkPw(){
+        val passwordRegex = Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,32}$")
+        _isPwResult.value = when {
+            !passwordRegex.matches(pw.value) || !passwordRegex.matches(pwCheck.value) -> { PwCheckResult.NotValid }
+            pw.value != pwCheck.value -> { PwCheckResult.NotAccordance }
+            else -> { PwCheckResult.Success }
+        }
+    }
+
+
+
     private val _isPwValid = MutableStateFlow(true)
     val isPwValid: StateFlow<Boolean> = _isPwValid
     private val _isPwCheckEnabled = MutableStateFlow(false)
     val isPwCheckEnabled: StateFlow<Boolean> = _isPwCheckEnabled
 
-    fun setPw(value: String) {
+   /* fun setPw(value: String) {
         _pw = value
         val regex =
             Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#\$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#\$%^&*(),.?\":{}|<>]{8,20}$")
@@ -147,7 +165,7 @@ class SignUpViewModel @Inject constructor(
         !_isPwValid.value -> PwCheckResult.NotValid
         _pw == _pwCheck -> PwCheckResult.Accordance
         else -> PwCheckResult.NotAccordance
-    }
+    }*/
 
     // Phone step
 
@@ -171,7 +189,7 @@ class SignUpViewModel @Inject constructor(
         return try {
             signUpUseCase(
                 email = "",
-                password = _pw,
+                password = _pw.value,
                 verificationId = "_verificationId",
                 smsCode = "_certificationNumber",
                 phone = "",

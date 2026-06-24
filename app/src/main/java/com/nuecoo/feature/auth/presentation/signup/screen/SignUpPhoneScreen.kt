@@ -86,7 +86,7 @@ fun SignUpPhoneScreen(
 
 
 @Composable
-fun SignUpPhoneScreenContent(
+private fun SignUpPhoneScreenContent(
     isLoading: Boolean,
     step: Int,
     phone: String,

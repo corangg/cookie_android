@@ -1,4 +1,4 @@
-package com.nuecoo.domain.model
+package com.nuecoo.feature.auth.domain.model
 
 sealed class LoginResult {
     object Success : LoginResult()
@@ -13,7 +13,7 @@ sealed class EmailCheckResult {
 }
 
 sealed class PwCheckResult {
-    object Accordance : PwCheckResult()
+    object Success : PwCheckResult()
     object NotAccordance : PwCheckResult()
     object NotValid : PwCheckResult()
 }

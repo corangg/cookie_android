@@ -11,10 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,15 +36,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.nuecoo.R
 import com.nuecoo.core.navigation.Route
-import com.nuecoo.domain.model.EmailCheckResult
-import com.nuecoo.domain.model.PwCheckResult
 import com.nuecoo.ui.component.NueCooButton
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
@@ -57,171 +50,7 @@ import kotlinx.coroutines.launch
 
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun EmailInputRow(
-    emailInput: String,
-    onEmailChange: (String) -> Unit,
-    selectedDomain: String,
-    domains: List<String>,
-    onDomainChange: (String) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        OutlinedTextField(
-            value = emailInput,
-            onValueChange = onEmailChange,
-            placeholder = { Text("이메일", color = MainBorder.copy(0.5f)) },
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = MainBorder, unfocusedTextColor = MainBorder,
-                focusedContainerColor = MainBackground, unfocusedContainerColor = MainBackground,
-                focusedBorderColor = MainBorder, unfocusedBorderColor = MainBorder.copy(0.6f)
-            ),
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .weight(4f)
-                .fillMaxWidth()
-        )
-        Text("@", color = MainBorder, fontSize = 16.sp)
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
-            modifier = Modifier.weight(4f)
-        ) {
-            OutlinedTextField(
-                value = selectedDomain,
-                onValueChange = {},
-                readOnly = true,
-                singleLine = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MainBorder,
-                    unfocusedTextColor = MainBorder,
-                    focusedContainerColor = MainBackground,
-                    unfocusedContainerColor = MainBackground,
-                    focusedBorderColor = MainBorder,
-                    unfocusedBorderColor = MainBorder.copy(0.6f)
-                ),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier
-                    .menuAnchor()
-                    .fillMaxWidth()
-            )
-            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                domains.forEach { domain ->
-                    DropdownMenuItem(
-                        text = { Text(domain) },
-                        onClick = { onDomainChange(domain); expanded = false }
-                    )
-                }
-            }
-        }
-    }
-}
 
-@Composable
-fun SignUpPwScreen(
-    navController: NavController,
-    viewModel: SignUpViewModel
-) {
-    val isLoading by viewModel.isLoading.collectAsState()
-    val isPwValid by viewModel.isPwValid.collectAsState()
-    val isPwCheckEnabled by viewModel.isPwCheckEnabled.collectAsState()
-    var pwInput by remember { mutableStateOf("") }
-    var pwCheckInput by remember { mutableStateOf("") }
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MainBackground)
-                .padding(horizontal = 24.dp, vertical = 16.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
-            SignUpTopBar(title = stringResource(R.string.signup_main_title)) { navController.popBackStack() }
-            Spacer(Modifier.height(16.dp))
-            Text(stringResource(R.string.text_input_pw), color = MainBorder, fontSize = 20.sp)
-            Spacer(Modifier.height(16.dp))
-            OutlinedTextField(
-                value = pwInput,
-                onValueChange = { pwInput = it; viewModel.setPw(it) },
-                placeholder = { Text("비밀번호 (8-20자, 영문+숫자+특수문자)", color = MainBorder.copy(0.5f)) },
-                visualTransformation = PasswordVisualTransformation(),
-                singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MainBorder,
-                    unfocusedTextColor = MainBorder,
-                    focusedContainerColor = MainBackground,
-                    unfocusedContainerColor = MainBackground,
-                    focusedBorderColor = MainBorder,
-                    unfocusedBorderColor = MainBorder.copy(0.6f)
-                ),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            )
-            if (!isPwValid && pwInput.isNotEmpty()) {
-                Text(
-                    stringResource(R.string.text_valid_pw),
-                    color = Color.Red, fontSize = 12.sp,
-                    modifier = Modifier.padding(start = 4.dp, top = 4.dp)
-                )
-            }
-            Spacer(Modifier.height(12.dp))
-            OutlinedTextField(
-                value = pwCheckInput,
-                onValueChange = { pwCheckInput = it; viewModel.setPwCheck(it) },
-                placeholder = { Text("비밀번호 확인", color = MainBorder.copy(0.5f)) },
-                visualTransformation = PasswordVisualTransformation(),
-                singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MainBorder,
-                    unfocusedTextColor = MainBorder,
-                    focusedContainerColor = MainBackground,
-                    unfocusedContainerColor = MainBackground,
-                    focusedBorderColor = MainBorder,
-                    unfocusedBorderColor = MainBorder.copy(0.6f)
-                ),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            )
-            Spacer(Modifier.weight(1f))
-            NueCooButton(
-                text = stringResource(R.string.btn_ok),
-                enabled = isPwCheckEnabled,
-                onClick = {
-                    when (viewModel.checkPw()) {
-                        PwCheckResult.Accordance -> navController.navigate(Route.SignUp.PHONE)
-                        PwCheckResult.NotAccordance -> scope.launch {
-                            snackbarHostState.showSnackbar("비밀번호가 일치하지 않습니다")
-                        }
-
-                        PwCheckResult.NotValid -> scope.launch {
-                            snackbarHostState.showSnackbar("비밀번호 형식을 확인해주세요")
-                        }
-                    }
-                }
-            )
-            Spacer(Modifier.height(20.dp))
-        }
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
-    }
-}
 
 @Composable
 fun SignUpBirthScreen(
