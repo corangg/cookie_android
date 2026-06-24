@@ -91,7 +91,7 @@ private fun LoginHomeScreenContent(
             )//시작하기 버튼
 
             DefaultAuthButton(
-                modifier = Modifier.padding(vertical = 16.dp),
+                modifier = Modifier.padding(vertical = 16.dp).padding(bottom = 10.dp),
                 title = stringResource(R.string.login_start_sign_up),
                 background = MainBackground,
                 titleColor = SubText,

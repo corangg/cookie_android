@@ -46,7 +46,7 @@ fun SignUpNicknameScreen(
         nickname = nickname,
         onNicknameChanged = viewModel::setNickname,
         onBack = { navController.popBackStack() },
-        onNext = { navController.navigate(Route.SignUp.BIRTH) },
+        onNext = { navController.navigate(Route.SignUp.INFO) },
         onCancelLoading = viewModel::cancelCurrentWork
     )
 }
@@ -92,7 +92,7 @@ private fun SignUpNicknameScreenContent(
 
             DefaultAuthButton(
                 modifier = Modifier.padding(bottom = bottomPadding),
-                title = stringResource(R.string.next),
+                title = stringResource(R.string.signup),
                 background = MainButton,
                 titleColor = White,
                 enabled = nickname.isNotEmpty(),

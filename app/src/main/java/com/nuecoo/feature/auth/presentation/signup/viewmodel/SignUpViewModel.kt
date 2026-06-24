@@ -145,7 +145,6 @@ class SignUpViewModel @Inject constructor(
     }
 
     //nickname step
-
     private val _nickname = MutableStateFlow("")
     val nickname: StateFlow<String> = _nickname
 
@@ -153,54 +152,36 @@ class SignUpViewModel @Inject constructor(
         _nickname.value = value
     }
 
+    //birth step
+    private val _gender: MutableStateFlow<Boolean?> = MutableStateFlow(null)
+    val gender: StateFlow<Boolean?> = _gender
 
+    private val _year = MutableStateFlow(2000)
+    val year: StateFlow<Int> = _year
 
-    private val _isPwValid = MutableStateFlow(true)
-    val isPwValid: StateFlow<Boolean> = _isPwValid
-    private val _isPwCheckEnabled = MutableStateFlow(false)
-    val isPwCheckEnabled: StateFlow<Boolean> = _isPwCheckEnabled
+    private val _month = MutableStateFlow(1)
+    val month: StateFlow<Int> = _month
 
-   /* fun setPw(value: String) {
-        _pw = value
-        val regex =
-            Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#\$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#\$%^&*(),.?\":{}|<>]{8,20}$")
-        _isPwValid.value = _pw.isEmpty() || regex.matches(_pw)
-        _updatePwCheckEnabled()
+    private val _day = MutableStateFlow(1)
+    val day: StateFlow<Int> = _day
+
+    fun setGender(value: Boolean?){
+        _gender.value = value
     }
 
-    fun setPwCheck(value: String) {
-        _pwCheck = value
-        _updatePwCheckEnabled()
+    fun setYear(value: Int){
+        _year.value = value
     }
 
-    private fun _updatePwCheckEnabled() {
-        _isPwCheckEnabled.value = _pw.isNotEmpty() && _pwCheck.isNotEmpty()
+    fun setMonth(value: Int){
+        _month.value = value
     }
 
-    fun checkPw(): PwCheckResult = when {
-        !_isPwValid.value -> PwCheckResult.NotValid
-        _pw == _pwCheck -> PwCheckResult.Accordance
-        else -> PwCheckResult.NotAccordance
-    }*/
-
-    // Phone step
-
-
-    // Birth step
-    private val _isGender = MutableStateFlow(true)
-    val isGender: StateFlow<Boolean> = _isGender
-    private val _birthDate = MutableStateFlow<String?>(null)
-    val birthDate: StateFlow<String?> = _birthDate
-
-    fun setGender(gender: Boolean) {
-        _isGender.value = gender
+    fun setDay(value: Int){
+        _day.value = value
     }
 
-    fun setBirthDate(date: String) {
-        _birthDate.value = date
-    }
-
-    suspend fun trySignUp(): Boolean {
+/*    suspend fun trySignUp(): Boolean {
 
         return try {
             signUpUseCase(
@@ -215,5 +196,5 @@ class SignUpViewModel @Inject constructor(
         } finally {
 
         }
-    }
+    }*/
 }

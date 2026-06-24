@@ -25,6 +25,7 @@ object Route {
         const val EMAIL = "signup/email"
         const val PW = "signup/pw"
         const val NICKNAME = "signup/nickname"
+        const val INFO = "signup/info"
         const val BIRTH = "signup/birth"
         const val COMPLETE = "signup/complete"
     }
