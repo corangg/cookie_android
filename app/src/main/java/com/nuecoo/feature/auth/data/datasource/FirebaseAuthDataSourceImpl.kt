@@ -1,4 +1,4 @@
-package com.nuecoo.data.datasource.remote
+package com.nuecoo.feature.auth.data.datasource
 
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
@@ -10,10 +10,10 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class FirebaseAuthDataSource @Inject constructor(
+class FirebaseAuthDataSourceImpl @Inject constructor(
     private val auth: FirebaseAuth
-) {
-    fun isLoggedIn(): Boolean = auth.currentUser != null
+): FirebaseAuthDataSource {
+    /*fun isLoggedIn(): Boolean = auth.currentUser != null
 
     suspend fun login(email: String, password: String): Boolean = runCatching {
         auth.signInWithEmailAndPassword(email, password).await()
@@ -36,7 +36,11 @@ class FirebaseAuthDataSource @Inject constructor(
             override fun onVerificationFailed(e: FirebaseException) {
                 cont.resumeWithException(e)
             }
-            override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+
+            override fun onCodeSent(
+                verificationId: String,
+                token: PhoneAuthProvider.ForceResendingToken
+            ) {
                 cont.resume(verificationId)
             }
         }
@@ -53,5 +57,5 @@ class FirebaseAuthDataSource @Inject constructor(
     suspend fun createAccount(email: String, password: String): Boolean = runCatching {
         auth.createUserWithEmailAndPassword(email, password).await()
         true
-    }.getOrElse { false }
+    }.getOrElse { false }*/
 }

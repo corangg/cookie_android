@@ -1,7 +1,7 @@
-package com.nuecoo.domain.repository
+package com.nuecoo.feature.auth.domain
 
 interface AuthRepository {
-    suspend fun isLoggedIn(): Boolean
+   /* suspend fun isLoggedIn(): Boolean
     suspend fun login(email: String, password: String): Boolean
     suspend fun logout(): Boolean
     suspend fun checkEmailExists(email: String): Boolean
@@ -15,5 +15,5 @@ interface AuthRepository {
         phone: String,
         gender: Boolean,
         birth: String
-    ): Boolean
+    ): Boolean*/
 }

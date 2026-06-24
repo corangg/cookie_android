@@ -50,7 +50,7 @@ fun SignUpCompleteScreen(
         isSignupResult = isSignupResult,
         onBack = { navController.popBackStack() },
         onHome = {
-            navController.navigate(Route.Login.EMAIL) {
+            navController.navigate(Route.Login.HOME) {
                 popUpTo(0) {
                     inclusive = true
                 }

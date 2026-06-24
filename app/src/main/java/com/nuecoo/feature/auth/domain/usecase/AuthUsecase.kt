@@ -1,46 +1,43 @@
 package com.nuecoo.feature.auth.domain.usecase
 
-import com.nuecoo.domain.repository.AuthRepository
+import com.nuecoo.feature.auth.domain.AuthRepository
 import com.nuecoo.feature.auth.domain.model.AuthModel
 import javax.inject.Inject
 
 class CheckAuthUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(): Boolean = repository.isLoggedIn()
+    suspend operator fun invoke(): Boolean = true//repository.isLoggedIn()
 }
 
 class LoginUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(email: String, password: String): Boolean =
-        repository.login(email, password)
+    suspend operator fun invoke(email: String, password: String): Boolean = true
 }
 
 class LogoutUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(): Boolean = repository.logout()
+    suspend operator fun invoke(): Boolean = true
 }
 
 class CheckEmailExistsUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(email: String): Boolean = repository.checkEmailExists(email)
+    suspend operator fun invoke(email: String): Boolean = true
 }
 
 class SendVerificationCodeUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(phoneNumber: String): String =
-        repository.sendVerificationCode(phoneNumber)
+    suspend operator fun invoke(phoneNumber: String): String = ""
 }
 
 class VerifySmsCodeUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(verificationId: String, code: String): Boolean =
-        repository.verifySmsCode(verificationId, code)
+    suspend operator fun invoke(verificationId: String, code: String): Boolean = true
 }
 
 class SignUpUseCase @Inject constructor(
