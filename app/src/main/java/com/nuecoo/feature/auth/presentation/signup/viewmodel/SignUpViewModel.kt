@@ -113,7 +113,7 @@ class SignUpViewModel @Inject constructor(
     fun checkEmail() = onIoWork {
         _isEmailResult.value = if (!Patterns.EMAIL_ADDRESS.matcher(_email.value).matches()) {
             EmailCheckResult.NotValid
-        } else if (!checkEmailExistsUseCase(email.value)) {
+        } else if (checkEmailExistsUseCase(email.value)) {
             EmailCheckResult.Duplicated
         } else {
             EmailCheckResult.Available
