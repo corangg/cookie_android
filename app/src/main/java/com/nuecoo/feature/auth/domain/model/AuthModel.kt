@@ -19,9 +19,11 @@ sealed class PwCheckResult {
     object NotValid : PwCheckResult()
 }
 
-data class CollectionDisplayItem(
-    val no: Int,
-    val isCollected: Boolean,
-    val type: Int,
-    val date: String? = null
+data class AuthModel(
+    val email: String,
+    val password: String,
+    val nickname: String,
+    val phone: String,
+    val birth: String,
+    val gender: Boolean,
 )

@@ -2,7 +2,7 @@ package com.nuecoo.feature.splash.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nuecoo.domain.usecase.CheckAuthUseCase
+import com.nuecoo.feature.auth.domain.usecase.CheckAuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

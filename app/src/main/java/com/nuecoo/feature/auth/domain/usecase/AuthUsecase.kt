@@ -1,6 +1,7 @@
-package com.nuecoo.domain.usecase
+package com.nuecoo.feature.auth.domain.usecase
 
 import com.nuecoo.domain.repository.AuthRepository
+import com.nuecoo.feature.auth.domain.model.AuthModel
 import javax.inject.Inject
 
 class CheckAuthUseCase @Inject constructor(
@@ -45,13 +46,7 @@ class VerifySmsCodeUseCase @Inject constructor(
 class SignUpUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(
-        email: String,
-        password: String,
-        verificationId: String,
-        smsCode: String,
-        phone: String,
-        gender: Boolean,
-        birth: String
-    ): Boolean = repository.signUp(email, password, verificationId, smsCode, phone, gender, birth)
+    suspend operator fun invoke(authData: AuthModel): Boolean {
+        return true
+    }
 }

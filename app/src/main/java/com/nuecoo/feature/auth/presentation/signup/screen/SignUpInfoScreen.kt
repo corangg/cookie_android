@@ -147,7 +147,7 @@ private fun SignUpInfoScreenContent(
 
             DefaultAuthButton(
                 modifier = Modifier.padding(bottom = bottomPadding),
-                title = stringResource(R.string.signup_complete),
+                title = stringResource(R.string.signup),
                 background = MainButton,
                 titleColor = White,
                 enabled = gender != null,

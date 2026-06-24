@@ -63,13 +63,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.R
 import com.nuecoo.core.ui.component.CommonDropDown
+import com.nuecoo.core.ui.component.MainTitleItem
 import com.nuecoo.core.ui.model.CommonDropDownItem
 import com.nuecoo.core.util.toDisplayDate
-import com.nuecoo.feature.auth.domain.model.CollectionDisplayItem
+import com.nuecoo.feature.main.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CollectionSortType
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.presentation.collection.viewmodel.CollectionViewModel
-import com.nuecoo.core.ui.component.MainTitleItem
 import com.nuecoo.ui.theme.DropDownBackground
 import com.nuecoo.ui.theme.DropDownSelectBackground
 import com.nuecoo.ui.theme.ItemCardBackground
@@ -149,7 +149,9 @@ private fun CollectionScreenContent(
             verticalAlignment = Alignment.Bottom
         ) {
             MainTitleItem(
-                modifier = Modifier.weight(1f).padding(top = 16.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(top = 16.dp),
                 subTitle = stringResource(R.string.text_collection_sub_title),
                 mainTitle = stringResource(R.string.text_collection_title)
             )//메인 타이틀

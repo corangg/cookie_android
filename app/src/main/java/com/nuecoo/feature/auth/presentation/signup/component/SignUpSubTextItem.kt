@@ -8,12 +8,12 @@ import androidx.compose.ui.unit.sp
 import com.nuecoo.ui.theme.SubText
 
 @Composable
-fun SignUpSubTextItem(modifier: Modifier, text: String) {
+fun SignUpSubTextItem(modifier: Modifier, text: String, fontSize: Int = 16) {
     Text(
         modifier = modifier,
         text = text,
         fontWeight = FontWeight.Medium,
         color = SubText,
-        fontSize = 16.sp
+        fontSize = fontSize.sp
     )
 }

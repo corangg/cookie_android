@@ -11,13 +11,13 @@ import com.nuecoo.R
 import com.nuecoo.ui.theme.MainText
 
 @Composable
-fun SignUpMainTextItem(modifier: Modifier, text: String) {
+fun SignUpMainTextItem(modifier: Modifier, text: String, fontSize: Int = 22) {
     Text(
         modifier = modifier,
         text = text,
         fontWeight = FontWeight.Medium,
         fontFamily = FontFamily(Font(R.font.title_font)),
         color = MainText,
-        fontSize = 22.sp
+        fontSize = fontSize.sp
     )
 }

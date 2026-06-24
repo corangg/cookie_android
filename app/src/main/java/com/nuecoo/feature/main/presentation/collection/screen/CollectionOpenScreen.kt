@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nuecoo.R
 import com.nuecoo.core.util.toDateUnit
-import com.nuecoo.feature.auth.domain.model.CollectionDisplayItem
+import com.nuecoo.feature.main.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
 import com.nuecoo.feature.main.presentation.oven.screen.CookieOpenScreen

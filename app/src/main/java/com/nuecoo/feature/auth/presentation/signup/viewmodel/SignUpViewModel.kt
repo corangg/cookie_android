@@ -6,10 +6,11 @@ import com.nuecoo.core.base.BaseViewModel
 import com.nuecoo.core.di.DefaultDispatcher
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.MainDispatcher
-import com.nuecoo.domain.usecase.CheckEmailExistsUseCase
-import com.nuecoo.domain.usecase.SendVerificationCodeUseCase
-import com.nuecoo.domain.usecase.SignUpUseCase
-import com.nuecoo.domain.usecase.VerifySmsCodeUseCase
+import com.nuecoo.feature.auth.domain.usecase.CheckEmailExistsUseCase
+import com.nuecoo.feature.auth.domain.usecase.SendVerificationCodeUseCase
+import com.nuecoo.feature.auth.domain.usecase.SignUpUseCase
+import com.nuecoo.feature.auth.domain.usecase.VerifySmsCodeUseCase
+import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.EmailCheckResult
 import com.nuecoo.feature.auth.domain.model.PwCheckResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,13 +47,14 @@ class SignUpViewModel @Inject constructor(
     private val _checkedTerms = MutableStateFlow(false)
     val checkedTerms: StateFlow<Boolean> = _checkedTerms
 
-    val isAllTermsChecked: StateFlow<Boolean> = combine(checkedPrivacy, checkedTerms) { privacy, terms ->
-        privacy && terms
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = false
-    )
+    val isAllTermsChecked: StateFlow<Boolean> =
+        combine(checkedPrivacy, checkedTerms) { privacy, terms ->
+            privacy && terms
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false
+        )
 
     fun setCheckedPrivacy(checked: Boolean) {
         _checkedPrivacy.value = checked
@@ -102,7 +104,7 @@ class SignUpViewModel @Inject constructor(
 
     private val _isEmailResult = MutableStateFlow<EmailCheckResult?>(null)
 
-    val isEmailResult: StateFlow<EmailCheckResult?> =_isEmailResult
+    val isEmailResult: StateFlow<EmailCheckResult?> = _isEmailResult
 
     fun setEmail(value: String) {
         _email.value = value
@@ -125,22 +127,31 @@ class SignUpViewModel @Inject constructor(
     val pwCheck: StateFlow<String> = _pwCheck
 
     private val _isPwResult = MutableStateFlow<PwCheckResult?>(null)
-    val isPwResult: StateFlow<PwCheckResult?> =_isPwResult
+    val isPwResult: StateFlow<PwCheckResult?> = _isPwResult
 
-    fun setPw(value: String){
+    fun setPw(value: String) {
         _pw.value = value
     }
 
-    fun setPwCheck(value: String){
+    fun setPwCheck(value: String) {
         _pwCheck.value = value
     }
 
-    fun checkPw(){
-        val passwordRegex = Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,32}$")
+    fun checkPw() {
+        val passwordRegex =
+            Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#\$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,32}$")
         _isPwResult.value = when {
-            !passwordRegex.matches(pw.value) || !passwordRegex.matches(pwCheck.value) -> { PwCheckResult.NotValid }
-            pw.value != pwCheck.value -> { PwCheckResult.NotAccordance }
-            else -> { PwCheckResult.Success }
+            !passwordRegex.matches(pw.value) || !passwordRegex.matches(pwCheck.value) -> {
+                PwCheckResult.NotValid
+            }
+
+            pw.value != pwCheck.value -> {
+                PwCheckResult.NotAccordance
+            }
+
+            else -> {
+                PwCheckResult.Success
+            }
         }
     }
 
@@ -148,7 +159,7 @@ class SignUpViewModel @Inject constructor(
     private val _nickname = MutableStateFlow("")
     val nickname: StateFlow<String> = _nickname
 
-    fun setNickname(value: String){
+    fun setNickname(value: String) {
         _nickname.value = value
     }
 
@@ -165,36 +176,36 @@ class SignUpViewModel @Inject constructor(
     private val _day = MutableStateFlow(1)
     val day: StateFlow<Int> = _day
 
-    fun setGender(value: Boolean?){
+    fun setGender(value: Boolean?) {
         _gender.value = value
     }
 
-    fun setYear(value: Int){
+    fun setYear(value: Int) {
         _year.value = value
     }
 
-    fun setMonth(value: Int){
+    fun setMonth(value: Int) {
         _month.value = value
     }
 
-    fun setDay(value: Int){
+    fun setDay(value: Int) {
         _day.value = value
     }
 
-/*    suspend fun trySignUp(): Boolean {
+    //complete step
 
-        return try {
-            signUpUseCase(
-                email = "",
-                password = _pw.value,
-                verificationId = "_verificationId",
-                smsCode = "_certificationNumber",
-                phone = "",
-                gender = _isGender.value,
-                birth = _birthDate.value ?: ""
-            )
-        } finally {
+    private val _isSignupResult = MutableStateFlow(false)
+    val isSignupResult: StateFlow<Boolean> = _isSignupResult
 
-        }
-    }*/
+    fun trySignUp() = onIoWork {
+        val authData = AuthModel(
+            email = email.value,
+            password = pw.value,
+            nickname = nickname.value,
+            phone = phone.value,
+            birth = "${year.value}.${month.value}.${day.value}",
+            gender = gender.value ?: false
+        )
+        _isSignupResult.value = signUpUseCase(authData)
+    }
 }

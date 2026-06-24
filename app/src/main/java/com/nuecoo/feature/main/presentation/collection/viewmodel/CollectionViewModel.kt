@@ -4,7 +4,7 @@ import com.nuecoo.core.base.BaseViewModel
 import com.nuecoo.core.di.DefaultDispatcher
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.MainDispatcher
-import com.nuecoo.feature.auth.domain.model.CollectionDisplayItem
+import com.nuecoo.feature.main.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CollectionSortType
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.usecase.GetCollectionListUseCase
@@ -14,6 +14,7 @@ import kotlinx.coroutines.MainCoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
+import kotlin.collections.filter
 
 @HiltViewModel
 class CollectionViewModel @Inject constructor(
@@ -47,7 +48,8 @@ class CollectionViewModel @Inject constructor(
     fun setSelectedCookieType(type: CookieType?) {
         _selectedCookieType.value = type
 
-        val selectList = if (type == null) allItems.value else allItems.value.filter { it.type == type.type }
+        val selectList =
+            if (type == null) allItems.value else allItems.value.filter { it.type == type.type }
         _items.value = applySortAndFilter(selectList, _showCollectedOnly.value, _sortType.value)
     }
 

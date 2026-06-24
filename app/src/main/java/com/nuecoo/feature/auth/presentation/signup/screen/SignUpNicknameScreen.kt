@@ -21,7 +21,6 @@ import com.nuecoo.core.ui.component.LoadingOverlay
 import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpMainTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpRateItem
-import com.nuecoo.feature.auth.presentation.signup.component.SignUpSubTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpTopItem
 import com.nuecoo.feature.auth.presentation.signup.viewmodel.SignUpViewModel
 import com.nuecoo.ui.theme.MainButton
@@ -92,7 +91,7 @@ private fun SignUpNicknameScreenContent(
 
             DefaultAuthButton(
                 modifier = Modifier.padding(bottom = bottomPadding),
-                title = stringResource(R.string.signup),
+                title = stringResource(R.string.next),
                 background = MainButton,
                 titleColor = White,
                 enabled = nickname.isNotEmpty(),

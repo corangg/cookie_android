@@ -8,3 +8,10 @@ enum class CollectionSortType(
     BY_NO(R.string.text_collection_no),
     BY_DATE(R.string.text_collection_date)
 }
+
+data class CollectionDisplayItem(
+    val no: Int,
+    val isCollected: Boolean,
+    val type: Int,
+    val date: String? = null
+)

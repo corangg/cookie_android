@@ -17,6 +17,7 @@ import com.nuecoo.feature.auth.presentation.find.screen.FindPwScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginEmailScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginHomeScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginKaKaoScreen
+import com.nuecoo.feature.auth.presentation.signup.screen.SignUpCompleteScreen
 import com.nuecoo.feature.auth.presentation.signup.screen.SignUpEmailScreen
 import com.nuecoo.feature.auth.presentation.signup.screen.SignUpInfoScreen
 import com.nuecoo.feature.auth.presentation.signup.screen.SignUpNicknameScreen
@@ -52,7 +53,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
     }
 
     navigation(
-        startDestination = Route.SignUp.INFO,
+        startDestination = Route.SignUp.TERMS,
         route = Route.SignUp.GRAPH
     ) {
         composable(Route.SignUp.TERMS) { entry ->
@@ -105,7 +106,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
                 navController.getBackStackEntry(Route.SignUp.GRAPH)
             }
             val viewModel: SignUpViewModel = hiltViewModel(parentEntry)
-            SignUpInfoScreen(navController = navController, viewModel = viewModel)
+            SignUpCompleteScreen(navController = navController, viewModel = viewModel)
         }
 
         composable(Route.APP_PRIVACY) {
