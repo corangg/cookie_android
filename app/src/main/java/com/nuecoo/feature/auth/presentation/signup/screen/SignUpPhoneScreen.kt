@@ -159,7 +159,6 @@ private fun SignUpPhoneScreenContent(
                 onNext = onNext,
             )//하단 버튼 컴포넌트
         }
-
         LoadingOverlay(isLoading = isLoading, onCancel = onCancelLoading)
     }
 }

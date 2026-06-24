@@ -56,7 +56,7 @@ fun SignUpPwScreen(
     }
 
     SignUpPwScreenContent(
-        isLoading = isLoading,
+        isLoading = true,//isLoading,
         step = step,
         pw = pw,
         pwCheck = pwCheck,
@@ -140,9 +140,8 @@ private fun SignUpPwScreenContent(
                 enabled = pw.isNotEmpty()&&pwCheck.isNotEmpty(),
                 onClick = onNext
             )//하단 버튼
-
-            LoadingOverlay(isLoading = isLoading, onCancel = onCancelLoading)
         }
+        LoadingOverlay(isLoading = isLoading, onCancel = onCancelLoading)
     }
 }
 

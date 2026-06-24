@@ -55,7 +55,7 @@ fun SignUpEmailScreen(
     }
 
     SignUpEmailScreenContent(
-        isLoading = isLoading,
+        isLoading = true,//sLoading,
         step = step,
         email = email,
         isEmailResult = isEmailResult,
@@ -127,9 +127,8 @@ private fun SignUpEmailScreenContent(
                 enabled = email.isNotEmpty(),
                 onClick = onNext
             )//하단 버튼
-
-            LoadingOverlay(isLoading = isLoading, onCancel = onCancelLoading)
         }
+        LoadingOverlay(isLoading = isLoading, onCancel = onCancelLoading)
     }
 }
 

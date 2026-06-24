@@ -139,7 +139,6 @@ private fun LoginEmailScreenContent(
                 onFindPW = { navController.navigate(Route.Login.FIND_PW) }
             )//아이디/비밀번호 찾기 텍스트
         }
-
         LoadingOverlay(isLoading = isLoading, onCancel = onCancelLoading)
     }
 }
