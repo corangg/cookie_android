@@ -14,9 +14,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,19 +49,38 @@ fun SignUpTermsScreen(
     viewModel: SignUpViewModel
 ) {
     val step by viewModel.signUpStep.collectAsStateWithLifecycle()
+    val checkedPrivacy by viewModel.checkedPrivacy.collectAsStateWithLifecycle()
+    val checkedTerms by viewModel.checkedTerms.collectAsStateWithLifecycle()
+    val allTermsChecked by viewModel.allTermsChecked.collectAsStateWithLifecycle()
 
     SignUpTermsScreenContent(
         step = step,
-        navController = navController,
+        checkedPrivacy = checkedPrivacy,
+        checkedTerms = checkedTerms,
+        allTermsChecked = allTermsChecked,
+        onPrivacyChange = viewModel::setCheckedPrivacy,
+        onTermsChange = viewModel::setCheckedTerms,
+        onAllCheckedChange = viewModel::setAllTermsChecked,
         onBack = { navController.popBackStack() },
+        onPrivacyDetail = { navController.navigate(Route.APP_PRIVACY) },
+        onTermsDetail = { navController.navigate(Route.APP_TERMS) },
+        onNext = { navController.navigate(Route.SignUp.EMAIL) }
     )
 }
 
 @Composable
 private fun SignUpTermsScreenContent(
     step: Int,
-    navController: NavHostController,
-    onBack: () -> Unit
+    checkedPrivacy: Boolean,
+    checkedTerms: Boolean,
+    allTermsChecked: Boolean,
+    onPrivacyChange: (Boolean) -> Unit,
+    onTermsChange: (Boolean) -> Unit,
+    onAllCheckedChange: (Boolean) -> Unit,
+    onBack: () -> Unit,
+    onPrivacyDetail: () -> Unit,
+    onTermsDetail: () -> Unit,
+    onNext: () -> Unit,
 ) {
     AuthScreenWrapper {
         Column(
@@ -72,32 +88,39 @@ private fun SignUpTermsScreenContent(
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
         ) {
-            SignUpTopItem(modifier = Modifier.padding(top = 16.dp), onBack = onBack)//상단 타이틀 컴포넌트
-            SignUpRateItem(modifier = Modifier.padding(top = 20.dp), step = step)//진행 단계 컴포넌트
+            SignUpTopItem(modifier = Modifier.padding(top = 16.dp), onBack = onBack)
+            SignUpRateItem(modifier = Modifier.padding(top = 20.dp), step = step)
             MainTextItem(
                 modifier = Modifier
                     .padding(top = 28.dp)
                     .padding(start = 10.dp)
-            )//메인 텍스트 컴포넌트
+            )
             SubTextItem(
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .padding(start = 10.dp)
-            )//서브 텍스트 컴포넌트
+            )
 
             AllCheckItem(
                 modifier = Modifier
                     .padding(top = 16.dp)
-                    .padding(horizontal = 6.dp)
-            )//체크박스 컴포넌트)
+                    .padding(horizontal = 6.dp),
+                checked = allTermsChecked,
+                onCheckedChange = onAllCheckedChange
+            )
 
             CheckItem(
                 modifier = Modifier
                     .padding(top = 16.dp)
                     .padding(horizontal = 6.dp),
-                onPrivacy = { navController.navigate(Route.APP_PRIVACY) },
-                onTerms = { navController.navigate(Route.APP_TERMS) }
+                checkedPrivacy = checkedPrivacy,
+                onPrivacyChange = onPrivacyChange,
+                checkedTerms = checkedTerms,
+                onTermsChange = onTermsChange,
+                onPrivacyDetail = onPrivacyDetail,
+                onTermsDetail = onTermsDetail
             )
+
             Spacer(Modifier.weight(1f))
 
             DefaultAuthButton(
@@ -105,7 +128,8 @@ private fun SignUpTermsScreenContent(
                 title = stringResource(R.string.next),
                 background = MainButton,
                 titleColor = White,
-                onClick = {}
+                enabled = allTermsChecked,
+                onClick = onNext
             )
         }
     }
@@ -135,9 +159,11 @@ private fun SubTextItem(modifier: Modifier) {
 }
 
 @Composable
-private fun AllCheckItem(modifier: Modifier) {
-    var checked by remember { mutableStateOf(false) }
-
+private fun AllCheckItem(
+    modifier: Modifier,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(20.dp))
@@ -150,7 +176,7 @@ private fun AllCheckItem(modifier: Modifier) {
         ) {
             DefaultCheckItem(
                 checked = checked,
-                onCheckedChange = { checked = it },
+                onCheckedChange = onCheckedChange,
                 boxSize = 28.dp,
                 checkedBoxColor = AuthChecked,
                 checkedBorderColor = AuthChecked,
@@ -172,9 +198,15 @@ private fun AllCheckItem(modifier: Modifier) {
 }
 
 @Composable
-private fun CheckItem(modifier: Modifier, onPrivacy: () -> Unit, onTerms: () -> Unit) {
-    var checked by remember { mutableStateOf(false) }
-
+private fun CheckItem(
+    modifier: Modifier,
+    checkedPrivacy: Boolean,
+    onPrivacyChange: (Boolean) -> Unit,
+    checkedTerms: Boolean,
+    onTermsChange: (Boolean) -> Unit,
+    onPrivacyDetail: () -> Unit,
+    onTermsDetail: () -> Unit,
+) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(20.dp))
@@ -187,8 +219,8 @@ private fun CheckItem(modifier: Modifier, onPrivacy: () -> Unit, onTerms: () -> 
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 DefaultCheckItem(
-                    checked = checked,
-                    onCheckedChange = { checked = it },
+                    checked = checkedPrivacy,
+                    onCheckedChange = onPrivacyChange,
                     boxSize = 28.dp,
                     checkedBoxColor = AuthChecked,
                     checkedBorderColor = AuthChecked,
@@ -215,14 +247,14 @@ private fun CheckItem(modifier: Modifier, onPrivacy: () -> Unit, onTerms: () -> 
                     fontSize = 14.sp
                 )
 
-                Spacer(modifier.weight(1f))
+                Spacer(Modifier.weight(1f))
 
                 Text(
                     modifier = Modifier
                         .padding(start = 8.dp)
                         .padding(top = 2.dp)
                         .clip(shape = RoundedCornerShape(50))
-                        .clickable(onClick = onPrivacy),
+                        .clickable(onClick = onPrivacyDetail),
                     text = stringResource(R.string.look),
                     fontWeight = FontWeight.Medium,
                     fontFamily = FontFamily(Font(R.font.title_font)),
@@ -230,6 +262,7 @@ private fun CheckItem(modifier: Modifier, onPrivacy: () -> Unit, onTerms: () -> 
                     fontSize = 12.sp
                 )
             }
+
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -243,8 +276,8 @@ private fun CheckItem(modifier: Modifier, onPrivacy: () -> Unit, onTerms: () -> 
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 DefaultCheckItem(
-                    checked = checked,
-                    onCheckedChange = { checked = it },
+                    checked = checkedTerms,
+                    onCheckedChange = onTermsChange,
                     boxSize = 28.dp,
                     checkedBoxColor = AuthChecked,
                     checkedBorderColor = AuthChecked,
@@ -271,14 +304,14 @@ private fun CheckItem(modifier: Modifier, onPrivacy: () -> Unit, onTerms: () -> 
                     fontSize = 14.sp
                 )
 
-                Spacer(modifier.weight(1f))
+                Spacer(Modifier.weight(1f))
 
                 Text(
                     modifier = Modifier
                         .padding(start = 8.dp)
                         .padding(top = 2.dp)
                         .clip(shape = RoundedCornerShape(50))
-                        .clickable(onClick = onTerms),
+                        .clickable(onClick = onTermsDetail),
                     text = stringResource(R.string.look),
                     fontWeight = FontWeight.Medium,
                     fontFamily = FontFamily(Font(R.font.title_font)),
@@ -288,9 +321,4 @@ private fun CheckItem(modifier: Modifier, onPrivacy: () -> Unit, onTerms: () -> 
             }
         }
     }
-}
-
-@Composable
-private fun NextButton(modifier: Modifier) {
-    //DefaultAuthButton()
 }

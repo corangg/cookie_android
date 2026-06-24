@@ -1,7 +1,6 @@
 package com.nuecoo.feature.auth.presentation.signup.viewmodel
 
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.nuecoo.core.base.BaseViewModel
 import com.nuecoo.core.di.DefaultDispatcher
 import com.nuecoo.core.di.IoDispatcher
@@ -16,7 +15,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.MainCoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,37 +34,34 @@ class SignUpViewModel @Inject constructor(
     private val _signUpStep = MutableStateFlow(0)
     val signUpStep: StateFlow<Int> = _signUpStep
 
-    val checkedPrivacy = MutableLiveData(false)
-    val checkedTerms = MutableLiveData(false)
+    // Terms step
+    private val _checkedPrivacy = MutableStateFlow(false)
+    val checkedPrivacy: StateFlow<Boolean> = _checkedPrivacy
 
-    val allTermsChecked = MediatorLiveData<Boolean>().apply {
-        fun update() {
-            value = checkedPrivacy.value == true &&
-                    checkedTerms.value == true
-        }
+    private val _checkedTerms = MutableStateFlow(false)
+    val checkedTerms: StateFlow<Boolean> = _checkedTerms
 
-        addSource(checkedPrivacy) { update() }
-        addSource(checkedTerms) { update() }
+    val allTermsChecked: StateFlow<Boolean> = combine(_checkedPrivacy, _checkedTerms) { privacy, terms ->
+        privacy && terms
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = false
+    )
+
+    fun setCheckedPrivacy(checked: Boolean) {
+        _checkedPrivacy.value = checked
     }
 
-    val nextEnabled = allTermsChecked
-
-    fun togglePrivacy() {
-        checkedPrivacy.value = !(checkedPrivacy.value ?: false)
+    fun setCheckedTerms(checked: Boolean) {
+        _checkedTerms.value = checked
     }
-
-    fun toggleTerms() {
-        checkedTerms.value = !(checkedTerms.value ?: false)
-    }
-
-
 
     fun setAllTermsChecked(checked: Boolean) {
-        checkedPrivacy.value = checked
-        checkedTerms.value = checked
+        _checkedPrivacy.value = checked
+        _checkedTerms.value = checked
     }
-
-
+    // Terms step end
 
 
 

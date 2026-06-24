@@ -33,17 +33,19 @@ fun DefaultAuthButton(
     title: String,
     titleColor: Color = White,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onClick: (() -> Unit)? = null
 ) {
     val shape = RoundedCornerShape(20.dp)
+    val resolvedBackground = if (enabled) background else background.copy(alpha = 0.4f)
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(background)
+            .background(resolvedBackground)
             .then(
-                if (onClick != null) {
+                if (onClick != null && enabled) {
                     Modifier.clickable(onClick = onClick)
                 } else {
                     Modifier
