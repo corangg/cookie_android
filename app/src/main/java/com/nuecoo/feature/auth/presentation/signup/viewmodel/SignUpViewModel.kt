@@ -1,5 +1,6 @@
 package com.nuecoo.feature.auth.presentation.signup.viewmodel
 
+import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import com.nuecoo.core.base.BaseViewModel
 import com.nuecoo.core.di.DefaultDispatcher
@@ -45,7 +46,7 @@ class SignUpViewModel @Inject constructor(
     private val _checkedTerms = MutableStateFlow(false)
     val checkedTerms: StateFlow<Boolean> = _checkedTerms
 
-    val isAllTermsChecked: StateFlow<Boolean> = combine(_checkedPrivacy, _checkedTerms) { privacy, terms ->
+    val isAllTermsChecked: StateFlow<Boolean> = combine(checkedPrivacy, checkedTerms) { privacy, terms ->
         privacy && terms
     }.stateIn(
         scope = viewModelScope,
@@ -95,49 +96,27 @@ class SignUpViewModel @Inject constructor(
         _isPhoneOk.value = true//추후 실제 기능 구현 필요
     }
 
-
-
-
-
-
-
-
-
-
-
-
     // Email step
-    private var _email = ""
-    private var _domain = ""
-    private val _isEmailValid = MutableStateFlow(false)
-    val isEmailValid: StateFlow<Boolean> = _isEmailValid
+    private val _email = MutableStateFlow("")
+    val email: StateFlow<String> = _email
+
+    private val _isEmailResult = MutableStateFlow<Boolean?>(null)
+
+    val isEmailResult: StateFlow<Boolean?> =_isEmailResult
 
     fun setEmail(value: String) {
-        _email = value
-        _updateEmailValidity()
+        _email.value = value
     }
 
-    fun setDomain(value: String) {
-        _domain = value
-        _updateEmailValidity()
+    fun checkEmail() {
+        _isEmailResult.value = Patterns.EMAIL_ADDRESS.matcher(_email.value).matches()
     }
 
-    private fun _updateEmailValidity() {
-        val full = "${_email.trim()}@${_domain.trim()}"
-        val emailRegex = Regex("^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$")
-        _isEmailValid.value = emailRegex.matches(full)
-    }
 
-    suspend fun checkEmailExists(): EmailCheckResult {
-        return try {
-            val exists = checkEmailExistsUseCase("${_email}@${_domain}")
-            if (exists) EmailCheckResult.Duplicated else EmailCheckResult.Available
-        } catch (e: Exception) {
-            EmailCheckResult.Error
-        } finally {
 
-        }
-    }
+
+
+
 
     // Password step
     private var _pw = ""
@@ -191,7 +170,7 @@ class SignUpViewModel @Inject constructor(
 
         return try {
             signUpUseCase(
-                email = "${_email}@${_domain}",
+                email = "",
                 password = _pw,
                 verificationId = "_verificationId",
                 smsCode = "_certificationNumber",

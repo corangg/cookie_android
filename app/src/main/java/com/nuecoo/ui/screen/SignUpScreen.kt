@@ -55,72 +55,7 @@ import com.nuecoo.ui.theme.MainButton
 import com.nuecoo.feature.auth.presentation.signup.viewmodel.SignUpViewModel
 import kotlinx.coroutines.launch
 
-@Composable
-fun SignUpEmailScreen(
-    navController: NavController,
-    viewModel: SignUpViewModel
-) {
-    val isLoading by viewModel.isLoading.collectAsState()
-    val isEmailValid by viewModel.isEmailValid.collectAsState()
-    var emailInput by remember { mutableStateOf("") }
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
-    val domains = listOf("gmail.com", "naver.com", "daum.net", "outlook.com", "kakao.com")
-    var selectedDomain by remember { mutableStateOf(domains.first()) }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MainBackground)
-                .padding(horizontal = 24.dp, vertical = 16.dp)
-        ) {
-            SignUpTopBar(title = stringResource(R.string.signup_main_title)) {
-                navController.popBackStack()
-            }
-            Spacer(Modifier.height(16.dp))
-            Text(
-                stringResource(R.string.text_input_email),
-                color = MainBorder, fontSize = 20.sp
-            )
-            Spacer(Modifier.height(16.dp))
-            EmailInputRow(
-                emailInput = emailInput,
-                onEmailChange = { emailInput = it; viewModel.setEmail(it) },
-                selectedDomain = selectedDomain,
-                domains = domains,
-                onDomainChange = { selectedDomain = it; viewModel.setDomain(it) }
-            )
-            Spacer(Modifier.weight(1f))
-            if (isLoading) {
-                CircularProgressIndicator(
-                    color = MainBorder,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-            } else {
-                NueCooButton(
-                    text = stringResource(R.string.btn_ok),
-                    enabled = isEmailValid,
-                    onClick = {
-                        scope.launch {
-                            when (viewModel.checkEmailExists()) {
-                                EmailCheckResult.Available -> navController.navigate(Route.SignUp.PW)
-                                EmailCheckResult.Duplicated -> snackbarHostState.showSnackbar("이미 사용 중인 이메일입니다")
-                                EmailCheckResult.Error -> snackbarHostState.showSnackbar("오류가 발생했습니다")
-                            }
-                        }
-                    }
-                )
-            }
-            Spacer(Modifier.height(20.dp))
-        }
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

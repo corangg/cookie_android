@@ -144,7 +144,7 @@ fun SignUpPhoneScreenContent(
             )//전화번호 인증 컴포넌트
 
             PhoneResultItem(
-                modifier = Modifier.padding(top = 10.dp),
+                modifier = Modifier.padding(top = 10.dp).padding(start = 6.dp),
                 result = isPhoneOk
             )//에러 메세지 컴포넌트
 

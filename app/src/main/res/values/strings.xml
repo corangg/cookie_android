@@ -34,12 +34,14 @@
     <!-- SignUp -->
     <string name="signup_main_title">회원가입</string>
     <string name="signup_sub_title">SIGN UP</string>
+
     <string name="signup_terms_main">약관에 동의해 주세요</string>
     <string name="signup_terms_sub">서비스 이용을 위해 동의가 필요해요</string>
     <string name="signup_terms_all_agree">전체 동의</string>
     <string name="signup_terms_essential">[필수]</string>
     <string name="signup_terms_privacy">개인정보 처리방침</string>
     <string name="signup_terms_terms">이용약관</string>
+
     <string name="signup_phone_main">사용하실 번호를 입력해주세요</string>
     <string name="signup_phone_sub">-없이 입력해주세요</string>
     <string name="signup_phone_hint">010-0000-0000</string>
@@ -47,6 +49,11 @@
     <string name="signup_phone_re_send">재전송</string>
     <string name="signup_phone_send_code">인증번호 보내기</string>
     <string name="signup_phone_code_error">인증번호가 잘못 되었습니다. 다시 확인해 주세요</string>
+
+    <string name="signup_email_main">사용하실 이메일을 입력해 주세요</string>
+    <string name="signup_email_sub">실제 등록된 이메일을 입력해 주세요</string>
+    <string name="signup_email_hint">yookoo@example.com</string>
+    <string name="signup_email_error">잘못된 이메일 형식 입니다. 다시 확인해 주세요</string>
 
 
     <string name="text_input_email">이메일을 입력해주세요</string>

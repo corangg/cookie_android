@@ -17,13 +17,13 @@ import com.nuecoo.feature.auth.presentation.find.screen.FindPwScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginEmailScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginHomeScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginKaKaoScreen
+import com.nuecoo.feature.auth.presentation.signup.screen.SignUpEmailScreen
 import com.nuecoo.feature.auth.presentation.signup.screen.SignUpPhoneScreen
 import com.nuecoo.feature.auth.presentation.signup.screen.SignUpTermsScreen
 import com.nuecoo.feature.auth.presentation.signup.viewmodel.SignUpViewModel
 import com.nuecoo.feature.main.presentation.menu.screen.AppPrivacyScreen
 import com.nuecoo.feature.main.presentation.menu.screen.AppTermsScreen
 import com.nuecoo.ui.screen.SignUpBirthScreen
-import com.nuecoo.ui.screen.SignUpEmailScreen
 import com.nuecoo.ui.screen.SignUpPwScreen
 import com.nuecoo.ui.theme.MainBackground
 
@@ -68,11 +68,6 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
             val viewModel: SignUpViewModel = hiltViewModel(parentEntry)
             SignUpPhoneScreen(navController = navController, viewModel = viewModel)
         }
-
-
-
-
-
         composable(Route.SignUp.EMAIL) { entry ->
             val parentEntry = remember(entry) {
                 navController.getBackStackEntry(Route.SignUp.GRAPH)
@@ -80,6 +75,11 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
             val viewModel: SignUpViewModel = hiltViewModel(parentEntry)
             SignUpEmailScreen(navController = navController, viewModel = viewModel)
         }
+
+
+
+
+
         composable(Route.SignUp.PW) { entry ->
             val parentEntry = remember(entry) {
                 navController.getBackStackEntry(Route.SignUp.GRAPH)
