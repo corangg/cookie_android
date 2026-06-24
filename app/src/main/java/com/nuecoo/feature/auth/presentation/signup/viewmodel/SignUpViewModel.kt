@@ -34,6 +34,10 @@ class SignUpViewModel @Inject constructor(
     private val _signUpStep = MutableStateFlow(0)
     val signUpStep: StateFlow<Int> = _signUpStep
 
+    fun updateSignUpStep(step: Int) {
+        _signUpStep.value = step
+    }
+
     // Terms step
     private val _checkedPrivacy = MutableStateFlow(false)
     val checkedPrivacy: StateFlow<Boolean> = _checkedPrivacy
@@ -41,7 +45,7 @@ class SignUpViewModel @Inject constructor(
     private val _checkedTerms = MutableStateFlow(false)
     val checkedTerms: StateFlow<Boolean> = _checkedTerms
 
-    val allTermsChecked: StateFlow<Boolean> = combine(_checkedPrivacy, _checkedTerms) { privacy, terms ->
+    val isAllTermsChecked: StateFlow<Boolean> = combine(_checkedPrivacy, _checkedTerms) { privacy, terms ->
         privacy && terms
     }.stateIn(
         scope = viewModelScope,
@@ -61,8 +65,52 @@ class SignUpViewModel @Inject constructor(
         _checkedPrivacy.value = checked
         _checkedTerms.value = checked
     }
-    // Terms step end
 
+    //phone step
+
+    private val _phone = MutableStateFlow("")
+    val phone: StateFlow<String> = _phone
+
+    private val _code = MutableStateFlow("")
+    val code: StateFlow<String> = _code
+
+    private val _isCodeSent = MutableStateFlow(false)
+    val isCodeSent: StateFlow<Boolean> = _isCodeSent
+
+    private val _isPhoneOk = MutableStateFlow(false)
+    val isPhoneOk: StateFlow<Boolean> = _isPhoneOk
+
+    fun setPhone(value: String) {
+        _phone.value = value.trim()
+    }
+
+    fun setCode(value: String) {
+        _code.value = value.trim()
+    }
+
+    fun sendCode() = onIoWork {
+        _isCodeSent.value = true//추후 실제 기능 구현 필요
+    }
+
+    fun checkCode() = onIoWork {
+        _isPhoneOk.value = true//추후 실제 기능 구현 필요
+    }
+
+    /*suspend fun sendVerificationCode(isResend: Boolean = false): Boolean {
+        *//*if (_phoneNumber.isEmpty()) return false
+        return try {
+            _verificationId = sendVerificationCodeUseCase(_phoneNumber)
+            _isCodeSent.value = true
+            true
+        } catch (e: Exception) {
+            false
+        }*//*
+    }
+
+    suspend fun verifySmsCode(): Boolean {
+        if (_verificationId.isEmpty()) return true // Skip if no verification ID (development)
+        return verifySmsCodeUseCase(_verificationId, _certificationNumber)
+    }*/
 
 
 
@@ -139,39 +187,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     // Phone step
-    private val _isCodeSent = MutableStateFlow(false)
-    val isCodeSent: StateFlow<Boolean> = _isCodeSent
-    private val _isPhoneOkEnabled = MutableStateFlow(false)
-    val isPhoneOkEnabled: StateFlow<Boolean> = _isPhoneOkEnabled
 
-    private var _phoneNumber = ""
-    private var _verificationCode = ""
-    private var _verificationId = ""
-
-    fun setPhoneNumber(value: String) {
-        _phoneNumber = value.trim()
-    }
-
-    fun setVerificationCode(value: String) {
-        _verificationCode = value.trim()
-        _isPhoneOkEnabled.value = _verificationCode.length >= 6
-    }
-
-    suspend fun sendVerificationCode(isResend: Boolean = false): Boolean {
-        if (_phoneNumber.isEmpty()) return false
-        return try {
-            _verificationId = sendVerificationCodeUseCase(_phoneNumber)
-            _isCodeSent.value = true
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    suspend fun verifySmsCode(): Boolean {
-        if (_verificationId.isEmpty()) return true // Skip if no verification ID (development)
-        return verifySmsCodeUseCase(_verificationId, _verificationCode)
-    }
 
     // Birth step
     private val _isGender = MutableStateFlow(true)
@@ -193,9 +209,9 @@ class SignUpViewModel @Inject constructor(
             signUpUseCase(
                 email = "${_email}@${_domain}",
                 password = _pw,
-                verificationId = _verificationId,
-                smsCode = _verificationCode,
-                phone = _phoneNumber,
+                verificationId = "_verificationId",
+                smsCode = "_certificationNumber",
+                phone = "",
                 gender = _isGender.value,
                 birth = _birthDate.value ?: ""
             )

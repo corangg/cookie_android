@@ -1,6 +1,5 @@
 package com.nuecoo.core.ui.component
 
-import android.R.attr.contentDescription
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -30,6 +29,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -48,6 +48,7 @@ fun DefaultTextField(
     modifier: Modifier = Modifier,
     isPassword: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    maxLength: Int = 64,
 ) {
     var isFocused by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -56,7 +57,11 @@ fun DefaultTextField(
 
     BasicTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = {
+            if (it.length <= maxLength) {
+                onValueChange(it)
+            }
+        },
         singleLine = true,
         visualTransformation = if (isPassword && !passwordVisible) {
             PasswordVisualTransformation()
@@ -66,7 +71,8 @@ fun DefaultTextField(
         keyboardOptions = keyboardOptions,
         textStyle = TextStyle(
             color = TextFieldText,
-            fontSize = 14.sp
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
         ),
         cursorBrush = SolidColor(TextFieldBorder),
         modifier = modifier
@@ -106,6 +112,7 @@ fun DefaultTextField(
                         Text(
                             text = hint,
                             color = TextFieldHint,
+                            fontWeight = FontWeight.Medium,
                             fontSize = 14.sp
                         )
                     }

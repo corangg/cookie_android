@@ -128,7 +128,10 @@ private fun LoginEmailScreenContent(
                 onClick = onLogin
             )//로그인 버튼
 
-            LoginResultItem(modifier = Modifier.padding(top = 10.dp), loginResult = loginResult)//로그인 결과 메세지
+            LoginResultItem(
+                modifier = Modifier.padding(top = 10.dp),
+                loginResult = loginResult
+            )//로그인 결과 메세지
 
             FindAuthItem(
                 modifier = Modifier.padding(top = 10.dp),

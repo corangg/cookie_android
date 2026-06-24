@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +31,9 @@ import com.nuecoo.core.navigation.Route
 import com.nuecoo.core.ui.component.DefaultAuthButton
 import com.nuecoo.core.ui.component.DefaultCheckItem
 import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
+import com.nuecoo.feature.auth.presentation.signup.component.SignUpMainTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpRateItem
+import com.nuecoo.feature.auth.presentation.signup.component.SignUpSubTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpTopItem
 import com.nuecoo.feature.auth.presentation.signup.viewmodel.SignUpViewModel
 import com.nuecoo.ui.theme.AccentText
@@ -51,7 +54,11 @@ fun SignUpTermsScreen(
     val step by viewModel.signUpStep.collectAsStateWithLifecycle()
     val checkedPrivacy by viewModel.checkedPrivacy.collectAsStateWithLifecycle()
     val checkedTerms by viewModel.checkedTerms.collectAsStateWithLifecycle()
-    val allTermsChecked by viewModel.allTermsChecked.collectAsStateWithLifecycle()
+    val allTermsChecked by viewModel.isAllTermsChecked.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.updateSignUpStep(0)
+    }
 
     SignUpTermsScreenContent(
         step = step,
@@ -64,7 +71,7 @@ fun SignUpTermsScreen(
         onBack = { navController.popBackStack() },
         onPrivacyDetail = { navController.navigate(Route.APP_PRIVACY) },
         onTermsDetail = { navController.navigate(Route.APP_TERMS) },
-        onNext = { navController.navigate(Route.SignUp.EMAIL) }
+        onNext = { navController.navigate(Route.SignUp.PHONE) }
     )
 }
 
@@ -88,18 +95,20 @@ private fun SignUpTermsScreenContent(
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
         ) {
-            SignUpTopItem(modifier = Modifier.padding(top = 16.dp), onBack = onBack)
-            SignUpRateItem(modifier = Modifier.padding(top = 20.dp), step = step)
-            MainTextItem(
+            SignUpTopItem(modifier = Modifier.padding(top = 16.dp), onBack = onBack)//상단 타이틀
+            SignUpRateItem(modifier = Modifier.padding(top = 20.dp), step = step)//진행 단계
+            SignUpMainTextItem(
                 modifier = Modifier
                     .padding(top = 28.dp)
-                    .padding(start = 10.dp)
-            )
-            SubTextItem(
+                    .padding(start = 10.dp),
+                text = stringResource(R.string.signup_terms_main)
+            )//메인 텍스트
+            SignUpSubTextItem(
                 modifier = Modifier
                     .padding(top = 8.dp)
-                    .padding(start = 10.dp)
-            )
+                    .padding(start = 10.dp),
+                text = stringResource(R.string.signup_terms_sub)
+            )//서브 텍스트
 
             AllCheckItem(
                 modifier = Modifier
@@ -107,7 +116,7 @@ private fun SignUpTermsScreenContent(
                     .padding(horizontal = 6.dp),
                 checked = allTermsChecked,
                 onCheckedChange = onAllCheckedChange
-            )
+            )//전체 클릭 컴포넌트
 
             CheckItem(
                 modifier = Modifier
@@ -119,7 +128,7 @@ private fun SignUpTermsScreenContent(
                 onTermsChange = onTermsChange,
                 onPrivacyDetail = onPrivacyDetail,
                 onTermsDetail = onTermsDetail
-            )
+            )//개별 클릭 컴포넌트
 
             Spacer(Modifier.weight(1f))
 
@@ -130,32 +139,9 @@ private fun SignUpTermsScreenContent(
                 titleColor = White,
                 enabled = allTermsChecked,
                 onClick = onNext
-            )
+            )//다음 버튼
         }
     }
-}
-
-@Composable
-private fun MainTextItem(modifier: Modifier) {
-    Text(
-        modifier = modifier,
-        text = stringResource(R.string.signup_terms_main),
-        fontWeight = FontWeight.Medium,
-        fontFamily = FontFamily(Font(R.font.title_font)),
-        color = MainText,
-        fontSize = 22.sp
-    )
-}
-
-@Composable
-private fun SubTextItem(modifier: Modifier) {
-    Text(
-        modifier = modifier,
-        text = stringResource(R.string.signup_terms_sub),
-        fontWeight = FontWeight.Medium,
-        color = SubText,
-        fontSize = 16.sp
-    )
 }
 
 @Composable

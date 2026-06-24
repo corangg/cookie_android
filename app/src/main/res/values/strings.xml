@@ -40,11 +40,17 @@
     <string name="signup_terms_essential">[필수]</string>
     <string name="signup_terms_privacy">개인정보 처리방침</string>
     <string name="signup_terms_terms">이용약관</string>
+    <string name="signup_phone_main">사용하실 번호를 입력해주세요</string>
+    <string name="signup_phone_sub">-없이 입력해주세요</string>
+    <string name="signup_phone_hint">010-0000-0000</string>
+    <string name="signup_phone_code_hint">인증번호 입력</string>
+    <string name="signup_phone_re_send">재전송</string>
+    <string name="signup_phone_send_code">인증번호 보내기</string>
+    <string name="signup_phone_code_error">인증번호가 잘못 되었습니다. 다시 확인해 주세요</string>
 
 
     <string name="text_input_email">이메일을 입력해주세요</string>
     <string name="text_input_pw">비밀번호를 입력해주세요</string>
-    <string name="text_input_phone">휴대폰 번호를 입력해주세요</string>
     <string name="text_valid_pw">비밀번호는 8-20자 영문, 숫자, 특수문자를 포함해야 합니다</string>
     <string name="btn_ok">확인</string>
     <string name="btn_send">인증</string>
