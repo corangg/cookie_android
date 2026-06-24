@@ -56,7 +56,7 @@ fun SignUpPwScreen(
     }
 
     SignUpPwScreenContent(
-        isLoading = true,//isLoading,
+        isLoading = isLoading,
         step = step,
         pw = pw,
         pwCheck = pwCheck,

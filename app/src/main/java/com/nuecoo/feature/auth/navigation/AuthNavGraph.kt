@@ -18,6 +18,7 @@ import com.nuecoo.feature.auth.presentation.login.screen.LoginEmailScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginHomeScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginKaKaoScreen
 import com.nuecoo.feature.auth.presentation.signup.screen.SignUpEmailScreen
+import com.nuecoo.feature.auth.presentation.signup.screen.SignUpNicknameScreen
 import com.nuecoo.feature.auth.presentation.signup.screen.SignUpPhoneScreen
 import com.nuecoo.feature.auth.presentation.signup.screen.SignUpPwScreen
 import com.nuecoo.feature.auth.presentation.signup.screen.SignUpTermsScreen
@@ -51,7 +52,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
     }
 
     navigation(
-        startDestination = Route.SignUp.EMAIL,
+        startDestination = Route.SignUp.NICKNAME,
         route = Route.SignUp.GRAPH
     ) {
         composable(Route.SignUp.TERMS) { entry ->
@@ -87,13 +88,9 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
                 navController.getBackStackEntry(Route.SignUp.GRAPH)
             }
             val viewModel: SignUpViewModel = hiltViewModel(parentEntry)
-            SignUpBirthScreen(navController = navController,
+            SignUpNicknameScreen(navController = navController,
                 viewModel = viewModel)
         }
-
-
-
-
 
         composable(Route.SignUp.BIRTH) { entry ->
             val parentEntry = remember(entry) {

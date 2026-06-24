@@ -118,7 +118,7 @@ class SignUpViewModel @Inject constructor(
         }
     }//중복 이메일인지 체크 기능 구현 필요
 
-    // Password step
+    // password step
     private val _pw = MutableStateFlow("")
     val pw: StateFlow<String> = _pw
     private val _pwCheck = MutableStateFlow("")
@@ -142,6 +142,15 @@ class SignUpViewModel @Inject constructor(
             pw.value != pwCheck.value -> { PwCheckResult.NotAccordance }
             else -> { PwCheckResult.Success }
         }
+    }
+
+    //nickname step
+
+    private val _nickname = MutableStateFlow("")
+    val nickname: StateFlow<String> = _nickname
+
+    fun setNickname(value: String){
+        _nickname.value = value
     }
 
 
