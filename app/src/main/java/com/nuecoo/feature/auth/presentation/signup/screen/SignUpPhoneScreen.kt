@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -62,7 +63,7 @@ fun SignUpPhoneScreen(
     }
 
     LaunchedEffect(isPhoneOk) {
-        if (isPhoneOk) {
+        if (isPhoneOk == true) {
             navController.navigate(Route.SignUp.EMAIL)
         }
     }
@@ -91,7 +92,7 @@ fun SignUpPhoneScreenContent(
     phone: String,
     code: String,
     isCodeSent: Boolean,
-    isPhoneOk: Boolean,
+    isPhoneOk: Boolean?,
     onPhoneChanged: (String) -> Unit,
     onCodeChanged: (String) -> Unit,
     onCodeSend: () -> Unit,
@@ -100,9 +101,12 @@ fun SignUpPhoneScreenContent(
     onCancelLoading: () -> Unit,
 ) {
     AuthScreenWrapper {
+        val bottomPadding = imeBottomPadding
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .imePadding()
                 .padding(horizontal = 24.dp)
         ) {
             SignUpTopItem(modifier = Modifier.padding(top = 16.dp), onBack = onBack)//상단 타이틀
@@ -147,17 +151,16 @@ fun SignUpPhoneScreenContent(
             Spacer(Modifier.weight(1f))
 
             BottomButtonItem(
-                modifier = Modifier.padding(bottom = 32.dp),
+                modifier = Modifier.padding(bottom = bottomPadding),
                 isCodeSent = isCodeSent,
                 isPhoneValid = phone.length == 11,
                 isCodeValid = code.length == 6,
                 onSend = onCodeSend,
                 onNext = onNext,
             )//하단 버튼 컴포넌트
-
-            LoadingOverlay(isLoading = isLoading, onCancel = onCancelLoading)
-
         }
+
+        LoadingOverlay(isLoading = isLoading, onCancel = onCancelLoading)
     }
 }
 
@@ -219,8 +222,8 @@ private fun CodeItem(
 }
 
 @Composable
-private fun PhoneResultItem(modifier: Modifier = Modifier, result: Boolean) {
-    if (result) return
+private fun PhoneResultItem(modifier: Modifier = Modifier, result: Boolean?) {
+    if (result != false) return
     Text(
         text = stringResource(R.string.signup_phone_code_error),
         color = ErrorRed,

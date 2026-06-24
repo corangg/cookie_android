@@ -67,7 +67,6 @@ class SignUpViewModel @Inject constructor(
     }
 
     //phone step
-
     private val _phone = MutableStateFlow("")
     val phone: StateFlow<String> = _phone
 
@@ -77,8 +76,8 @@ class SignUpViewModel @Inject constructor(
     private val _isCodeSent = MutableStateFlow(false)
     val isCodeSent: StateFlow<Boolean> = _isCodeSent
 
-    private val _isPhoneOk = MutableStateFlow(false)
-    val isPhoneOk: StateFlow<Boolean> = _isPhoneOk
+    private val _isPhoneOk: MutableStateFlow<Boolean?> = MutableStateFlow(null)
+    val isPhoneOk: StateFlow<Boolean?> = _isPhoneOk
 
     fun setPhone(value: String) {
         _phone.value = value.trim()
@@ -96,21 +95,6 @@ class SignUpViewModel @Inject constructor(
         _isPhoneOk.value = true//추후 실제 기능 구현 필요
     }
 
-    /*suspend fun sendVerificationCode(isResend: Boolean = false): Boolean {
-        *//*if (_phoneNumber.isEmpty()) return false
-        return try {
-            _verificationId = sendVerificationCodeUseCase(_phoneNumber)
-            _isCodeSent.value = true
-            true
-        } catch (e: Exception) {
-            false
-        }*//*
-    }
-
-    suspend fun verifySmsCode(): Boolean {
-        if (_verificationId.isEmpty()) return true // Skip if no verification ID (development)
-        return verifySmsCodeUseCase(_verificationId, _certificationNumber)
-    }*/
 
 
 
