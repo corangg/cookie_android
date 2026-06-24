@@ -1,4 +1,4 @@
-package com.nuecoo.feature.main.presentation.main.component
+package com.nuecoo.core.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

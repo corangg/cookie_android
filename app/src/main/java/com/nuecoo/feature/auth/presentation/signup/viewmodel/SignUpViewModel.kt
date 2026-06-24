@@ -1,7 +1,11 @@
-package com.nuecoo.viewmodel
+package com.nuecoo.feature.auth.presentation.signup.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import com.nuecoo.core.base.BaseViewModel
+import com.nuecoo.core.di.DefaultDispatcher
+import com.nuecoo.core.di.IoDispatcher
+import com.nuecoo.core.di.MainDispatcher
 import com.nuecoo.domain.model.EmailCheckResult
 import com.nuecoo.domain.model.PwCheckResult
 import com.nuecoo.domain.usecase.CheckEmailExistsUseCase
@@ -9,9 +13,10 @@ import com.nuecoo.domain.usecase.SendVerificationCodeUseCase
 import com.nuecoo.domain.usecase.SignUpUseCase
 import com.nuecoo.domain.usecase.VerifySmsCodeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.MainCoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,11 +24,56 @@ class SignUpViewModel @Inject constructor(
     private val checkEmailExistsUseCase: CheckEmailExistsUseCase,
     private val sendVerificationCodeUseCase: SendVerificationCodeUseCase,
     private val verifySmsCodeUseCase: VerifySmsCodeUseCase,
-    private val signUpUseCase: SignUpUseCase
-) : ViewModel() {
+    private val signUpUseCase: SignUpUseCase,
+    @MainDispatcher mainDispatcher: MainCoroutineDispatcher,
+    @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    @IoDispatcher ioDispatcher: CoroutineDispatcher
+) : BaseViewModel(mainDispatcher, defaultDispatcher, ioDispatcher) {
+    private val _signUpStep = MutableStateFlow(0)
+    val signUpStep: StateFlow<Int> = _signUpStep
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    val checkedPrivacy = MutableLiveData(false)
+    val checkedTerms = MutableLiveData(false)
+
+    val allTermsChecked = MediatorLiveData<Boolean>().apply {
+        fun update() {
+            value = checkedPrivacy.value == true &&
+                    checkedTerms.value == true
+        }
+
+        addSource(checkedPrivacy) { update() }
+        addSource(checkedTerms) { update() }
+    }
+
+    val nextEnabled = allTermsChecked
+
+    fun togglePrivacy() {
+        checkedPrivacy.value = !(checkedPrivacy.value ?: false)
+    }
+
+    fun toggleTerms() {
+        checkedTerms.value = !(checkedTerms.value ?: false)
+    }
+
+
+
+    fun setAllTermsChecked(checked: Boolean) {
+        checkedPrivacy.value = checked
+        checkedTerms.value = checked
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Email step
     private var _email = ""
@@ -48,14 +98,13 @@ class SignUpViewModel @Inject constructor(
     }
 
     suspend fun checkEmailExists(): EmailCheckResult {
-        _isLoading.value = true
         return try {
             val exists = checkEmailExistsUseCase("${_email}@${_domain}")
             if (exists) EmailCheckResult.Duplicated else EmailCheckResult.Available
         } catch (e: Exception) {
             EmailCheckResult.Error
         } finally {
-            _isLoading.value = false
+
         }
     }
 
@@ -69,7 +118,8 @@ class SignUpViewModel @Inject constructor(
 
     fun setPw(value: String) {
         _pw = value
-        val regex = Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#\$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#\$%^&*(),.?\":{}|<>]{8,20}$")
+        val regex =
+            Regex("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#\$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#\$%^&*(),.?\":{}|<>]{8,20}$")
         _isPwValid.value = _pw.isEmpty() || regex.matches(_pw)
         _updatePwCheckEnabled()
     }
@@ -99,7 +149,9 @@ class SignUpViewModel @Inject constructor(
     private var _verificationCode = ""
     private var _verificationId = ""
 
-    fun setPhoneNumber(value: String) { _phoneNumber = value.trim() }
+    fun setPhoneNumber(value: String) {
+        _phoneNumber = value.trim()
+    }
 
     fun setVerificationCode(value: String) {
         _verificationCode = value.trim()
@@ -128,11 +180,16 @@ class SignUpViewModel @Inject constructor(
     private val _birthDate = MutableStateFlow<String?>(null)
     val birthDate: StateFlow<String?> = _birthDate
 
-    fun setGender(gender: Boolean) { _isGender.value = gender }
-    fun setBirthDate(date: String) { _birthDate.value = date }
+    fun setGender(gender: Boolean) {
+        _isGender.value = gender
+    }
+
+    fun setBirthDate(date: String) {
+        _birthDate.value = date
+    }
 
     suspend fun trySignUp(): Boolean {
-        _isLoading.value = true
+
         return try {
             signUpUseCase(
                 email = "${_email}@${_domain}",
@@ -144,7 +201,7 @@ class SignUpViewModel @Inject constructor(
                 birth = _birthDate.value ?: ""
             )
         } finally {
-            _isLoading.value = false
+
         }
     }
 }

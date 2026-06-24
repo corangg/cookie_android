@@ -59,7 +59,7 @@ private fun LoginHomeScreenContent(
                 painter = painterResource(R.drawable.img_cookie_cheering_1),
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(top = 160.dp)
+                    .padding(top = 200.dp)
                     .size(148.dp)
             )
 

@@ -26,7 +26,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,7 +60,7 @@ import com.nuecoo.R
 import com.nuecoo.core.ui.component.DefaultItemBox
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
-import com.nuecoo.feature.main.presentation.main.component.MainTitleItem
+import com.nuecoo.core.ui.component.MainTitleItem
 import com.nuecoo.feature.main.presentation.oven.viewmodel.OvenViewModel
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder

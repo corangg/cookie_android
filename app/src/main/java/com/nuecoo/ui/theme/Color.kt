@@ -18,6 +18,9 @@ val MainBorder = Color(0xFF4D310E)
 //val MainText = Color(0xFF3F352A)
 val MainText = Color(0xFF4A3F32)
 val SubText = Color(0xFFAE9E80)
+
+
+val DividerLine = Color(0xFFECE0C8)
 val UnCollectedText = Color(0xFFB4A586)
 val MainButton = Color(0xFFEEB85E)
 val SubBorder = Color(0xFFFFF4D8)
@@ -59,6 +62,11 @@ val TextFieldHint = Color(0xFF9B8A6A)
 val BackButtonBackground = Color(0xFFfbf5e8)
 
 val DefaultIconBackground = Color(0xFFece0c8)
+
+val AuthChecked = Color(0xFFcf7639)
+val AuthUnCheckBorder = Color(0xFFECE0C8)
+
+val AccentText = Color(0xFFe0750f)
 
 
 val CheeringColor = Color(0xFFFFC83D)

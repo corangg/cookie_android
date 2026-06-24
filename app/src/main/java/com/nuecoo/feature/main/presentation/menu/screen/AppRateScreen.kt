@@ -24,10 +24,9 @@ import androidx.compose.ui.unit.sp
 import com.nuecoo.R
 import com.nuecoo.core.ui.component.BackButton
 import com.nuecoo.core.ui.component.DefaultItemBox
-import com.nuecoo.feature.main.presentation.main.component.MainTitleItem
+import com.nuecoo.core.ui.component.MainTitleItem
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainButton
-import com.nuecoo.ui.theme.MainText
 import com.nuecoo.ui.theme.SubText
 import com.nuecoo.ui.theme.White
 

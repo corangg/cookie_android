@@ -34,7 +34,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -70,7 +69,7 @@ import com.nuecoo.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CollectionSortType
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.presentation.collection.viewmodel.CollectionViewModel
-import com.nuecoo.feature.main.presentation.main.component.MainTitleItem
+import com.nuecoo.core.ui.component.MainTitleItem
 import com.nuecoo.ui.theme.DropDownBackground
 import com.nuecoo.ui.theme.DropDownSelectBackground
 import com.nuecoo.ui.theme.ItemCardBackground

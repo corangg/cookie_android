@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.nuecoo.ui.theme.MainBackground
@@ -16,6 +17,7 @@ fun AuthScreenWrapper(content: @Composable BoxScope.() -> Unit) {//Auth 기본 S
             .fillMaxSize()
             .background(MainBackground)
             .navigationBarsPadding()
+            .systemBarsPadding()
     ) {
         content()
     }

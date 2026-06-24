@@ -31,7 +31,7 @@ import com.nuecoo.BuildConfig
 import com.nuecoo.R
 import com.nuecoo.core.ui.component.BackButton
 import com.nuecoo.core.ui.component.DefaultItemBox
-import com.nuecoo.feature.main.presentation.main.component.MainTitleItem
+import com.nuecoo.core.ui.component.MainTitleItem
 import com.nuecoo.ui.theme.DefaultIconBackground
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainText
@@ -59,7 +59,7 @@ fun AppInfoScreen(
 }
 
 @Composable
-fun AppInfoScreenContent(
+private fun AppInfoScreenContent(
     onBack: () -> Unit,
     onMoveRate: () -> Unit,
     onMoveCs: () -> Unit,

@@ -52,7 +52,7 @@ import com.nuecoo.ui.component.NueCooButton
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder
 import com.nuecoo.ui.theme.MainButton
-import com.nuecoo.viewmodel.SignUpViewModel
+import com.nuecoo.feature.auth.presentation.signup.viewmodel.SignUpViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -76,7 +76,7 @@ fun SignUpEmailScreen(
                 .background(MainBackground)
                 .padding(horizontal = 24.dp, vertical = 16.dp)
         ) {
-            SignUpTopBar(title = stringResource(R.string.label_signup)) {
+            SignUpTopBar(title = stringResource(R.string.signup_main_title)) {
                 navController.popBackStack()
             }
             Spacer(Modifier.height(16.dp))
@@ -212,7 +212,7 @@ fun SignUpPwScreen(
                 .padding(horizontal = 24.dp, vertical = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            SignUpTopBar(title = stringResource(R.string.label_signup)) { navController.popBackStack() }
+            SignUpTopBar(title = stringResource(R.string.signup_main_title)) { navController.popBackStack() }
             Spacer(Modifier.height(16.dp))
             Text(stringResource(R.string.text_input_pw), color = MainBorder, fontSize = 20.sp)
             Spacer(Modifier.height(16.dp))
@@ -308,7 +308,7 @@ fun SignUpPhoneScreen(
                 .background(MainBackground)
                 .padding(horizontal = 24.dp, vertical = 16.dp)
         ) {
-            SignUpTopBar(title = stringResource(R.string.label_signup)) { navController.popBackStack() }
+            SignUpTopBar(title = stringResource(R.string.signup_main_title)) { navController.popBackStack() }
             Spacer(Modifier.height(16.dp))
             Text(stringResource(R.string.text_input_phone), color = MainBorder, fontSize = 20.sp)
             Spacer(Modifier.height(16.dp))
@@ -435,7 +435,7 @@ fun SignUpBirthScreen(
                 .background(MainBackground)
                 .padding(horizontal = 24.dp, vertical = 16.dp)
         ) {
-            SignUpTopBar(title = stringResource(R.string.label_signup)) { navController.popBackStack() }
+            SignUpTopBar(title = stringResource(R.string.signup_main_title)) { navController.popBackStack() }
             Spacer(Modifier.height(16.dp))
             Text("성별", color = MainBorder, fontSize = 20.sp)
             Spacer(Modifier.height(16.dp))

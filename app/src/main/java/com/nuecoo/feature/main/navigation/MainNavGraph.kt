@@ -1,4 +1,4 @@
-package com.nuecoo.feature.main.presentation.main.navigation
+package com.nuecoo.feature.main.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController

@@ -1,4 +1,4 @@
-package com.nuecoo.feature.main.presentation.main.navigation
+package com.nuecoo.feature.main.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController

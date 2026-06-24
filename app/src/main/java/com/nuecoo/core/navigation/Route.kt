@@ -20,9 +20,12 @@ object Route {
 
     object SignUp {
         const val GRAPH = "signup"
+        const val TERMS = "signup/terms"
+        const val PHONE = "signup/phone"
         const val EMAIL = "signup/email"
         const val PW = "signup/pw"
-        const val PHONE = "signup/phone"
+        const val NICKNAME = "signup/nickname"
         const val BIRTH = "signup/birth"
+        const val COMPLETE = "signup/complete"
     }
 }

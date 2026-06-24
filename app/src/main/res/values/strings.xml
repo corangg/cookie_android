@@ -10,6 +10,8 @@
     <string name="day">일</string>
     <string name="of">의</string>
     <string name="cookie">쿠키</string>
+    <string name="look">보기</string>
+    <string name="next">다음</string>
 
     <!-- Bottom Nav -->
     <string name="menu_main_oven">오븐</string>
@@ -30,7 +32,16 @@
     <string name="login_result_error">아이디 와 비밀번호를 확인해주세요</string>
 
     <!-- SignUp -->
-    <string name="label_signup">회원가입</string>
+    <string name="signup_main_title">회원가입</string>
+    <string name="signup_sub_title">SIGN UP</string>
+    <string name="signup_terms_main">약관에 동의해 주세요</string>
+    <string name="signup_terms_sub">서비스 이용을 위해 동의가 필요해요</string>
+    <string name="signup_terms_all_agree">전체 동의</string>
+    <string name="signup_terms_essential">[필수]</string>
+    <string name="signup_terms_privacy">개인정보 처리방침</string>
+    <string name="signup_terms_terms">이용약관</string>
+
+
     <string name="text_input_email">이메일을 입력해주세요</string>
     <string name="text_input_pw">비밀번호를 입력해주세요</string>
     <string name="text_input_phone">휴대폰 번호를 입력해주세요</string>
@@ -38,6 +49,7 @@
     <string name="btn_ok">확인</string>
     <string name="btn_send">인증</string>
     <string name="btn_resend">재전송</string>
+
 
     <!-- Oven -->
     <string name="text_oven_title">오늘의 쿠키</string>

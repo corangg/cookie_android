@@ -5,7 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.nuecoo.feature.auth.navigation.authNavGraph
-import com.nuecoo.feature.main.presentation.main.navigation.mainNavGraph
+import com.nuecoo.feature.main.navigation.mainNavGraph
 import com.nuecoo.feature.splash.presentation.screen.SplashScreen
 
 @Composable

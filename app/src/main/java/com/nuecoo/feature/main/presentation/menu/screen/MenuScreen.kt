@@ -56,7 +56,7 @@ import com.nuecoo.BuildConfig
 import com.nuecoo.R
 import com.nuecoo.core.ui.component.DefaultItemBox
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
-import com.nuecoo.feature.main.presentation.main.component.MainTitleItem
+import com.nuecoo.core.ui.component.MainTitleItem
 import com.nuecoo.feature.main.presentation.menu.viewmodel.CollectionProgress
 import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
 import com.nuecoo.ui.theme.AttendanceActive
