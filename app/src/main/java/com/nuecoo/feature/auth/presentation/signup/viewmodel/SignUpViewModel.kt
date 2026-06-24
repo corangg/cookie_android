@@ -10,6 +10,7 @@ import com.nuecoo.domain.usecase.CheckEmailExistsUseCase
 import com.nuecoo.domain.usecase.SendVerificationCodeUseCase
 import com.nuecoo.domain.usecase.SignUpUseCase
 import com.nuecoo.domain.usecase.VerifySmsCodeUseCase
+import com.nuecoo.feature.auth.domain.model.EmailCheckResult
 import com.nuecoo.feature.auth.domain.model.PwCheckResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -99,17 +100,23 @@ class SignUpViewModel @Inject constructor(
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email
 
-    private val _isEmailResult = MutableStateFlow<Boolean?>(null)
+    private val _isEmailResult = MutableStateFlow<EmailCheckResult?>(null)
 
-    val isEmailResult: StateFlow<Boolean?> =_isEmailResult
+    val isEmailResult: StateFlow<EmailCheckResult?> =_isEmailResult
 
     fun setEmail(value: String) {
         _email.value = value
     }
 
-    fun checkEmail() {
-        _isEmailResult.value = Patterns.EMAIL_ADDRESS.matcher(_email.value).matches()
-    }
+    fun checkEmail() = onIoWork {
+        _isEmailResult.value = if (!Patterns.EMAIL_ADDRESS.matcher(_email.value).matches()) {
+            EmailCheckResult.NotValid
+        } else if (!checkEmailExistsUseCase(email.value)) {
+            EmailCheckResult.Duplicated
+        } else {
+            EmailCheckResult.Available
+        }
+    }//중복 이메일인지 체크 기능 구현 필요
 
     // Password step
     private val _pw = MutableStateFlow("")

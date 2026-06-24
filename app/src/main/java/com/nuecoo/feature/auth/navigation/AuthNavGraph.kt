@@ -51,7 +51,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
     }
 
     navigation(
-        startDestination = Route.SignUp.PW,
+        startDestination = Route.SignUp.EMAIL,
         route = Route.SignUp.GRAPH
     ) {
         composable(Route.SignUp.TERMS) { entry ->

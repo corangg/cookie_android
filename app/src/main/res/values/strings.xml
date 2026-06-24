@@ -34,6 +34,7 @@
     <!-- SignUp -->
     <string name="signup_main_title">회원가입</string>
     <string name="signup_sub_title">SIGN UP</string>
+    <string name="signup_error">오류가 발생 했습니다. 다시 시도해 주세요</string>
 
     <string name="signup_terms_main">약관에 동의해 주세요</string>
     <string name="signup_terms_sub">서비스 이용을 위해 동의가 필요해요</string>
@@ -53,7 +54,8 @@
     <string name="signup_email_main">사용하실 이메일을 입력해 주세요</string>
     <string name="signup_email_sub">실제 등록된 이메일을 입력해 주세요</string>
     <string name="signup_email_hint">yookoo@example.com</string>
-    <string name="signup_email_error">잘못된 이메일 형식 입니다. 다시 확인해 주세요</string>
+    <string name="signup_email_error_duplicated">중복된 이메일 입니다. 다시 입력해 주세요</string>
+    <string name="signup_email_error_not_valid">잘못된 이메일 형식 입니다. 다시 확인해 주세요</string>
 
     <string name="signup_pw_main">사용하실 비밀번호를 입력해 주세요</string>
     <string name="signup_pw_sub">8~32자 영문·숫자·특수문자로 입력해 주세요</string>

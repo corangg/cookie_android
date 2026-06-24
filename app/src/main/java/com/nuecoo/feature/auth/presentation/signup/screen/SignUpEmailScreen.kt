@@ -23,6 +23,7 @@ import com.nuecoo.core.navigation.Route
 import com.nuecoo.core.ui.component.DefaultAuthButton
 import com.nuecoo.core.ui.component.DefaultTextField
 import com.nuecoo.core.ui.component.LoadingOverlay
+import com.nuecoo.feature.auth.domain.model.EmailCheckResult
 import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpMainTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpRateItem
@@ -48,7 +49,7 @@ fun SignUpEmailScreen(
     }
 
     LaunchedEffect(isEmailResult) {
-        if (isEmailResult == true) {
+        if (isEmailResult == EmailCheckResult.Available) {
             navController.navigate(Route.SignUp.PW)
         }
     }
@@ -70,7 +71,7 @@ private fun SignUpEmailScreenContent(
     isLoading: Boolean,
     step: Int,
     email: String,
-    isEmailResult: Boolean?,
+    isEmailResult: EmailCheckResult?,
     onEmailChanged: (String) -> Unit,
     onBack: () -> Unit,
     onNext: () -> Unit,
@@ -110,7 +111,9 @@ private fun SignUpEmailScreenContent(
             )//이메일 입력 텍스트 필드
 
             EmailResultItem(
-                modifier = Modifier.padding(top = 10.dp).padding(start = 6.dp),
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .padding(start = 6.dp),
                 result = isEmailResult
             )//에러 메세지 컴포넌트
 
@@ -145,10 +148,16 @@ private fun TextFieldEmailItem(
 }
 
 @Composable
-private fun EmailResultItem(modifier: Modifier = Modifier, result: Boolean?) {
-    if (result != false) return
+private fun EmailResultItem(modifier: Modifier = Modifier, result: EmailCheckResult?) {
+    val errorMessage = when (result) {
+        EmailCheckResult.Duplicated -> stringResource(R.string.signup_email_error_duplicated)
+        EmailCheckResult.NotValid -> stringResource(R.string.signup_email_error_not_valid)
+        EmailCheckResult.Error -> stringResource(R.string.signup_error)
+        else -> return
+    }
+
     Text(
-        text = stringResource(R.string.signup_email_error),
+        text = errorMessage,
         color = ErrorRed,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,

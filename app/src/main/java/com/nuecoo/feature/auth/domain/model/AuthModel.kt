@@ -9,6 +9,7 @@ sealed class LoginResult {
 sealed class EmailCheckResult {
     object Available : EmailCheckResult()
     object Duplicated : EmailCheckResult()
+    object NotValid : EmailCheckResult()
     object Error : EmailCheckResult()
 }
 
