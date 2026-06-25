@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.nuecoo.core.data.datasource.remote.FirebaseDataDataSource
+import com.nuecoo.core.data.mapper.toRTDBForm
 import com.nuecoo.core.data.mapper.toRemote
 import com.nuecoo.core.data.mapper.toUserInfo
 import com.nuecoo.core.di.IoDispatcher
@@ -26,18 +27,22 @@ class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
     override suspend fun trySignUp(authModel: AuthModel) = withContext(ioDispatcher) {
         val userInfo = authModel.toUserInfo()
-        val authResult = runCatching { firebaseAuthDataSource.trySignUp(authModel.email, authModel.password)
+        val authResult = runCatching {
+            firebaseAuthDataSource.trySignUp(authModel.email, authModel.password)
         }.getOrElse { e ->
             when (e) {
                 is FirebaseAuthWeakPasswordException -> {
                     return@withContext SignUpResult.WeakPassword
                 }
+
                 is FirebaseAuthUserCollisionException -> {
                     return@withContext SignUpResult.AlreadyExists
                 }
+
                 is FirebaseAuthInvalidCredentialsException -> {
                     return@withContext SignUpResult.InvalidEmail
                 }
+
                 else -> {
                     return@withContext SignUpResult.Failed
                 }
@@ -46,13 +51,19 @@ class AuthRepositoryImpl @Inject constructor(
         val uid = authResult.user?.uid ?: return@withContext SignUpResult.Failed
         runCatching {
             firebaseDataDataSource.saveUserInfo(uid, userInfo.toRemote())
+            firebaseDataDataSource.saveEmail(authModel.email.toRTDBForm())
         }.getOrElse { return@withContext SignUpResult.DbSaveFailed }
         SignUpResult.Success
     }
 
-    override suspend fun checkEmailExists(email: String): Boolean = withContext(ioDispatcher) {
-        TODO("Not yet implemented")
+    override suspend fun logOut(): Boolean = withContext(ioDispatcher) {
+        runCatching {
+            firebaseAuthDataSource.logOut()
+            false
+        }.getOrElse { return@withContext true }
     }
+
+
 
     /*override suspend fun isLoggedIn(): Boolean = firebaseAuthDataSourceImpl.isLoggedIn()
 

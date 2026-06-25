@@ -9,8 +9,8 @@ class FirebaseAuthDataSourceImpl @Inject constructor(
     private val auth: FirebaseAuth
 ) : FirebaseAuthDataSource {
 
-    override suspend fun trySignUp(email: String, password: String): AuthResult =
-        auth.createUserWithEmailAndPassword(email, password).await()
+    override suspend fun trySignUp(email: String, password: String): AuthResult = auth.createUserWithEmailAndPassword(email, password).await()
+    override suspend fun logOut() = auth.signOut()
 
 
     /*fun isLoggedIn(): Boolean = auth.currentUser != null

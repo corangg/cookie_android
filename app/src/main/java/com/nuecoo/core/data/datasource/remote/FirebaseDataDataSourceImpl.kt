@@ -15,6 +15,24 @@ class FirebaseDataDataSourceImpl @Inject constructor(
             .setValue(userInfo)
             .await()
     }
+
+    override suspend fun saveEmail(email: String) {
+        database.reference
+            .child("emails")
+            .child(email)
+            .setValue(true)
+            .await()
+    }
+
+    override suspend fun checkEmailExists(email: String): Boolean {
+        val snapshot = database.reference
+            .child("emails")
+            .child(email)
+            .get()
+            .await()
+        snapshot.exists()
+        return snapshot.exists()
+    }
 }
 
 

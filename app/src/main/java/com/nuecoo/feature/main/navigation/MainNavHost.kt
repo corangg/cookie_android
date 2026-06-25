@@ -51,7 +51,13 @@ fun MainNavHost(
                         restoreState = true
                     }
                 },
-                onMoveAppInfo = { navController.navigate(Route.APP_INFO) }
+                onMoveAppInfo = { navController.navigate(Route.APP_INFO) },
+                onLogout = {
+                    rootNavController.navigate(Route.Login.GRAPH) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
             )
         }
         composable(Route.APP_INFO) {

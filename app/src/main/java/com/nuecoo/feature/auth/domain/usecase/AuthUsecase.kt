@@ -1,5 +1,6 @@
 package com.nuecoo.feature.auth.domain.usecase
 
+import com.nuecoo.core.domain.repository.DataRepository
 import com.nuecoo.feature.auth.domain.AuthRepository
 import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.SignUpResult
@@ -12,15 +13,10 @@ class SignUpUseCase @Inject constructor(
 }
 
 class CheckEmailExistsUseCase @Inject constructor(
-    private val repository: AuthRepository
+    private val repository: DataRepository
 ) {
-    suspend operator fun invoke(email: String): Boolean = false
+    suspend operator fun invoke(email: String) = repository.checkEmailExists(email)
 }
-
-
-
-
-
 
 
 
@@ -33,15 +29,8 @@ class CheckAuthUseCase @Inject constructor(
 class LoginUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(email: String, password: String): Boolean = false
+    suspend operator fun invoke(email: String, password: String): Boolean = true
 }
-
-class LogoutUseCase @Inject constructor(
-    private val repository: AuthRepository
-) {
-    suspend operator fun invoke(): Boolean = true
-}
-
 
 
 class SendVerificationCodeUseCase @Inject constructor(

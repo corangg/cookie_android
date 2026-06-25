@@ -44,3 +44,6 @@ fun AuthModel.toUserInfo() = UserInfo(
     birth = this.birth,
     gender = this.gender,
 )
+
+fun String.toRTDBForm() = this.replace(".", ",")
+fun String.toEmailForm() = this.replace(",", ".")

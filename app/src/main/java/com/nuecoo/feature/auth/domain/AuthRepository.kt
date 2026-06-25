@@ -5,7 +5,8 @@ import com.nuecoo.feature.auth.domain.model.SignUpResult
 
 interface AuthRepository {
     suspend fun trySignUp(authModel: AuthModel): SignUpResult
-    suspend fun checkEmailExists(email: String): Boolean
+    suspend fun logOut(): Boolean
+
 
     /* suspend fun isLoggedIn(): Boolean
      suspend fun login(email: String, password: String): Boolean

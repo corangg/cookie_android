@@ -1,5 +1,6 @@
 package com.nuecoo.feature.main.domain.usecase
 
+import com.nuecoo.feature.auth.domain.AuthRepository
 import com.nuecoo.feature.main.domain.model.DailyCookieItemData
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
 import com.nuecoo.feature.main.domain.repository.CookieRepository
@@ -86,4 +87,10 @@ class GetWeeklyAttendance @Inject constructor(
         val data = list.find { it.date == this } ?: return false
         return data.list.any { it.no != null }
     }
+}
+
+class LogOutUseCase @Inject constructor(
+    private val repository: AuthRepository
+){
+    suspend operator fun invoke() = repository.logOut()
 }
