@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.nuecoo.R
 import com.nuecoo.core.navigation.Route
@@ -52,7 +53,7 @@ fun SplashScreen(
         animationSpec = tween(durationMillis = 600), label = "title2"
     )
 
-    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+    val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         showIcon = true
@@ -66,7 +67,7 @@ fun SplashScreen(
 
     LaunchedEffect(isLoggedIn) {
         isLoggedIn?.let { loggedIn ->
-            if (!loggedIn) {//로그인 ui를 위해 잠시 반전
+            if (loggedIn) {//로그인 ui를 위해 잠시 반전
                 navController.navigate(Route.MAIN) {
                     popUpTo(Route.SPLASH) { inclusive = true }
                 }
