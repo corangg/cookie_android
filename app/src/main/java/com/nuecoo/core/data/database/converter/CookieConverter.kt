@@ -1,9 +1,8 @@
-package com.nuecoo.core.database.converter
+package com.nuecoo.core.data.database.converter
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.nuecoo.core.database.entity.LocalCookieData
+import com.nuecoo.core.data.model.local.LocalCookieData
 
 class CookieConverter {
 
@@ -18,7 +17,7 @@ class CookieConverter {
     fun toLocalCookieDataList(value: String?): List<LocalCookieData> {
         if (value.isNullOrBlank()) return emptyList()
 
-        val type = object : TypeToken<List<LocalCookieData>>() {}.type
+        val type = object : com.google.gson.reflect.TypeToken<List<LocalCookieData>>() {}.type
         return gson.fromJson(value, type)
     }
 }

@@ -79,6 +79,10 @@
     <string name="signup_complete_success_sub">님을 위한 쿠키가 준비되어 있어요!</string>
     <string name="signup_complete_fail_main">죄송합니다</string>
     <string name="signup_complete_fail_sub">회원 가입에 실패 했습니다.</string>
+    <string name="signup_complete_fail_sub_pw">비밀번호 오류가 발생 했습니다.</string>
+    <string name="signup_complete_fail_sub_already_exists">이미 가입된 이메일 입니다.</string>
+    <string name="signup_complete_fail_sub_invalid_email">잘못된 이메일 형식 입니다.</string>
+    <string name="signup_complete_fail_sub_save_fail">정보 저장 오류가 발생 했습니다.</string>
     <string name="signup_complete_fail_button">홈으로</string>
 
     <!-- Oven -->

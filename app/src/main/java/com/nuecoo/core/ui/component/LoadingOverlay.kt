@@ -28,7 +28,7 @@ import com.nuecoo.ui.theme.MainButton
 import com.nuecoo.ui.theme.OverlayBackground
 import kotlinx.coroutines.delay
 
-private const val LOADING_TIMEOUT_MS = 10_000L
+private const val LOADING_TIMEOUT_MS = 60_000L
 private const val DOT_ANIMATION_DURATION = 500
 private const val DOT_BOUNCE_HEIGHT = -10f
 

@@ -6,13 +6,14 @@ import com.nuecoo.core.base.BaseViewModel
 import com.nuecoo.core.di.DefaultDispatcher
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.MainDispatcher
+import com.nuecoo.feature.auth.domain.model.AuthModel
+import com.nuecoo.feature.auth.domain.model.EmailCheckResult
+import com.nuecoo.feature.auth.domain.model.PwCheckResult
+import com.nuecoo.feature.auth.domain.model.SignUpResult
 import com.nuecoo.feature.auth.domain.usecase.CheckEmailExistsUseCase
 import com.nuecoo.feature.auth.domain.usecase.SendVerificationCodeUseCase
 import com.nuecoo.feature.auth.domain.usecase.SignUpUseCase
 import com.nuecoo.feature.auth.domain.usecase.VerifySmsCodeUseCase
-import com.nuecoo.feature.auth.domain.model.AuthModel
-import com.nuecoo.feature.auth.domain.model.EmailCheckResult
-import com.nuecoo.feature.auth.domain.model.PwCheckResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.MainCoroutineDispatcher
@@ -194,8 +195,8 @@ class SignUpViewModel @Inject constructor(
 
     //complete step
 
-    private val _isSignupResult = MutableStateFlow(false)
-    val isSignupResult: StateFlow<Boolean> = _isSignupResult
+    private val _isSignupResult: MutableStateFlow<SignUpResult> = MutableStateFlow(SignUpResult.Failed)
+    val isSignupResult: StateFlow<SignUpResult> = _isSignupResult
 
     fun trySignUp() = onIoWork {
         val authData = AuthModel(
@@ -203,9 +204,13 @@ class SignUpViewModel @Inject constructor(
             password = pw.value,
             nickname = nickname.value,
             phone = phone.value,
-            birth = "${year.value}.${month.value}.${day.value}",
+            birth = formatBirth(year = year.value, month = month.value, day = day.value),
             gender = gender.value ?: false
         )
         _isSignupResult.value = signUpUseCase(authData)
+    }
+
+    private fun formatBirth(year: Int, month: Int, day: Int): String {
+        return "%04d%02d%02d".format(year, month, day)
     }
 }

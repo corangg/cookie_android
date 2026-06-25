@@ -1,7 +1,7 @@
 package com.nuecoo.feature.main.data.mapper
 
-import com.nuecoo.core.database.entity.LocalCookieData
-import com.nuecoo.core.database.entity.LocalDailyCookieData
+import com.nuecoo.core.data.model.local.LocalCookieData
+import com.nuecoo.core.data.model.local.LocalDailyCookieData
 import com.nuecoo.feature.main.domain.model.CookieItemData
 import com.nuecoo.feature.main.domain.model.DailyCookieItemData
 

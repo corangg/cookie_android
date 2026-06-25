@@ -1,18 +1,18 @@
 package com.nuecoo.feature.auth.data.datasource
 
-import com.google.firebase.FirebaseException
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class FirebaseAuthDataSourceImpl @Inject constructor(
     private val auth: FirebaseAuth
-): FirebaseAuthDataSource {
+) : FirebaseAuthDataSource {
+
+    override suspend fun trySignUp(email: String, password: String): AuthResult =
+        auth.createUserWithEmailAndPassword(email, password).await()
+
+
     /*fun isLoggedIn(): Boolean = auth.currentUser != null
 
     suspend fun login(email: String, password: String): Boolean = runCatching {

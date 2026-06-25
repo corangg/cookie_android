@@ -19,10 +19,10 @@ import com.nuecoo.core.navigation.Route
 import com.nuecoo.core.ui.component.DefaultAuthButton
 import com.nuecoo.core.ui.component.FireworksEffect
 import com.nuecoo.core.ui.component.LoadingOverlay
+import com.nuecoo.feature.auth.domain.model.SignUpResult
 import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpMainTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpRateItem
-import com.nuecoo.feature.auth.presentation.signup.component.SignUpSubTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpTopItem
 import com.nuecoo.feature.auth.presentation.signup.viewmodel.SignUpViewModel
 import com.nuecoo.ui.theme.MainButton
@@ -47,7 +47,7 @@ fun SignUpCompleteScreen(
         isLoading = isLoading,
         step = step,
         nickname = nickname,
-        isSignupResult = isSignupResult,
+        signupResult = isSignupResult,
         onBack = { navController.popBackStack() },
         onHome = {
             navController.navigate(Route.Login.HOME) {
@@ -66,7 +66,7 @@ private fun SignUpCompleteScreenContent(
     isLoading: Boolean,
     step: Int,
     nickname: String,
-    isSignupResult: Boolean,
+    signupResult: SignUpResult,
     onBack: () -> Unit,
     onHome: () -> Unit,
     onCancelLoading: () -> Unit
@@ -83,33 +83,31 @@ private fun SignUpCompleteScreenContent(
                 SignUpTopItem(modifier = Modifier.padding(top = 16.dp), onBack = onBack)//상단 타이틀
                 SignUpRateItem(modifier = Modifier.padding(top = 20.dp), step = step)//진행 단계
 
-                SignUpMainTextItem(
+                MainTextItem(
                     modifier = Modifier
                         .padding(top = 80.dp)
                         .align(Alignment.CenterHorizontally),
-                    text = stringResource(if (isSignupResult) R.string.signup_complete_success_main else R.string.signup_complete_fail_main),
-                    fontSize = 26
+                    signupResult = signupResult
                 )//메인 텍스트
-                SignUpSubTextItem(
+                SubTextItem(
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .align(Alignment.CenterHorizontally),
-                    text = "$nickname${stringResource(if (isSignupResult) R.string.signup_complete_success_sub else R.string.signup_complete_fail_sub)}",
-                    fontSize = 16
+                    signupResult = signupResult
                 )//서브 텍스트
 
                 Spacer(Modifier.weight(1f))
 
                 DefaultAuthButton(
                     modifier = Modifier.padding(bottom = bottomPadding),
-                    title = stringResource(if (isSignupResult) R.string.signup_start else R.string.signup_complete_fail_button),
+                    title = stringResource(if (signupResult == SignUpResult.Success) R.string.signup_start else R.string.signup_complete_fail_button),
                     background = MainButton,
                     titleColor = White,
                     onClick = onHome
                 )//하단 버튼
 
             }
-            if (isSignupResult) {
+            if (signupResult == SignUpResult.Success) {
                 FireworksEffect(
                     isVisible = true,
                     durationSeconds = 15f,
@@ -119,4 +117,38 @@ private fun SignUpCompleteScreenContent(
         }
         LoadingOverlay(isLoading = isLoading, onCancel = onCancelLoading)
     }
+}
+
+@Composable
+private fun MainTextItem(modifier: Modifier, signupResult: SignUpResult) {
+    val text = stringResource(
+        when (signupResult) {
+            SignUpResult.Success -> R.string.signup_complete_success_main
+            else -> R.string.signup_complete_fail_main
+        }
+    )
+    SignUpMainTextItem(
+        modifier = modifier,
+        text = text,
+        fontSize = 26
+    )
+}
+
+@Composable
+private fun SubTextItem(modifier: Modifier, signupResult: SignUpResult) {
+    val text = stringResource(
+        when (signupResult) {
+            SignUpResult.Success -> R.string.signup_complete_success_sub
+            SignUpResult.WeakPassword -> R.string.signup_complete_fail_sub_pw
+            SignUpResult.AlreadyExists -> R.string.signup_complete_fail_sub_already_exists
+            SignUpResult.InvalidEmail -> R.string.signup_complete_fail_sub_invalid_email
+            SignUpResult.DbSaveFailed -> R.string.signup_complete_fail_sub_save_fail
+            SignUpResult.Failed -> R.string.signup_complete_fail_sub
+        }
+    )
+    SignUpMainTextItem(
+        modifier = modifier,
+        text = text,
+        fontSize = 16
+    )
 }

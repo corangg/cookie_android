@@ -29,6 +29,7 @@ composeNavigation = "2.8.9"
 
 # Firebase
 firebaseBom = "33.6.0"
+firebaseDatabase = "21.0.0"
 googleServices = "4.4.2"
 
 [libraries]
@@ -81,6 +82,7 @@ retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
+firebase-database = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabase" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

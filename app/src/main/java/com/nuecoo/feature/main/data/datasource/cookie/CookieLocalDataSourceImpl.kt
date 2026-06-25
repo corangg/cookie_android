@@ -1,7 +1,7 @@
 package com.nuecoo.feature.main.data.datasource.cookie
 
-import com.nuecoo.core.database.dao.CookieDao
-import com.nuecoo.core.database.entity.LocalDailyCookieData
+import com.nuecoo.core.data.database.dao.CookieDao
+import com.nuecoo.core.data.model.local.LocalDailyCookieData
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

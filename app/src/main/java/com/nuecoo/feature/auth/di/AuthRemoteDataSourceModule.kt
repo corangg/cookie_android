@@ -1,6 +1,5 @@
 package com.nuecoo.feature.auth.di
 
-import com.nuecoo.core.di.LocalDataSources
 import com.nuecoo.core.di.RemoteDataSources
 import com.nuecoo.feature.auth.data.datasource.FirebaseAuthDataSource
 import com.nuecoo.feature.auth.data.datasource.FirebaseAuthDataSourceImpl
@@ -12,7 +11,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class AuthRemoteDataSource {
+abstract class AuthRemoteDataSourceModule {
     @Binds
     @Singleton
     @RemoteDataSources

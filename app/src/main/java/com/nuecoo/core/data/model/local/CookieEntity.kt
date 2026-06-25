@@ -1,9 +1,9 @@
-package com.nuecoo.core.database.entity
+package com.nuecoo.core.data.model.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.nuecoo.core.database.converter.CookieConverter
+import com.nuecoo.core.data.database.converter.CookieConverter
 
 @Entity
 @TypeConverters(CookieConverter::class)

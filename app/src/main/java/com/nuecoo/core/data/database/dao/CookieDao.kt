@@ -1,9 +1,9 @@
-package com.nuecoo.core.database.dao
+package com.nuecoo.core.data.database.dao
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.nuecoo.core.database.entity.LocalDailyCookieData
+import com.nuecoo.core.data.model.local.LocalDailyCookieData
 import kotlinx.coroutines.flow.Flow
 
 @Dao
