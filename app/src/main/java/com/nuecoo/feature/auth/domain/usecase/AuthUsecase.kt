@@ -11,8 +11,11 @@ class SignUpUseCase @Inject constructor(
     suspend operator fun invoke(authData: AuthModel): SignUpResult = repository.trySignUp(authData)
 }
 
-
-
+class CheckEmailExistsUseCase @Inject constructor(
+    private val repository: AuthRepository
+) {
+    suspend operator fun invoke(email: String): Boolean = false
+}
 
 
 
@@ -30,7 +33,7 @@ class CheckAuthUseCase @Inject constructor(
 class LoginUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(email: String, password: String): Boolean = true
+    suspend operator fun invoke(email: String, password: String): Boolean = false
 }
 
 class LogoutUseCase @Inject constructor(
@@ -39,11 +42,7 @@ class LogoutUseCase @Inject constructor(
     suspend operator fun invoke(): Boolean = true
 }
 
-class CheckEmailExistsUseCase @Inject constructor(
-    private val repository: AuthRepository
-) {
-    suspend operator fun invoke(email: String): Boolean = false
-}
+
 
 class SendVerificationCodeUseCase @Inject constructor(
     private val repository: AuthRepository

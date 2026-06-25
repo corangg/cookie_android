@@ -4,13 +4,10 @@ import android.content.Context
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
-import com.nuecoo.core.data.datasource.local.UserInfoDataSource
 import com.nuecoo.core.data.datasource.remote.FirebaseDataDataSource
-import com.nuecoo.core.data.mapper.toLocal
 import com.nuecoo.core.data.mapper.toRemote
 import com.nuecoo.core.data.mapper.toUserInfo
 import com.nuecoo.core.di.IoDispatcher
-import com.nuecoo.core.di.LocalDataSources
 import com.nuecoo.core.di.RemoteDataSources
 import com.nuecoo.feature.auth.data.datasource.FirebaseAuthDataSource
 import com.nuecoo.feature.auth.domain.AuthRepository
@@ -51,6 +48,10 @@ class AuthRepositoryImpl @Inject constructor(
             firebaseDataDataSource.saveUserInfo(uid, userInfo.toRemote())
         }.getOrElse { return@withContext SignUpResult.DbSaveFailed }
         SignUpResult.Success
+    }
+
+    override suspend fun checkEmailExists(email: String): Boolean = withContext(ioDispatcher) {
+        TODO("Not yet implemented")
     }
 
     /*override suspend fun isLoggedIn(): Boolean = firebaseAuthDataSourceImpl.isLoggedIn()
