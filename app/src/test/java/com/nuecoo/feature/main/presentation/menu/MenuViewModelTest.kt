@@ -61,7 +61,7 @@ class MenuViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         getCollectionByTypeUseCase = mockk()
-        //logoutUseCase = mockk()
+        logoutUseCase = mockk()
         saveWidgetEnabledUseCase = mockk()
         getAttendanceCount = mockk()
         checkTodayAttendance = mockk()
@@ -99,6 +99,12 @@ class MenuViewModelTest {
     fun `초기 collectionProgress는 비어있다`() {
         // loadCollectionProgress 호출 전에는 진행도 목록이 없어야 함
         assertTrue(viewModel.collectionProgress.value.isEmpty())
+    }
+
+    @Test
+    fun `초기 isLoggedIn은 true이다`() {
+        // 로그인 상태로 진입하므로 초기값은 항상 true
+        assertTrue(viewModel.isLoggedIn.value)
     }
 
     // ── WhileSubscribed 플로우 (backgroundScope + advanceUntilIdle 패턴) ──
@@ -254,16 +260,37 @@ class MenuViewModelTest {
         coVerify(exactly = 1) { saveWidgetEnabledUseCase(true) }
     }
 
-    // ── logout ──
+    // ── logout / isLoggedIn ──
 
-    /*  @Test
-      fun `logout은 LogoutUseCase에 위임하고 결과를 반환한다`() = runTest {
-          // 로그아웃 요청이 UseCase로 위임되고 결과가 그대로 반환되는지 확인
-          coEvery { logoutUseCase() } returns true
+    @Test
+    fun `logout 성공 시 isLoggedIn이 false가 된다`() = runTest {
+        // logOut() 반환값: false = 로그아웃 성공(Firebase signOut 완료)
+        // → _isLoggedIn = false → MenuScreen의 LaunchedEffect가 onLogout() 호출
+        coEvery { logoutUseCase() } returns false
 
-          val result = viewModel.logout()
+        viewModel.logout()
 
-          assertTrue(result)
-          coVerify(exactly = 1) { logoutUseCase() }
-      }*/
+        assertFalse(viewModel.isLoggedIn.value)
+    }
+
+    @Test
+    fun `logout 실패 시 isLoggedIn이 true를 유지한다`() = runTest {
+        // logOut() 반환값: true = 로그아웃 실패(예외 발생, 세션 유지)
+        // → _isLoggedIn = true → 화면 이동 없음
+        coEvery { logoutUseCase() } returns true
+
+        viewModel.logout()
+
+        assertTrue(viewModel.isLoggedIn.value)
+    }
+
+    @Test
+    fun `logout은 LogOutUseCase에 위임한다`() = runTest {
+        // ViewModel이 직접 로그아웃 로직을 처리하지 않고 UseCase에 위임하는지 확인
+        coEvery { logoutUseCase() } returns false
+
+        viewModel.logout()
+
+        coVerify(exactly = 1) { logoutUseCase() }
+    }
 }
