@@ -32,6 +32,11 @@ firebaseBom = "33.6.0"
 firebaseDatabase = "21.0.0"
 googleServices = "4.4.2"
 
+# Test
+mockk = "1.13.12"
+coroutines = "1.8.1"
+archCore = "2.2.0"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -83,6 +88,12 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabase" }
+
+# Test
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
