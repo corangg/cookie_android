@@ -15,7 +15,9 @@ import io.mockk.slot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainCoroutineDispatcher
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -85,12 +87,17 @@ class SignUpViewModelTest {
     @Test
     fun `아무것도 체크하지 않으면 전체 동의가 false이다`() = runTest {
         // 개인정보와 이용약관 모두 체크 전에는 전체 동의 불가
+        // WhileSubscribed 활성화: launch 후 advanceUntilIdle()로 구독 코루틴을 실제 실행시켜야 combine이 동작함
+        backgroundScope.launch { viewModel.isAllTermsChecked.collect {} }
+        advanceUntilIdle()
         assertFalse(viewModel.isAllTermsChecked.value)
     }
 
     @Test
     fun `개인정보만 체크하면 전체 동의가 false이다`() = runTest {
         // 이용약관이 빠지면 전체 동의 조건 미충족
+        backgroundScope.launch { viewModel.isAllTermsChecked.collect {} }
+        advanceUntilIdle()
         viewModel.setCheckedPrivacy(true)
         assertFalse(viewModel.isAllTermsChecked.value)
     }
@@ -98,6 +105,8 @@ class SignUpViewModelTest {
     @Test
     fun `이용약관만 체크하면 전체 동의가 false이다`() = runTest {
         // 개인정보가 빠지면 전체 동의 조건 미충족
+        backgroundScope.launch { viewModel.isAllTermsChecked.collect {} }
+        advanceUntilIdle()
         viewModel.setCheckedTerms(true)
         assertFalse(viewModel.isAllTermsChecked.value)
     }
@@ -105,6 +114,8 @@ class SignUpViewModelTest {
     @Test
     fun `개인정보와 이용약관을 모두 체크하면 전체 동의가 true이다`() = runTest {
         // 두 항목 모두 체크하면 전체 동의 충족
+        backgroundScope.launch { viewModel.isAllTermsChecked.collect {} }
+        advanceUntilIdle()
         viewModel.setCheckedPrivacy(true)
         viewModel.setCheckedTerms(true)
         assertTrue(viewModel.isAllTermsChecked.value)
@@ -113,6 +124,8 @@ class SignUpViewModelTest {
     @Test
     fun `setAllTermsChecked true 호출 시 두 항목이 모두 true가 된다`() = runTest {
         // '전체 동의' 버튼을 눌렀을 때 개인정보·이용약관 동시에 체크
+        backgroundScope.launch { viewModel.isAllTermsChecked.collect {} }
+        advanceUntilIdle()
         viewModel.setAllTermsChecked(true)
         assertTrue(viewModel.checkedPrivacy.value)
         assertTrue(viewModel.checkedTerms.value)
@@ -122,6 +135,8 @@ class SignUpViewModelTest {
     @Test
     fun `setAllTermsChecked false 호출 시 두 항목이 모두 false가 된다`() = runTest {
         // '전체 동의' 해제 버튼을 눌렀을 때 개인정보·이용약관 동시에 해제
+        backgroundScope.launch { viewModel.isAllTermsChecked.collect {} }
+        advanceUntilIdle()
         viewModel.setAllTermsChecked(true)
         viewModel.setAllTermsChecked(false)
         assertFalse(viewModel.checkedPrivacy.value)
