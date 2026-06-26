@@ -1,6 +1,7 @@
 package com.nuecoo.feature.auth.data.repository
 
 import android.content.Context
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
@@ -16,6 +17,9 @@ import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.SignUpResult
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -25,6 +29,8 @@ class AuthRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @ApplicationContext private val context: Context
 ) : AuthRepository {
+    override fun observeAuthState(): Flow<Boolean?> = firebaseAuthDataSource.observeAuthState()
+
     override suspend fun trySignUp(authModel: AuthModel) = withContext(ioDispatcher) {
         val userInfo = authModel.toUserInfo()
         val authResult = runCatching {
@@ -56,11 +62,18 @@ class AuthRepositoryImpl @Inject constructor(
         SignUpResult.Success
     }
 
-    override suspend fun logOut(): Boolean = withContext(ioDispatcher) {
+    override suspend fun logIn(email: String, password: String) = withContext(ioDispatcher) {
+        runCatching {
+            firebaseAuthDataSource.logIn(email, password)
+            true
+        }.getOrElse { false }
+    }
+
+    override suspend fun logOut() = withContext(ioDispatcher) {
         runCatching {
             firebaseAuthDataSource.logOut()
-            false
-        }.getOrElse { return@withContext true }
+            true
+        }.getOrElse { false }
     }
 
 

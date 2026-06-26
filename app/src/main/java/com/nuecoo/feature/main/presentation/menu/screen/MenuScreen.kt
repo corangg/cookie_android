@@ -54,13 +54,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.BuildConfig
 import com.nuecoo.R
-import com.nuecoo.core.ui.component.DefaultItemBox
-import com.nuecoo.core.ui.component.LoadingOverlay
+import com.nuecoo.core.presetation.ui.component.DefaultItemBox
+import com.nuecoo.core.presetation.ui.component.LoadingOverlay
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
-import com.nuecoo.core.ui.component.MainTitleItem
+import com.nuecoo.core.presetation.ui.component.MainTitleItem
 import com.nuecoo.feature.main.presentation.menu.viewmodel.CollectionProgress
 import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
-import com.nuecoo.feature.main.presentation.oven.screen.CookieCircleProgress
 import com.nuecoo.ui.theme.AttendanceActive
 import com.nuecoo.ui.theme.AttendanceComplete
 import com.nuecoo.ui.theme.AttendanceInActive
@@ -95,7 +94,6 @@ fun MenuScreen(
     viewModel: MenuViewModel = hiltViewModel(),
     onMoveOven: () -> Unit,
     onMoveAppInfo: () -> Unit,
-    onLogout: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val progress by viewModel.collectionProgress.collectAsStateWithLifecycle()
@@ -104,15 +102,9 @@ fun MenuScreen(
     val isTodayAttendance by viewModel.isTodayAttendance.collectAsStateWithLifecycle()
     val weeklyAttendance by viewModel.weeklyAttendance.collectAsStateWithLifecycle()
     val widgetEnabled by viewModel.widgetEnabled.collectAsStateWithLifecycle()
-    val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.loadCollectionProgress(context.getCookieTypeListSize())
-    }
-    LaunchedEffect(isLoggedIn) {
-        if (!isLoggedIn) {
-            onLogout()
-        }
     }
 
     MenuScreenContent(

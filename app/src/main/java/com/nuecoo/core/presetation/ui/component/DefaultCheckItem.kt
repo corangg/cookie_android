@@ -1,4 +1,4 @@
-package com.nuecoo.core.ui.component
+package com.nuecoo.core.presetation.ui.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable

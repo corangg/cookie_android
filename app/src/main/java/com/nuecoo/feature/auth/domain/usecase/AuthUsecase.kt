@@ -6,6 +6,12 @@ import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.SignUpResult
 import javax.inject.Inject
 
+class ObserveAuthStateUseCase @Inject constructor(
+    private val repository: AuthRepository
+){
+    operator fun invoke() = repository.observeAuthState()
+}
+
 class SignUpUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
@@ -18,6 +24,28 @@ class CheckEmailExistsUseCase @Inject constructor(
     suspend operator fun invoke(email: String) = repository.checkEmailExists(email)
 }
 
+class LoginUseCase @Inject constructor(
+    private val repository: AuthRepository
+) {
+    suspend operator fun invoke(email: String, password: String) = repository.logIn(email, password)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class CheckAuthUseCase @Inject constructor(
@@ -26,11 +54,7 @@ class CheckAuthUseCase @Inject constructor(
     suspend operator fun invoke(): Boolean = true//repository.isLoggedIn()
 }
 
-class LoginUseCase @Inject constructor(
-    private val repository: AuthRepository
-) {
-    suspend operator fun invoke(email: String, password: String): Boolean = true
-}
+
 
 
 class SendVerificationCodeUseCase @Inject constructor(

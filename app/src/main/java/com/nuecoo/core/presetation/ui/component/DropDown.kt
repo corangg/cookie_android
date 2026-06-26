@@ -1,4 +1,4 @@
-package com.nuecoo.core.ui.component
+package com.nuecoo.core.presetation.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.DropdownMenu
@@ -41,7 +40,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.nuecoo.core.ui.model.CommonDropDownItem
+import com.nuecoo.core.presetation.ui.model.CommonDropDownItem
 import com.nuecoo.ui.theme.MainText
 
 @OptIn(ExperimentalMaterial3Api::class)

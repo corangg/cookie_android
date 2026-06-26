@@ -2,9 +2,12 @@ package com.nuecoo.feature.auth.domain
 
 import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.SignUpResult
+import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
+    fun observeAuthState(): Flow<Boolean?>
     suspend fun trySignUp(authModel: AuthModel): SignUpResult
+    suspend fun logIn(email: String, password: String): Boolean
     suspend fun logOut(): Boolean
 
 

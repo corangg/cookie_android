@@ -57,10 +57,10 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.R
-import com.nuecoo.core.ui.component.DefaultItemBox
+import com.nuecoo.core.presetation.ui.component.DefaultItemBox
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
-import com.nuecoo.core.ui.component.MainTitleItem
+import com.nuecoo.core.presetation.ui.component.MainTitleItem
 import com.nuecoo.feature.main.presentation.oven.viewmodel.OvenViewModel
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainBorder

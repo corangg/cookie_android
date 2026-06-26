@@ -1,4 +1,4 @@
-package com.nuecoo.core.ui.component
+package com.nuecoo.core.presetation.ui.component
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing

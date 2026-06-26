@@ -19,8 +19,7 @@ import com.nuecoo.feature.main.presentation.oven.screen.OvenScreen
 
 @Composable
 fun MainNavHost(
-    navController: NavHostController,
-    rootNavController: NavController
+    navController: NavHostController
 ) {
     NavHost(
         navController = navController,
@@ -52,12 +51,6 @@ fun MainNavHost(
                     }
                 },
                 onMoveAppInfo = { navController.navigate(Route.APP_INFO) },
-                onLogout = {
-                    rootNavController.navigate(Route.Login.GRAPH) {
-                        popUpTo(0) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
             )
         }
         composable(Route.APP_INFO) {

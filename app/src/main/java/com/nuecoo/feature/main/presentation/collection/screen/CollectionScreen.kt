@@ -62,9 +62,9 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.R
-import com.nuecoo.core.ui.component.CommonDropDown
-import com.nuecoo.core.ui.component.MainTitleItem
-import com.nuecoo.core.ui.model.CommonDropDownItem
+import com.nuecoo.core.presetation.ui.component.CommonDropDown
+import com.nuecoo.core.presetation.ui.component.MainTitleItem
+import com.nuecoo.core.presetation.ui.model.CommonDropDownItem
 import com.nuecoo.core.util.toDisplayDate
 import com.nuecoo.feature.main.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CollectionSortType

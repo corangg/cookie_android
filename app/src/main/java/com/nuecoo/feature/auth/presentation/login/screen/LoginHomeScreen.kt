@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.nuecoo.R
 import com.nuecoo.core.navigation.Route
-import com.nuecoo.core.ui.component.DefaultAuthButton
+import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
 import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
 import com.nuecoo.ui.theme.Black
 import com.nuecoo.ui.theme.MainBackground

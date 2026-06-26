@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,19 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.nuecoo.R
-import com.nuecoo.core.navigation.Route
 import com.nuecoo.ui.theme.MainBackground
-import com.nuecoo.feature.splash.presentation.viewmodel.SplashViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
-    navController: NavController,
-    viewModel: SplashViewModel = hiltViewModel()
 ) {
     var showIcon by remember { mutableStateOf(false) }
     var showTitle1 by remember { mutableStateOf(false) }
@@ -53,7 +45,6 @@ fun SplashScreen(
         animationSpec = tween(durationMillis = 600), label = "title2"
     )
 
-    val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         showIcon = true
@@ -62,21 +53,6 @@ fun SplashScreen(
         delay(600)
         showTitle2 = true
         delay(800)
-        viewModel.checkAuthState()
-    }
-
-    LaunchedEffect(isLoggedIn) {
-        isLoggedIn?.let { loggedIn ->
-            if (loggedIn) {//로그인 ui를 위해 잠시 반전
-                navController.navigate(Route.MAIN) {
-                    popUpTo(Route.SPLASH) { inclusive = true }
-                }
-            } else {
-                navController.navigate(Route.Login.GRAPH) {
-                    popUpTo(Route.SPLASH) { inclusive = true }
-                }
-            }
-        }
     }
 
     Column(

@@ -22,9 +22,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nuecoo.R
-import com.nuecoo.core.ui.component.BackButton
-import com.nuecoo.core.ui.component.DefaultItemBox
-import com.nuecoo.core.ui.component.MainTitleItem
+import com.nuecoo.core.presetation.ui.component.BackButton
+import com.nuecoo.core.presetation.ui.component.DefaultItemBox
+import com.nuecoo.core.presetation.ui.component.MainTitleItem
 import com.nuecoo.ui.theme.ItemCardBackground
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainText

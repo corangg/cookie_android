@@ -1,4 +1,4 @@
-package com.nuecoo.core.ui.model
+package com.nuecoo.core.presetation.ui.model
 
 data class CommonDropDownItem<T>(
     val label: String,

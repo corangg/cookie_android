@@ -9,8 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nuecoo.R
-import com.nuecoo.core.ui.component.BackButton
-import com.nuecoo.core.ui.component.MainTitleItem
+import com.nuecoo.core.presetation.ui.component.BackButton
+import com.nuecoo.core.presetation.ui.component.MainTitleItem
 
 @Composable
 fun SignUpTopItem(modifier: Modifier, onBack: () -> Unit) {

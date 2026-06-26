@@ -28,8 +28,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.nuecoo.R
 import com.nuecoo.core.navigation.Route
-import com.nuecoo.core.ui.component.DefaultAuthButton
-import com.nuecoo.core.ui.component.DefaultCheckItem
+import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
+import com.nuecoo.core.presetation.ui.component.DefaultCheckItem
 import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpMainTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpRateItem

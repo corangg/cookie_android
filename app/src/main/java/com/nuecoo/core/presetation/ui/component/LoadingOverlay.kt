@@ -1,4 +1,4 @@
-package com.nuecoo.core.ui.component
+package com.nuecoo.core.presetation.ui.component
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.FastOutSlowInEasing

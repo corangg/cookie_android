@@ -7,7 +7,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.nuecoo.core.navigation.Route
@@ -23,7 +22,7 @@ private val bottomBarHiddenRoutes = setOf(
 )
 
 @Composable
-fun MainScreen(rootNavController: NavController) {
+fun MainScreen() {
     val navController = rememberNavController()
     val currentEntry by navController.currentBackStackEntryAsState()
     val showBottomBar = currentEntry?.destination?.route !in bottomBarHiddenRoutes
@@ -33,10 +32,12 @@ fun MainScreen(rootNavController: NavController) {
             containerColor = MainBackground,
             bottomBar = { if (showBottomBar) MainBottomNavBar(navController = navController) }
         ) { paddingValues ->
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)) {
-                MainNavHost(navController = navController, rootNavController = rootNavController)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                MainNavHost(navController = navController)
             }
         }
     }
