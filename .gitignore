@@ -13,3 +13,13 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Firebase Functions
+functions/node_modules/
+functions/lib/
+
+# Test script (로컬 전용)
+node_modules/
+test-call.js
+
+.kotlin/
