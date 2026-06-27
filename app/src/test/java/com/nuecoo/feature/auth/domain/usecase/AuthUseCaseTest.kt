@@ -2,6 +2,7 @@ package com.nuecoo.feature.auth.domain.usecase
 
 import com.nuecoo.feature.auth.domain.AuthRepository
 import com.nuecoo.feature.auth.domain.model.AuthModel
+import com.nuecoo.feature.auth.domain.model.FindEmailResult
 import com.nuecoo.feature.auth.domain.model.SignUpResult
 import com.nuecoo.feature.auth.domain.model.VerificationResult
 import io.mockk.coEvery
@@ -415,5 +416,174 @@ class VerifyCodeUseCaseTest {
         useCase("01012345678", "123456")
 
         coVerify(exactly = 1) { repository.verifyCodeForSignUp(any(), any()) }
+    }
+}
+
+// ──────────────────────────────────────────────
+// SendFindEmailPhoneCodeUseCase
+// 이메일 찾기 흐름에서 국내 전화번호를 E164 형식으로 변환 후
+// 인증코드 발송을 요청하는 UseCase 테스트
+// ──────────────────────────────────────────────
+
+class SendFindEmailPhoneCodeUseCaseTest {
+
+    private lateinit var repository: AuthRepository
+    private lateinit var useCase: SendFindEmailPhoneCodeUseCase
+
+    @Before
+    fun setUp() {
+        repository = mockk()
+        useCase = SendFindEmailPhoneCodeUseCase(repository)
+    }
+
+    @Test
+    fun `성공 시 Success를 반환한다`() = runTest {
+        // 가입된 번호로 이메일 찾기 코드 발송 성공
+        coEvery { repository.sendFindEmailVerificationCode(any()) } returns VerificationResult.Success
+
+        val result = useCase("01012345678")
+
+        assertEquals(VerificationResult.Success, result)
+    }
+
+    @Test
+    fun `재발송 한도 초과 시 TooManyAttempts를 반환한다`() = runTest {
+        // 쿨다운·횟수 초과: 서버에서 RESOURCE_EXHAUSTED 오류가 내려온 경우
+        coEvery { repository.sendFindEmailVerificationCode(any()) } returns VerificationResult.TooManyAttempts
+
+        val result = useCase("01012345678")
+
+        assertEquals(VerificationResult.TooManyAttempts, result)
+    }
+
+    @Test
+    fun `SMS 발송 실패 시 SmsSendFailed를 반환한다`() = runTest {
+        // Solapi 연동 오류: 서버에서 INTERNAL 오류가 내려온 경우
+        coEvery { repository.sendFindEmailVerificationCode(any()) } returns VerificationResult.SmsSendFailed
+
+        val result = useCase("01012345678")
+
+        assertEquals(VerificationResult.SmsSendFailed, result)
+    }
+
+    @Test
+    fun `국내 번호를 E164 형식으로 변환하여 Repository에 전달한다`() = runTest {
+        // 010-1234-5678 → +821012345678 변환 후 전달
+        val capturedPhone = slot<String>()
+        coEvery { repository.sendFindEmailVerificationCode(capture(capturedPhone)) } returns VerificationResult.Success
+
+        useCase("01012345678")
+
+        assertEquals("+821012345678", capturedPhone.captured)
+    }
+
+    @Test
+    fun `하이픈이 포함된 번호도 E164 형식으로 변환된다`() = runTest {
+        // 사용자가 010-1234-5678 형태로 입력해도 올바르게 변환
+        val capturedPhone = slot<String>()
+        coEvery { repository.sendFindEmailVerificationCode(capture(capturedPhone)) } returns VerificationResult.Success
+
+        useCase("010-1234-5678")
+
+        assertEquals("+821012345678", capturedPhone.captured)
+    }
+
+    @Test
+    fun `Repository의 sendFindEmailVerificationCode를 정확히 한 번 호출한다`() = runTest {
+        // UseCase 가 중복 호출 없이 위임하는지 확인
+        coEvery { repository.sendFindEmailVerificationCode(any()) } returns VerificationResult.Success
+
+        useCase("01012345678")
+
+        coVerify(exactly = 1) { repository.sendFindEmailVerificationCode(any()) }
+    }
+}
+
+// ──────────────────────────────────────────────
+// VerifyFindEmailCodeUseCase
+// 이메일 찾기 흐름에서 인증번호를 확인하고
+// 마스킹된 이메일(FindEmailResult)을 반환하는 UseCase 테스트
+// ──────────────────────────────────────────────
+
+class VerifyFindEmailCodeUseCaseTest {
+
+    private lateinit var repository: AuthRepository
+    private lateinit var useCase: VerifyFindEmailCodeUseCase
+
+    @Before
+    fun setUp() {
+        repository = mockk()
+        useCase = VerifyFindEmailCodeUseCase(repository)
+    }
+
+    @Test
+    fun `인증 성공 시 마스킹된 이메일을 담은 Success를 반환한다`() = runTest {
+        // 인증번호 일치 → 가입된 이메일을 마스킹하여 반환
+        val expected = FindEmailResult.Success("te****@email.com")
+        coEvery { repository.verifyCodeForFindEmail(any(), any()) } returns expected
+
+        val result = useCase("01012345678", "123456")
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `인증번호 불일치 시 CodeMismatch 사유의 Failure를 반환한다`() = runTest {
+        // 잘못된 인증번호 입력: 서버에서 PERMISSION_DENIED 오류가 내려온 경우
+        val expected = FindEmailResult.Failure(VerificationResult.CodeMismatch)
+        coEvery { repository.verifyCodeForFindEmail(any(), any()) } returns expected
+
+        val result = useCase("01012345678", "000000")
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `인증번호 만료 시 CodeExpired 사유의 Failure를 반환한다`() = runTest {
+        // 3분 유효시간 초과: 서버에서 DEADLINE_EXCEEDED 오류가 내려온 경우
+        val expected = FindEmailResult.Failure(VerificationResult.CodeExpired)
+        coEvery { repository.verifyCodeForFindEmail(any(), any()) } returns expected
+
+        val result = useCase("01012345678", "123456")
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `국내 번호를 E164 형식으로 변환하여 Repository에 전달한다`() = runTest {
+        // 전화번호 변환 검증: 010-1234-5678 → +821012345678
+        val capturedPhone = slot<String>()
+        coEvery {
+            repository.verifyCodeForFindEmail(capture(capturedPhone), any())
+        } returns FindEmailResult.Success("te****@email.com")
+
+        useCase("01012345678", "123456")
+
+        assertEquals("+821012345678", capturedPhone.captured)
+    }
+
+    @Test
+    fun `인증번호가 Repository에 그대로 전달된다`() = runTest {
+        // UseCase 가 code 파라미터를 가공하지 않고 그대로 전달해야 함
+        val capturedCode = slot<String>()
+        coEvery {
+            repository.verifyCodeForFindEmail(any(), capture(capturedCode))
+        } returns FindEmailResult.Success("te****@email.com")
+
+        useCase("01012345678", "987654")
+
+        assertEquals("987654", capturedCode.captured)
+    }
+
+    @Test
+    fun `Repository의 verifyCodeForFindEmail을 정확히 한 번 호출한다`() = runTest {
+        // UseCase 가 중복 호출 없이 위임하는지 확인
+        coEvery {
+            repository.verifyCodeForFindEmail(any(), any())
+        } returns FindEmailResult.Success("te****@email.com")
+
+        useCase("01012345678", "123456")
+
+        coVerify(exactly = 1) { repository.verifyCodeForFindEmail(any(), any()) }
     }
 }
