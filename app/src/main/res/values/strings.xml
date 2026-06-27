@@ -93,6 +93,20 @@
     <string name="signup_complete_fail_sub_save_fail">정보 저장 오류가 발생 했습니다.</string>
     <string name="signup_complete_fail_button">홈으로</string>
 
+    <!--Find Email-->
+    <string name="find_email_title_main">이메일 찾기</string>
+    <string name="find_email_title_sub">FIND EMAIL</string>
+    <string name="find_email_main">회원 가입시 등록한 전화번호를 입력해 주세요</string>
+    <string name="find_email_sub">-없이 입력해주세요</string>
+    <string name="find_email_hint">010-0000-0000</string>
+    <string name="find_email_code_hint">인증번호 입력</string>
+    <string name="find_email_re_send">재전송</string>
+    <string name="find_email_send_code">인증번호 보내기</string>
+
+    <string name="find_email_complete_main">가입된 이메일이에요</string>
+    <string name="find_email_complete_login_button">로그인하러 가기</string>
+
+
     <!-- Oven -->
     <string name="text_oven_title">오늘의 쿠키</string>
     <string name="text_oven_sub_title">TODAY COOKIE</string>

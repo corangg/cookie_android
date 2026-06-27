@@ -23,14 +23,14 @@ import androidx.navigation.NavHostController
 import com.nuecoo.R
 import com.nuecoo.core.navigation.Route
 import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
-import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
+import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
 import com.nuecoo.ui.theme.Black
 import com.nuecoo.ui.theme.MainBackground
 import com.nuecoo.ui.theme.MainButton
 import com.nuecoo.ui.theme.MainText
 import com.nuecoo.ui.theme.SubText
 import com.nuecoo.ui.theme.White
-import com.nuecoo.ui.theme.kakao
+import com.nuecoo.ui.theme.Kakao
 
 @Composable
 fun LoginHomeScreen(navController: NavHostController) {
@@ -47,7 +47,7 @@ private fun LoginHomeScreenContent(
     onKakaoLogin: () -> Unit = {},
     onSignUp: () -> Unit = {}
 ) {
-    AuthScreenWrapper {
+    DefaultScreenWrapper {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -76,7 +76,7 @@ private fun LoginHomeScreenContent(
 
             DefaultAuthButton(
                 title = stringResource(R.string.login_kakao),
-                background = kakao,
+                background = Kakao,
                 icon = painterResource(R.drawable.ic_kakao),
                 titleColor = Black,
                 onClick = onKakaoLogin

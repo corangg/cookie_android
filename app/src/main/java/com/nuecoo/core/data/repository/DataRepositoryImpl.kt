@@ -6,7 +6,7 @@ import com.nuecoo.core.data.mapper.toRTDBForm
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.RemoteDataSources
 import com.nuecoo.core.domain.repository.DataRepository
-import com.nuecoo.feature.auth.data.datasource.FirebaseAuthDataSource
+import com.nuecoo.feature.auth.data.remote.datasource.FirebaseAuthDataSource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

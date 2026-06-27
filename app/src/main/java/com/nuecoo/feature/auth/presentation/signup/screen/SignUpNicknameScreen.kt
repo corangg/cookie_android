@@ -18,7 +18,7 @@ import com.nuecoo.core.navigation.Route
 import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
 import com.nuecoo.core.presetation.ui.component.DefaultTextField
 import com.nuecoo.core.presetation.ui.component.LoadingOverlay
-import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
+import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpMainTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpRateItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpTopItem
@@ -60,7 +60,7 @@ private fun SignUpNicknameScreenContent(
     onNext: () -> Unit,
     onCancelLoading: () -> Unit
 ) {
-    AuthScreenWrapper {
+    DefaultScreenWrapper {
         val bottomPadding = imeBottomPadding
 
         Column(

@@ -1,8 +1,8 @@
 package com.nuecoo.feature.auth.di
 
 import com.nuecoo.core.di.RemoteDataSources
-import com.nuecoo.feature.auth.data.datasource.FirebaseAuthDataSource
-import com.nuecoo.feature.auth.data.datasource.FirebaseAuthDataSourceImpl
+import com.nuecoo.feature.auth.data.remote.datasource.FirebaseAuthDataSource
+import com.nuecoo.feature.auth.data.remote.datasource.FirebaseAuthDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

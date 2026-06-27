@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
+import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
 
 @Composable
 fun FindPwScreen(navController: NavHostController) {
-    AuthScreenWrapper {
+    DefaultScreenWrapper {
         Box(modifier = Modifier.fillMaxSize())
     }
 }

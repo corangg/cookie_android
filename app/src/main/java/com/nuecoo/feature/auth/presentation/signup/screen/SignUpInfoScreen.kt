@@ -31,7 +31,7 @@ import com.nuecoo.R
 import com.nuecoo.core.navigation.Route
 import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
 import com.nuecoo.core.presetation.ui.component.LoadingOverlay
-import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
+import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
 import com.nuecoo.feature.auth.presentation.signup.component.BirthDateSpinnerItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpMainTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpRateItem
@@ -92,7 +92,7 @@ private fun SignUpInfoScreenContent(
     onNext: () -> Unit,
     onCancelLoading: () -> Unit
 ) {
-    AuthScreenWrapper {
+    DefaultScreenWrapper {
         val bottomPadding = imeBottomPadding
 
         Column(

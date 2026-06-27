@@ -3,11 +3,11 @@ package com.nuecoo.feature.auth.presentation.signup
 import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.PwCheckResult
 import com.nuecoo.feature.auth.domain.model.SignUpResult
-import com.nuecoo.feature.auth.domain.model.SignUpVerificationResult
+import com.nuecoo.feature.auth.domain.model.VerificationResult
 import com.nuecoo.feature.auth.domain.usecase.CheckEmailExistsUseCase
 import com.nuecoo.feature.auth.domain.usecase.SendSignUpPhoneCodeUseCase
 import com.nuecoo.feature.auth.domain.usecase.SignUpUseCase
-import com.nuecoo.feature.auth.domain.usecase.VerifyCodeUseCase
+import com.nuecoo.feature.auth.domain.usecase.VerifySignUpCodeUseCase
 import com.nuecoo.feature.auth.presentation.signup.viewmodel.SignUpViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -42,7 +42,7 @@ class SignUpViewModelTest {
 
     private lateinit var checkEmailExistsUseCase: CheckEmailExistsUseCase
     private lateinit var sendSignUpPhoneCodeUseCase: SendSignUpPhoneCodeUseCase
-    private lateinit var verifyCodeUseCase: VerifyCodeUseCase
+    private lateinit var verifySignUpCodeUseCase: VerifySignUpCodeUseCase
     private lateinit var signUpUseCase: SignUpUseCase
     private lateinit var viewModel: SignUpViewModel
 
@@ -51,12 +51,12 @@ class SignUpViewModelTest {
         Dispatchers.setMain(testDispatcher)
         checkEmailExistsUseCase = mockk(relaxed = true)
         sendSignUpPhoneCodeUseCase = mockk()
-        verifyCodeUseCase = mockk()
+        verifySignUpCodeUseCase = mockk()
         signUpUseCase = mockk()
         viewModel = SignUpViewModel(
             checkEmailExistsUseCase = checkEmailExistsUseCase,
             sendSignUpPhoneCodeUseCase = sendSignUpPhoneCodeUseCase,
-            verifyCodeUseCase = verifyCodeUseCase,
+            verifySignUpCodeUseCase = verifySignUpCodeUseCase,
             signUpUseCase = signUpUseCase,
             mainDispatcher = Dispatchers.Main as MainCoroutineDispatcher,
             defaultDispatcher = testDispatcher,
@@ -170,29 +170,29 @@ class SignUpViewModelTest {
     @Test
     fun `sendCode 성공 시 isCodeSent가 Success이다`() = runTest {
         // SMS 발송 성공 → UI 에서 인증번호 입력창 표시
-        coEvery { sendSignUpPhoneCodeUseCase(any()) } returns SignUpVerificationResult.Success
+        coEvery { sendSignUpPhoneCodeUseCase(any()) } returns VerificationResult.Success
 
         viewModel.setPhone("01012345678")
         viewModel.sendCode()
 
-        assertEquals(SignUpVerificationResult.Success, viewModel.isCodeSent.value)
+        assertEquals(VerificationResult.Success, viewModel.isCodeSent.value)
     }
 
     @Test
     fun `sendCode 실패 시 isCodeSent에 에러 결과가 반영된다`() = runTest {
         // 이미 가입된 번호로 코드 요청 시 AlreadyRegistered 반환
-        coEvery { sendSignUpPhoneCodeUseCase(any()) } returns SignUpVerificationResult.AlreadyRegistered
+        coEvery { sendSignUpPhoneCodeUseCase(any()) } returns VerificationResult.AlreadyRegistered
 
         viewModel.setPhone("01012345678")
         viewModel.sendCode()
 
-        assertEquals(SignUpVerificationResult.AlreadyRegistered, viewModel.isCodeSent.value)
+        assertEquals(VerificationResult.AlreadyRegistered, viewModel.isCodeSent.value)
     }
 
     @Test
     fun `sendCode는 SendSignUpPhoneCodeUseCase에 위임한다`() = runTest {
         // ViewModel 이 직접 SMS 발송 로직을 처리하지 않고 UseCase 에 위임하는지 확인
-        coEvery { sendSignUpPhoneCodeUseCase(any()) } returns SignUpVerificationResult.Success
+        coEvery { sendSignUpPhoneCodeUseCase(any()) } returns VerificationResult.Success
 
         viewModel.setPhone("01012345678")
         viewModel.sendCode()
@@ -203,60 +203,60 @@ class SignUpViewModelTest {
     @Test
     fun `sendCode TooManyAttempts 시 isCodeSent에 TooManyAttempts가 반영된다`() = runTest {
         // 재발송 쿨다운 또는 횟수 초과 시나리오
-        coEvery { sendSignUpPhoneCodeUseCase(any()) } returns SignUpVerificationResult.TooManyAttempts
+        coEvery { sendSignUpPhoneCodeUseCase(any()) } returns VerificationResult.TooManyAttempts
 
         viewModel.setPhone("01012345678")
         viewModel.sendCode()
 
-        assertEquals(SignUpVerificationResult.TooManyAttempts, viewModel.isCodeSent.value)
+        assertEquals(VerificationResult.TooManyAttempts, viewModel.isCodeSent.value)
     }
 
     @Test
     fun `checkCode 성공 시 isPhoneOk가 Success이다`() = runTest {
         // 인증번호 일치 → 휴대폰 인증 완료
-        coEvery { verifyCodeUseCase(any(), any()) } returns SignUpVerificationResult.Success
+        coEvery { verifySignUpCodeUseCase(any(), any()) } returns VerificationResult.Success
 
         viewModel.setPhone("01012345678")
         viewModel.setCode("123456")
         viewModel.checkCode()
 
-        assertEquals(SignUpVerificationResult.Success, viewModel.isPhoneOk.value)
+        assertEquals(VerificationResult.Success, viewModel.isPhoneOk.value)
     }
 
     @Test
     fun `checkCode 실패 시 isPhoneOk에 에러 결과가 반영된다`() = runTest {
         // 인증번호 불일치 시 CodeMismatch 반환
-        coEvery { verifyCodeUseCase(any(), any()) } returns SignUpVerificationResult.CodeMismatch
+        coEvery { verifySignUpCodeUseCase(any(), any()) } returns VerificationResult.CodeMismatch
 
         viewModel.setPhone("01012345678")
         viewModel.setCode("000000")
         viewModel.checkCode()
 
-        assertEquals(SignUpVerificationResult.CodeMismatch, viewModel.isPhoneOk.value)
+        assertEquals(VerificationResult.CodeMismatch, viewModel.isPhoneOk.value)
     }
 
     @Test
     fun `checkCode 만료 시 isPhoneOk에 CodeExpired가 반영된다`() = runTest {
         // 3분 유효시간 초과 후 인증 시도 시 CodeExpired 반환
-        coEvery { verifyCodeUseCase(any(), any()) } returns SignUpVerificationResult.CodeExpired
+        coEvery { verifySignUpCodeUseCase(any(), any()) } returns VerificationResult.CodeExpired
 
         viewModel.setPhone("01012345678")
         viewModel.setCode("123456")
         viewModel.checkCode()
 
-        assertEquals(SignUpVerificationResult.CodeExpired, viewModel.isPhoneOk.value)
+        assertEquals(VerificationResult.CodeExpired, viewModel.isPhoneOk.value)
     }
 
     @Test
     fun `checkCode는 VerifyCodeUseCase에 위임한다`() = runTest {
         // ViewModel 이 직접 인증 로직을 처리하지 않고 UseCase 에 위임하는지 확인
-        coEvery { verifyCodeUseCase(any(), any()) } returns SignUpVerificationResult.Success
+        coEvery { verifySignUpCodeUseCase(any(), any()) } returns VerificationResult.Success
 
         viewModel.setPhone("01012345678")
         viewModel.setCode("123456")
         viewModel.checkCode()
 
-        coVerify(exactly = 1) { verifyCodeUseCase(phoneNumber = "01012345678", code = "123456") }
+        coVerify(exactly = 1) { verifySignUpCodeUseCase(phoneNumber = "01012345678", code = "123456") }
     }
 
     // ── 비밀번호 유효성 검사(checkPw) ──

@@ -1,4 +1,4 @@
-package com.nuecoo.feature.auth.data.datasource
+package com.nuecoo.feature.auth.data.remote.datasource
 
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -30,11 +30,11 @@ class FirebaseAuthDataSourceImpl @Inject constructor(
 
     override suspend fun logOut() = auth.signOut()
 
-    override suspend fun sendVerificationCode(phoneNumber: String) {
+    override suspend fun sendVerificationCode(phoneNumber: String, purpose: String) {
         ensureAuthenticated()
         functions
             .getHttpsCallable("sendVerificationCode")
-            .call(mapOf("phoneNumber" to phoneNumber, "purpose" to "SIGNUP"))
+            .call(mapOf("phoneNumber" to phoneNumber, "purpose" to purpose))
             .await()
     }
 
@@ -50,5 +50,33 @@ class FirebaseAuthDataSourceImpl @Inject constructor(
         if (auth.currentUser == null) {
             auth.signInAnonymously().await()
         }
+    }
+
+    override suspend fun verifyCodeAndFindEmail(phoneNumber: String, code: String): String {
+        ensureAuthenticated()
+        val result = functions
+            .getHttpsCallable("verifyCodeAndFindEmail")
+            .call(mapOf("phoneNumber" to phoneNumber, "code" to code))
+            .await()
+
+        @Suppress("UNCHECKED_CAST")
+        val data = result.getData() as Map<String, Any>
+        return data["maskedEmail"] as String
+    }
+
+    override suspend fun verifyCodeForResetPassword(phoneNumber: String, code: String) {
+        ensureAuthenticated()
+        functions
+            .getHttpsCallable("verifyCodeForResetPassword")
+            .call(mapOf("phoneNumber" to phoneNumber, "code" to code))
+            .await()
+    }
+
+    override suspend fun resetPassword(phoneNumber: String, newPassword: String) {
+        ensureAuthenticated()
+        functions
+            .getHttpsCallable("resetPassword")
+            .call(mapOf("phoneNumber" to phoneNumber, "newPassword" to newPassword))
+            .await()
     }
 }

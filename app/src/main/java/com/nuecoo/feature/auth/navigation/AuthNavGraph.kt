@@ -9,9 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.nuecoo.core.navigation.Route
+import com.nuecoo.feature.auth.presentation.find.screen.FindEmailCompleteScreen
 import com.nuecoo.feature.auth.presentation.find.screen.FindEmailScreen
 import com.nuecoo.feature.auth.presentation.find.screen.FindPwScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginEmailScreen
@@ -46,6 +49,13 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
         }
         composable(Route.Login.FIND_EMAIL) {
             FindEmailScreen(navController = navController)
+        }
+        composable(
+            route = Route.Login.FIND_EMAIL_COMPLETE,
+            arguments = listOf(navArgument("maskedEmail") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val maskedEmail = backStackEntry.arguments?.getString("maskedEmail").orEmpty()
+            FindEmailCompleteScreen(navController = navController, maskedEmail = maskedEmail)
         }
         composable(Route.Login.FIND_PW) {
             FindPwScreen(navController = navController)

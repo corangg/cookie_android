@@ -17,7 +17,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +37,7 @@ import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
 import com.nuecoo.core.presetation.ui.component.DefaultTextField
 import com.nuecoo.core.presetation.ui.component.LoadingOverlay
 import com.nuecoo.feature.auth.domain.model.LoginResult
-import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
+import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
 import com.nuecoo.feature.auth.presentation.login.viewmodel.LoginViewModel
 import com.nuecoo.ui.theme.ErrorRed
 import com.nuecoo.ui.theme.MainButton
@@ -91,7 +90,7 @@ private fun LoginEmailScreenContent(
     onLogin: () -> Unit,
     onCancelLoading: () -> Unit,
 ) {
-    AuthScreenWrapper {
+    DefaultScreenWrapper {
         Column(
             modifier = Modifier
                 .fillMaxSize()

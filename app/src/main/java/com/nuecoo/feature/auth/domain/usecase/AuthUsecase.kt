@@ -1,11 +1,10 @@
 package com.nuecoo.feature.auth.domain.usecase
 
-import android.R.attr.phoneNumber
 import com.nuecoo.core.domain.repository.DataRepository
 import com.nuecoo.feature.auth.domain.AuthRepository
 import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.SignUpResult
-import com.nuecoo.feature.auth.domain.model.SignUpVerificationResult
+import com.nuecoo.feature.auth.domain.model.VerificationResult
 import javax.inject.Inject
 
 class ObserveAuthStateUseCase @Inject constructor(
@@ -35,8 +34,8 @@ class LoginUseCase @Inject constructor(
 class SendSignUpPhoneCodeUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(phoneNumber: String): SignUpVerificationResult{
-        return repository.sendVerificationCode(toE164Format(phoneNumber))
+    suspend operator fun invoke(phoneNumber: String): VerificationResult{
+        return repository.sendSignupVerificationCode(toE164Format(phoneNumber))
     }
 
     private fun toE164Format(domesticPhone: String): String {
@@ -45,10 +44,10 @@ class SendSignUpPhoneCodeUseCase @Inject constructor(
     }
 }
 
-class VerifyCodeUseCase @Inject constructor(
+class VerifySignUpCodeUseCase @Inject constructor(
     private val repository: AuthRepository){
-    suspend operator fun invoke(phoneNumber: String, code: String): SignUpVerificationResult{
-        return repository.verifyCode(toE164Format(phoneNumber), code)
+    suspend operator fun invoke(phoneNumber: String, code: String): VerificationResult{
+        return repository.verifyCodeForSignUp(toE164Format(phoneNumber), code)
     }
 
     private fun toE164Format(domesticPhone: String): String {
@@ -57,37 +56,24 @@ class VerifyCodeUseCase @Inject constructor(
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-class CheckAuthUseCase @Inject constructor(
+class SendFindEmailPhoneCodeUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(): Boolean = true//repository.isLoggedIn()
+    suspend operator fun invoke(phoneNumber: String) = repository.sendFindEmailVerificationCode(toE164Format(phoneNumber))
+
+    private fun toE164Format(domesticPhone: String): String {
+        val digitsOnly = domesticPhone.filter { it.isDigit() }
+        return "+82" + digitsOnly.removePrefix("0")
+    }
 }
 
-
-
-
-class SendVerificationCodeUseCase @Inject constructor(
+class VerifyFindEmailCodeUseCase @Inject constructor(
     private val repository: AuthRepository
-) {
-    suspend operator fun invoke(phoneNumber: String): String = ""
-}
+){
+    suspend operator fun invoke(phoneNumber: String, code: String) = repository.verifyCodeForFindEmail(toE164Format(phoneNumber), code)
 
-class VerifySmsCodeUseCase @Inject constructor(
-    private val repository: AuthRepository
-) {
-    suspend operator fun invoke(verificationId: String, code: String): Boolean = true
+    private fun toE164Format(domesticPhone: String): String {
+        val digitsOnly = domesticPhone.filter { it.isDigit() }
+        return "+82" + digitsOnly.removePrefix("0")
+    }
 }
-

@@ -15,14 +15,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.nuecoo.ui.theme.MainBackground
 
-class AuthScreenWrapperScope(
+class DefaultScreenWrapperScope(
     val imeBottomPadding: Dp,
     boxScope: BoxScope,
 ) : BoxScope by boxScope
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun AuthScreenWrapper(content: @Composable AuthScreenWrapperScope.() -> Unit) {
+fun DefaultScreenWrapper(content: @Composable DefaultScreenWrapperScope.() -> Unit) {
     val imeBottomPadding = if (WindowInsets.isImeVisible) 10.dp else 32.dp
 
     Box(
@@ -32,6 +32,6 @@ fun AuthScreenWrapper(content: @Composable AuthScreenWrapperScope.() -> Unit) {
             .navigationBarsPadding()
             .systemBarsPadding()
     ) {
-        AuthScreenWrapperScope(imeBottomPadding, this).content()
+        DefaultScreenWrapperScope(imeBottomPadding, this).content()
     }
 }

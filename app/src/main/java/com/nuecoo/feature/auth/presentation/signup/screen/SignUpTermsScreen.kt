@@ -30,7 +30,7 @@ import com.nuecoo.R
 import com.nuecoo.core.navigation.Route
 import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
 import com.nuecoo.core.presetation.ui.component.DefaultCheckItem
-import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
+import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpMainTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpRateItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpSubTextItem
@@ -89,7 +89,7 @@ private fun SignUpTermsScreenContent(
     onTermsDetail: () -> Unit,
     onNext: () -> Unit,
 ) {
-    AuthScreenWrapper {
+    DefaultScreenWrapper {
         Column(
             modifier = Modifier
                 .fillMaxSize()

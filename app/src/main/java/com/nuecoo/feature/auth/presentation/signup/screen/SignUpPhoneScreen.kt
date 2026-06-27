@@ -34,8 +34,8 @@ import com.nuecoo.core.navigation.Route
 import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
 import com.nuecoo.core.presetation.ui.component.DefaultTextField
 import com.nuecoo.core.presetation.ui.component.LoadingOverlay
-import com.nuecoo.feature.auth.domain.model.SignUpVerificationResult
-import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
+import com.nuecoo.feature.auth.domain.model.VerificationResult
+import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpMainTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpRateItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpSubTextItem
@@ -64,7 +64,7 @@ fun SignUpPhoneScreen(
     }
 
     LaunchedEffect(isPhoneOk) {
-        if (isPhoneOk == SignUpVerificationResult.Success) {
+        if (isPhoneOk == VerificationResult.Success) {
             navController.navigate(Route.SignUp.EMAIL)
         }
     }
@@ -92,8 +92,8 @@ private fun SignUpPhoneScreenContent(
     step: Int,
     phone: String,
     code: String,
-    isCodeSent: SignUpVerificationResult?,
-    isPhoneOk: SignUpVerificationResult?,
+    isCodeSent: VerificationResult?,
+    isPhoneOk: VerificationResult?,
     onPhoneChanged: (String) -> Unit,
     onCodeChanged: (String) -> Unit,
     onCodeSend: () -> Unit,
@@ -101,7 +101,7 @@ private fun SignUpPhoneScreenContent(
     onNext: () -> Unit,
     onCancelLoading: () -> Unit,
 ) {
-    AuthScreenWrapper {
+    DefaultScreenWrapper {
         val bottomPadding = imeBottomPadding
 
         Column(
@@ -192,7 +192,7 @@ private fun TextFieldPhoneItem(
 @Composable
 private fun CodeItem(
     modifier: Modifier,
-    isCodeSent: SignUpVerificationResult?,
+    isCodeSent: VerificationResult?,
     code: String,
     onCodeChanged: (String) -> Unit,
     onCodeSend: () -> Unit
@@ -231,14 +231,14 @@ private fun CodeItem(
 }
 
 @Composable
-private fun CodeSendResultItem(modifier: Modifier = Modifier, result: SignUpVerificationResult?) {
+private fun CodeSendResultItem(modifier: Modifier = Modifier, result: VerificationResult?) {
     val text = when (result) {
-        SignUpVerificationResult.AlreadyRegistered -> stringResource(R.string.signup_phone_code_error_already_registered)
-        SignUpVerificationResult.TooManyAttempts -> stringResource(R.string.signup_phone_code_error_iooMany_attempts)
-        SignUpVerificationResult.InvalidPhoneFormat -> stringResource(R.string.signup_phone_code_error_invalid_phone_format)
-        SignUpVerificationResult.SmsSendFailed -> stringResource(R.string.signup_phone_code_error_sms_send_failed)
-        SignUpVerificationResult.Unauthenticated -> stringResource(R.string.signup_phone_code_error_unauthenticated)
-        SignUpVerificationResult.Unknown -> stringResource(R.string.signup_phone_code_error)
+        VerificationResult.AlreadyRegistered -> stringResource(R.string.signup_phone_code_error_already_registered)
+        VerificationResult.TooManyAttempts -> stringResource(R.string.signup_phone_code_error_iooMany_attempts)
+        VerificationResult.InvalidPhoneFormat -> stringResource(R.string.signup_phone_code_error_invalid_phone_format)
+        VerificationResult.SmsSendFailed -> stringResource(R.string.signup_phone_code_error_sms_send_failed)
+        VerificationResult.Unauthenticated -> stringResource(R.string.signup_phone_code_error_unauthenticated)
+        VerificationResult.Unknown -> stringResource(R.string.signup_phone_code_error)
         else -> return
     }
 
@@ -254,11 +254,11 @@ private fun CodeSendResultItem(modifier: Modifier = Modifier, result: SignUpVeri
 }
 
 @Composable
-private fun PhoneResultItem(modifier: Modifier = Modifier, result: SignUpVerificationResult?) {
-    if(result == null || result == SignUpVerificationResult.Success) return
+private fun PhoneResultItem(modifier: Modifier = Modifier, result: VerificationResult?) {
+    if(result == null || result == VerificationResult.Success) return
     val text = when (result) {
-        SignUpVerificationResult.CodeMismatch -> stringResource(R.string.signup_phone_code_error_mismatch)
-        SignUpVerificationResult.CodeExpired -> stringResource(R.string.signup_phone_code_error_expired)
+        VerificationResult.CodeMismatch -> stringResource(R.string.signup_phone_code_error_mismatch)
+        VerificationResult.CodeExpired -> stringResource(R.string.signup_phone_code_error_expired)
         else -> stringResource(R.string.signup_phone_code_error)
     }
 
@@ -276,7 +276,7 @@ private fun PhoneResultItem(modifier: Modifier = Modifier, result: SignUpVerific
 @Composable
 private fun BottomButtonItem(
     modifier: Modifier,
-    isCodeSent: SignUpVerificationResult?,
+    isCodeSent: VerificationResult?,
     isPhoneValid: Boolean,
     isCodeValid: Boolean,
     onSend: () -> Unit,

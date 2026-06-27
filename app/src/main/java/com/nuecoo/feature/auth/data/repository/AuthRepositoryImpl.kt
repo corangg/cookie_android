@@ -4,18 +4,19 @@ import android.content.Context
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
-import com.google.firebase.functions.FirebaseFunctionsException
 import com.nuecoo.core.data.datasource.remote.FirebaseDataDataSource
-import com.nuecoo.core.data.mapper.toRTDBForm
 import com.nuecoo.core.data.mapper.toRemote
 import com.nuecoo.core.data.mapper.toUserInfo
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.RemoteDataSources
-import com.nuecoo.feature.auth.data.datasource.FirebaseAuthDataSource
+import com.nuecoo.feature.auth.data.remote.VerificationPurpose
+import com.nuecoo.feature.auth.data.remote.datasource.FirebaseAuthDataSource
+import com.nuecoo.feature.auth.data.toVerificationResult
 import com.nuecoo.feature.auth.domain.AuthRepository
 import com.nuecoo.feature.auth.domain.model.AuthModel
+import com.nuecoo.feature.auth.domain.model.FindEmailResult
 import com.nuecoo.feature.auth.domain.model.SignUpResult
-import com.nuecoo.feature.auth.domain.model.SignUpVerificationResult
+import com.nuecoo.feature.auth.domain.model.VerificationResult
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -36,21 +37,10 @@ class AuthRepositoryImpl @Inject constructor(
             firebaseAuthDataSource.trySignUp(authModel.email, authModel.password)
         }.getOrElse { e ->
             when (e) {
-                is FirebaseAuthWeakPasswordException -> {
-                    return@withContext SignUpResult.WeakPassword
-                }
-
-                is FirebaseAuthUserCollisionException -> {
-                    return@withContext SignUpResult.AlreadyExists
-                }
-
-                is FirebaseAuthInvalidCredentialsException -> {
-                    return@withContext SignUpResult.InvalidEmail
-                }
-
-                else -> {
-                    return@withContext SignUpResult.Failed
-                }
+                is FirebaseAuthWeakPasswordException -> return@withContext SignUpResult.WeakPassword
+                is FirebaseAuthUserCollisionException -> return@withContext SignUpResult.AlreadyExists
+                is FirebaseAuthInvalidCredentialsException -> return@withContext SignUpResult.InvalidEmail
+                else -> return@withContext SignUpResult.Failed
             }
         }
         val uid = authResult.user?.uid ?: return@withContext SignUpResult.Failed
@@ -79,44 +69,45 @@ class AuthRepositoryImpl @Inject constructor(
         }.getOrElse { false }
     }
 
-    override suspend fun sendVerificationCode(phoneNumber: String) = withContext(ioDispatcher) {
-        runCatching {
-            firebaseAuthDataSource.sendVerificationCode(phoneNumber)
-            SignUpVerificationResult.Success
-        }.getOrElse { e ->
-            if (e is FirebaseFunctionsException) {
-                when (e.code) {
-                    FirebaseFunctionsException.Code.ALREADY_EXISTS -> SignUpVerificationResult.AlreadyRegistered
-                    FirebaseFunctionsException.Code.RESOURCE_EXHAUSTED -> SignUpVerificationResult.TooManyAttempts
-                    FirebaseFunctionsException.Code.INVALID_ARGUMENT -> SignUpVerificationResult.InvalidPhoneFormat
-                    FirebaseFunctionsException.Code.INTERNAL -> SignUpVerificationResult.SmsSendFailed
-                    FirebaseFunctionsException.Code.UNAUTHENTICATED -> SignUpVerificationResult.Unauthenticated
-                    else -> SignUpVerificationResult.Unknown
-                }
-            } else {
-                SignUpVerificationResult.Unknown
-            }
-        }
-    }
+    override suspend fun sendSignupVerificationCode(phoneNumber: String) = sendCode(phoneNumber = phoneNumber, purpose = VerificationPurpose.SIGNUP)
 
-    override suspend fun verifyCode(phoneNumber: String, code: String) = withContext(ioDispatcher) {
+    override suspend fun verifyCodeForSignUp(phoneNumber: String, code: String) = withContext(ioDispatcher) {
         runCatching {
             firebaseAuthDataSource.verifyCode(phoneNumber, code)
-            SignUpVerificationResult.Success
-        }.getOrElse { e ->
-            if (e is FirebaseFunctionsException) {
-                when (e.code) {
-                    FirebaseFunctionsException.Code.PERMISSION_DENIED -> SignUpVerificationResult.CodeMismatch
-                    FirebaseFunctionsException.Code.DEADLINE_EXCEEDED -> SignUpVerificationResult.CodeExpired
-                    FirebaseFunctionsException.Code.NOT_FOUND -> SignUpVerificationResult.RequestNotFound
-                    FirebaseFunctionsException.Code.RESOURCE_EXHAUSTED -> SignUpVerificationResult.TooManyAttempts
-                    FirebaseFunctionsException.Code.UNAUTHENTICATED -> SignUpVerificationResult.Unauthenticated
-                    else -> SignUpVerificationResult.Unknown
-                }
-            } else {
-                SignUpVerificationResult.Unknown
-            }
-        }
+            VerificationResult.Success
+        }.getOrElse {e -> e.toVerificationResult() }
+    }
+
+    override suspend fun sendFindEmailVerificationCode(phoneNumber: String) = sendCode(phoneNumber = phoneNumber, purpose = VerificationPurpose.FIND_EMAIL)
+
+    override suspend fun verifyCodeForFindEmail(phoneNumber: String, code: String) = withContext(ioDispatcher) {
+        runCatching {
+            val maskedEmail = firebaseAuthDataSource.verifyCodeAndFindEmail(phoneNumber, code)
+            FindEmailResult.Success(maskedEmail)
+        }.getOrElse { e -> FindEmailResult.Failure(e.toVerificationResult()) }
+    }
+
+    override suspend fun sendResetPasswordVerificationCode(phoneNumber: String) = sendCode(phoneNumber = phoneNumber, purpose = VerificationPurpose.RESET_PASSWORD)
+
+    override suspend fun verifyCodeForResetPassword(phoneNumber: String, code: String) = withContext(ioDispatcher) {
+        runCatching {
+            firebaseAuthDataSource.verifyCodeForResetPassword(phoneNumber, code)
+            VerificationResult.Success
+        }.getOrElse { e -> e.toVerificationResult() }
+    }
+
+    override suspend fun resetPassword(phoneNumber: String, newPassword: String) = withContext(ioDispatcher) {
+        runCatching {
+            firebaseAuthDataSource.resetPassword(phoneNumber, newPassword)
+            VerificationResult.Success
+        }.getOrElse { e -> e.toVerificationResult() }
+    }
+
+    private suspend fun sendCode(phoneNumber: String, purpose: String) = withContext(ioDispatcher) {
+        runCatching {
+            firebaseAuthDataSource.sendVerificationCode(phoneNumber, purpose)
+            VerificationResult.Success
+        }.getOrElse { e -> e.toVerificationResult() }
     }
 
 

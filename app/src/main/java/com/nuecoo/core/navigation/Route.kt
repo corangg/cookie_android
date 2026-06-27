@@ -1,5 +1,7 @@
 package com.nuecoo.core.navigation
 
+import android.net.Uri
+
 object Route {
     const val SPLASH = "splash"
     const val MAIN = "main"
@@ -14,8 +16,11 @@ object Route {
         const val HOME       = "login/home"
         const val KAKAO      = "login/kakao"
         const val EMAIL      = "login/email"
-        const val FIND_EMAIL = "login/find-email"
-        const val FIND_PW    = "login/find-pw"
+        const val FIND_EMAIL = "login/find_email"
+        const val FIND_EMAIL_COMPLETE = "login/find_email_complete/{maskedEmail}"
+
+        fun findEmailComplete(maskedEmail: String) = "login/find_email_complete/${Uri.encode(maskedEmail)}"
+        const val FIND_PW    = "login/find_pw"
     }
 
     object SignUp {
@@ -26,7 +31,6 @@ object Route {
         const val PW = "signup/pw"
         const val NICKNAME = "signup/nickname"
         const val INFO = "signup/info"
-        const val BIRTH = "signup/birth"
         const val COMPLETE = "signup/complete"
     }
 }

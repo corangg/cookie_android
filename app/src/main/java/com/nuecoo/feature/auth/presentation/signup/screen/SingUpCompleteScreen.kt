@@ -20,7 +20,7 @@ import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
 import com.nuecoo.core.presetation.ui.component.FireworksEffect
 import com.nuecoo.core.presetation.ui.component.LoadingOverlay
 import com.nuecoo.feature.auth.domain.model.SignUpResult
-import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
+import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpMainTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpRateItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpTopItem
@@ -71,7 +71,7 @@ private fun SignUpCompleteScreenContent(
     onHome: () -> Unit,
     onCancelLoading: () -> Unit
 ) {
-    AuthScreenWrapper {
+    DefaultScreenWrapper {
         val bottomPadding = imeBottomPadding
         if (!isLoading) {
             Column(
