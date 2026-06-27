@@ -55,8 +55,12 @@ class AuthRepositoryImpl @Inject constructor(
         }
         val uid = authResult.user?.uid ?: return@withContext SignUpResult.Failed
         runCatching {
-            firebaseDataDataSource.saveUserInfo(uid, userInfo.toRemote())
-            firebaseDataDataSource.saveEmail(authModel.email.toRTDBForm())
+            firebaseDataDataSource.saveSignUpData(
+                uid = uid,
+                userInfo = userInfo.toRemote(),
+                email = authModel.email,
+                phone = authModel.phone
+            )
         }.getOrElse { return@withContext SignUpResult.DbSaveFailed }
         SignUpResult.Success
     }
