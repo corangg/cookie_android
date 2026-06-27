@@ -255,7 +255,7 @@ private fun CodeSendResultItem(modifier: Modifier = Modifier, result: SignUpVeri
 
 @Composable
 private fun PhoneResultItem(modifier: Modifier = Modifier, result: SignUpVerificationResult?) {
-    if(result == null) return
+    if(result == null || result == SignUpVerificationResult.Success) return
     val text = when (result) {
         SignUpVerificationResult.CodeMismatch -> stringResource(R.string.signup_phone_code_error_mismatch)
         SignUpVerificationResult.CodeExpired -> stringResource(R.string.signup_phone_code_error_expired)

@@ -3,10 +3,12 @@ package com.nuecoo.feature.auth.domain.usecase
 import com.nuecoo.feature.auth.domain.AuthRepository
 import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.SignUpResult
+import com.nuecoo.feature.auth.domain.model.SignUpVerificationResult
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
@@ -236,5 +238,183 @@ class LoginUseCaseTest {
 
         assertEquals("user@example.com", capturedEmail)
         assertEquals("Secret123!", capturedPassword)
+    }
+}
+
+// ──────────────────────────────────────────────
+// SendSignUpPhoneCodeUseCase
+// 국내 전화번호를 E164 국제 형식으로 변환 후 SMS 인증코드 발송을 요청하는 UseCase 테스트
+// ──────────────────────────────────────────────
+
+class SendSignUpPhoneCodeUseCaseTest {
+
+    private lateinit var repository: AuthRepository
+    private lateinit var useCase: SendSignUpPhoneCodeUseCase
+
+    @Before
+    fun setUp() {
+        repository = mockk()
+        useCase = SendSignUpPhoneCodeUseCase(repository)
+    }
+
+    @Test
+    fun `성공 시 Success를 반환한다`() = runTest {
+        // Solapi SMS 발송 성공 → 인증번호 입력 UI 노출 조건
+        coEvery { repository.sendVerificationCode(any()) } returns SignUpVerificationResult.Success
+
+        val result = useCase("01012345678")
+
+        assertEquals(SignUpVerificationResult.Success, result)
+    }
+
+    @Test
+    fun `이미 가입된 번호이면 AlreadyRegistered를 반환한다`() = runTest {
+        // 중복 가입 방지: 서버에서 ALREADY_EXISTS 오류가 내려온 경우
+        coEvery { repository.sendVerificationCode(any()) } returns SignUpVerificationResult.AlreadyRegistered
+
+        val result = useCase("01012345678")
+
+        assertEquals(SignUpVerificationResult.AlreadyRegistered, result)
+    }
+
+    @Test
+    fun `재발송 한도 초과 시 TooManyAttempts를 반환한다`() = runTest {
+        // 쿨다운·횟수 초과: 서버에서 RESOURCE_EXHAUSTED 오류가 내려온 경우
+        coEvery { repository.sendVerificationCode(any()) } returns SignUpVerificationResult.TooManyAttempts
+
+        val result = useCase("01012345678")
+
+        assertEquals(SignUpVerificationResult.TooManyAttempts, result)
+    }
+
+    @Test
+    fun `SMS 발송 실패 시 SmsSendFailed를 반환한다`() = runTest {
+        // Solapi 연동 오류: 서버에서 INTERNAL 오류가 내려온 경우
+        coEvery { repository.sendVerificationCode(any()) } returns SignUpVerificationResult.SmsSendFailed
+
+        val result = useCase("01012345678")
+
+        assertEquals(SignUpVerificationResult.SmsSendFailed, result)
+    }
+
+    @Test
+    fun `국내 번호를 E164 형식으로 변환하여 Repository에 전달한다`() = runTest {
+        // 010-1234-5678 → +821012345678 변환 후 전달
+        val capturedPhone = slot<String>()
+        coEvery { repository.sendVerificationCode(capture(capturedPhone)) } returns SignUpVerificationResult.Success
+
+        useCase("01012345678")
+
+        assertEquals("+821012345678", capturedPhone.captured)
+    }
+
+    @Test
+    fun `하이픈이 포함된 번호도 E164 형식으로 변환된다`() = runTest {
+        // 사용자가 010-1234-5678 형태로 입력해도 올바르게 변환
+        val capturedPhone = slot<String>()
+        coEvery { repository.sendVerificationCode(capture(capturedPhone)) } returns SignUpVerificationResult.Success
+
+        useCase("010-1234-5678")
+
+        assertEquals("+821012345678", capturedPhone.captured)
+    }
+
+    @Test
+    fun `Repository의 sendVerificationCode를 정확히 한 번 호출한다`() = runTest {
+        // UseCase 가 중복 호출 없이 위임하는지 확인
+        coEvery { repository.sendVerificationCode(any()) } returns SignUpVerificationResult.Success
+
+        useCase("01012345678")
+
+        coVerify(exactly = 1) { repository.sendVerificationCode(any()) }
+    }
+}
+
+// ──────────────────────────────────────────────
+// VerifyCodeUseCase
+// 국내 전화번호를 E164 형식으로 변환 후 인증번호 확인을 요청하는 UseCase 테스트
+// ──────────────────────────────────────────────
+
+class VerifyCodeUseCaseTest {
+
+    private lateinit var repository: AuthRepository
+    private lateinit var useCase: VerifyCodeUseCase
+
+    @Before
+    fun setUp() {
+        repository = mockk()
+        useCase = VerifyCodeUseCase(repository)
+    }
+
+    @Test
+    fun `인증번호 일치 시 Success를 반환한다`() = runTest {
+        // 사용자가 올바른 인증번호를 입력한 경우
+        coEvery { repository.verifyCode(any(), any()) } returns SignUpVerificationResult.Success
+
+        val result = useCase("01012345678", "123456")
+
+        assertEquals(SignUpVerificationResult.Success, result)
+    }
+
+    @Test
+    fun `인증번호 불일치 시 CodeMismatch를 반환한다`() = runTest {
+        // 잘못된 인증번호 입력: 서버에서 PERMISSION_DENIED 오류가 내려온 경우
+        coEvery { repository.verifyCode(any(), any()) } returns SignUpVerificationResult.CodeMismatch
+
+        val result = useCase("01012345678", "000000")
+
+        assertEquals(SignUpVerificationResult.CodeMismatch, result)
+    }
+
+    @Test
+    fun `인증번호 만료 시 CodeExpired를 반환한다`() = runTest {
+        // 3분 유효시간 초과: 서버에서 DEADLINE_EXCEEDED 오류가 내려온 경우
+        coEvery { repository.verifyCode(any(), any()) } returns SignUpVerificationResult.CodeExpired
+
+        val result = useCase("01012345678", "123456")
+
+        assertEquals(SignUpVerificationResult.CodeExpired, result)
+    }
+
+    @Test
+    fun `인증 요청 내역이 없으면 RequestNotFound를 반환한다`() = runTest {
+        // sendCode 를 거치지 않고 checkCode 를 먼저 호출한 경우: 서버에서 NOT_FOUND
+        coEvery { repository.verifyCode(any(), any()) } returns SignUpVerificationResult.RequestNotFound
+
+        val result = useCase("01012345678", "123456")
+
+        assertEquals(SignUpVerificationResult.RequestNotFound, result)
+    }
+
+    @Test
+    fun `국내 번호를 E164 형식으로 변환하여 Repository에 전달한다`() = runTest {
+        // 전화번호 변환 검증: 010-1234-5678 → +821012345678
+        val capturedPhone = slot<String>()
+        coEvery { repository.verifyCode(capture(capturedPhone), any()) } returns SignUpVerificationResult.Success
+
+        useCase("01012345678", "123456")
+
+        assertEquals("+821012345678", capturedPhone.captured)
+    }
+
+    @Test
+    fun `인증번호가 Repository에 그대로 전달된다`() = runTest {
+        // UseCase 가 code 파라미터를 가공하지 않고 그대로 전달해야 함
+        val capturedCode = slot<String>()
+        coEvery { repository.verifyCode(any(), capture(capturedCode)) } returns SignUpVerificationResult.Success
+
+        useCase("01012345678", "987654")
+
+        assertEquals("987654", capturedCode.captured)
+    }
+
+    @Test
+    fun `Repository의 verifyCode를 정확히 한 번 호출한다`() = runTest {
+        // UseCase 가 중복 호출 없이 위임하는지 확인
+        coEvery { repository.verifyCode(any(), any()) } returns SignUpVerificationResult.Success
+
+        useCase("01012345678", "123456")
+
+        coVerify(exactly = 1) { repository.verifyCode(any(), any()) }
     }
 }
