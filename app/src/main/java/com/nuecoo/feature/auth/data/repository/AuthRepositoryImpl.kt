@@ -1,10 +1,10 @@
 package com.nuecoo.feature.auth.data.repository
 
 import android.content.Context
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.functions.FirebaseFunctionsException
 import com.nuecoo.core.data.datasource.remote.FirebaseDataDataSource
 import com.nuecoo.core.data.mapper.toRTDBForm
 import com.nuecoo.core.data.mapper.toRemote
@@ -15,11 +15,10 @@ import com.nuecoo.feature.auth.data.datasource.FirebaseAuthDataSource
 import com.nuecoo.feature.auth.domain.AuthRepository
 import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.SignUpResult
+import com.nuecoo.feature.auth.domain.model.SignUpVerificationResult
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -75,6 +74,52 @@ class AuthRepositoryImpl @Inject constructor(
             true
         }.getOrElse { false }
     }
+
+    override suspend fun sendVerificationCode(phoneNumber: String) = withContext(ioDispatcher) {
+        runCatching {
+            firebaseAuthDataSource.sendVerificationCode(phoneNumber)
+            SignUpVerificationResult.Success
+        }.getOrElse { e ->
+            if (e is FirebaseFunctionsException) {
+                when (e.code) {
+                    FirebaseFunctionsException.Code.ALREADY_EXISTS -> SignUpVerificationResult.AlreadyRegistered
+                    FirebaseFunctionsException.Code.RESOURCE_EXHAUSTED -> SignUpVerificationResult.TooManyAttempts
+                    FirebaseFunctionsException.Code.INVALID_ARGUMENT -> SignUpVerificationResult.InvalidPhoneFormat
+                    FirebaseFunctionsException.Code.INTERNAL -> SignUpVerificationResult.SmsSendFailed
+                    FirebaseFunctionsException.Code.UNAUTHENTICATED -> SignUpVerificationResult.Unauthenticated
+                    else -> SignUpVerificationResult.Unknown
+                }
+            } else {
+                SignUpVerificationResult.Unknown
+            }
+        }
+    }
+
+    override suspend fun verifyCode(phoneNumber: String, code: String) = withContext(ioDispatcher) {
+        runCatching {
+            firebaseAuthDataSource.verifyCode(phoneNumber, code)
+            SignUpVerificationResult.Success
+        }.getOrElse { e ->
+            if (e is FirebaseFunctionsException) {
+                when (e.code) {
+                    FirebaseFunctionsException.Code.PERMISSION_DENIED -> SignUpVerificationResult.CodeMismatch
+                    FirebaseFunctionsException.Code.DEADLINE_EXCEEDED -> SignUpVerificationResult.CodeExpired
+                    FirebaseFunctionsException.Code.NOT_FOUND -> SignUpVerificationResult.RequestNotFound
+                    FirebaseFunctionsException.Code.RESOURCE_EXHAUSTED -> SignUpVerificationResult.TooManyAttempts
+                    FirebaseFunctionsException.Code.UNAUTHENTICATED -> SignUpVerificationResult.Unauthenticated
+                    else -> SignUpVerificationResult.Unknown
+                }
+            } else {
+                SignUpVerificationResult.Unknown
+            }
+        }
+    }
+
+
+
+
+
+
 
 
 

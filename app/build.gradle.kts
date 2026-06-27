@@ -86,6 +86,7 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.appcheck.playintegrity)
     debugImplementation(libs.firebase.appcheck.debug)
+    implementation(libs.firebase.functions)
 
     // Room
     implementation(libs.androidx.room.runtime)

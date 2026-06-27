@@ -49,9 +49,17 @@
     <string name="signup_phone_sub">-없이 입력해주세요</string>
     <string name="signup_phone_hint">010-0000-0000</string>
     <string name="signup_phone_code_hint">인증번호 입력</string>
+    <string name="signup_phone_code_error_already_registered">이미 가입된 휴대폰 번호 입니다.</string>
+    <string name="signup_phone_code_error_iooMany_attempts">인증 시도 횟수가 초과 되었습니다.</string>
+    <string name="signup_phone_code_error_invalid_phone_format">전화번호 형식이 잘못 되었습니다.</string>
+    <string name="signup_phone_code_error_sms_send_failed">SMS 발송이 실패했습니다.</string>
+    <string name="signup_phone_code_error_unauthenticated">오류가 발생했습니다.</string>
+    <string name="signup_phone_code_error_unknown">오류가 발생했습니다.</string>
     <string name="signup_phone_re_send">재전송</string>
     <string name="signup_phone_send_code">인증번호 보내기</string>
-    <string name="signup_phone_code_error">인증번호가 잘못 되었습니다. 다시 확인해 주세요</string>
+    <string name="signup_phone_code_error_mismatch">인증번호가 잘못 되었습니다. 다시 확인해 주세요</string>
+    <string name="signup_phone_code_error_expired">인증번호가 유효시간(3분이)이 만료 되었습니다.</string>
+    <string name="signup_phone_code_error">오류가 발생했습니다.</string>
 
     <string name="signup_email_main">사용하실 이메일을 입력해 주세요</string>
     <string name="signup_email_sub">실제 등록된 이메일을 입력해 주세요</string>

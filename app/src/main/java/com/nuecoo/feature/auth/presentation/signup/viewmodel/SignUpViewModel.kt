@@ -10,9 +10,12 @@ import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.EmailCheckResult
 import com.nuecoo.feature.auth.domain.model.PwCheckResult
 import com.nuecoo.feature.auth.domain.model.SignUpResult
+import com.nuecoo.feature.auth.domain.model.SignUpVerificationResult
 import com.nuecoo.feature.auth.domain.usecase.CheckEmailExistsUseCase
+import com.nuecoo.feature.auth.domain.usecase.SendSignUpPhoneCodeUseCase
 import com.nuecoo.feature.auth.domain.usecase.SendVerificationCodeUseCase
 import com.nuecoo.feature.auth.domain.usecase.SignUpUseCase
+import com.nuecoo.feature.auth.domain.usecase.VerifyCodeUseCase
 import com.nuecoo.feature.auth.domain.usecase.VerifySmsCodeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -27,8 +30,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val checkEmailExistsUseCase: CheckEmailExistsUseCase,
-    private val sendVerificationCodeUseCase: SendVerificationCodeUseCase,
-    private val verifySmsCodeUseCase: VerifySmsCodeUseCase,
+    private val sendSignUpPhoneCodeUseCase: SendSignUpPhoneCodeUseCase,
+    private val verifyCodeUseCase: VerifyCodeUseCase,
     private val signUpUseCase: SignUpUseCase,
     @MainDispatcher mainDispatcher: MainCoroutineDispatcher,
     @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
@@ -77,11 +80,11 @@ class SignUpViewModel @Inject constructor(
     private val _code = MutableStateFlow("")
     val code: StateFlow<String> = _code
 
-    private val _isCodeSent = MutableStateFlow(false)
-    val isCodeSent: StateFlow<Boolean> = _isCodeSent
+    private val _isCodeSent: MutableStateFlow<SignUpVerificationResult?> = MutableStateFlow(null)
+    val isCodeSent: StateFlow<SignUpVerificationResult?> = _isCodeSent
 
-    private val _isPhoneOk: MutableStateFlow<Boolean?> = MutableStateFlow(null)
-    val isPhoneOk: StateFlow<Boolean?> = _isPhoneOk
+    private val _isPhoneOk: MutableStateFlow<SignUpVerificationResult?> = MutableStateFlow(null)
+    val isPhoneOk: StateFlow<SignUpVerificationResult?> = _isPhoneOk
 
     fun setPhone(value: String) {
         _phone.value = value.trim()
@@ -92,11 +95,11 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun sendCode() = onIoWork {
-        _isCodeSent.value = true//추후 실제 기능 구현 필요
+        _isCodeSent.value = sendSignUpPhoneCodeUseCase(phone.value)
     }
 
     fun checkCode() = onIoWork {
-        _isPhoneOk.value = true//추후 실제 기능 구현 필요
+        _isPhoneOk.value = verifyCodeUseCase(phoneNumber = phone.value, code = code.value)
     }
 
     // Email step

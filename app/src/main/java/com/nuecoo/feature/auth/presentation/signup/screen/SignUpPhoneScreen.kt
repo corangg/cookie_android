@@ -34,6 +34,7 @@ import com.nuecoo.core.navigation.Route
 import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
 import com.nuecoo.core.presetation.ui.component.DefaultTextField
 import com.nuecoo.core.presetation.ui.component.LoadingOverlay
+import com.nuecoo.feature.auth.domain.model.SignUpVerificationResult
 import com.nuecoo.feature.auth.presentation.component.AuthScreenWrapper
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpMainTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpRateItem
@@ -63,7 +64,7 @@ fun SignUpPhoneScreen(
     }
 
     LaunchedEffect(isPhoneOk) {
-        if (isPhoneOk == true) {
+        if (isPhoneOk == SignUpVerificationResult.Success) {
             navController.navigate(Route.SignUp.EMAIL)
         }
     }
@@ -91,8 +92,8 @@ private fun SignUpPhoneScreenContent(
     step: Int,
     phone: String,
     code: String,
-    isCodeSent: Boolean,
-    isPhoneOk: Boolean?,
+    isCodeSent: SignUpVerificationResult?,
+    isPhoneOk: SignUpVerificationResult?,
     onPhoneChanged: (String) -> Unit,
     onCodeChanged: (String) -> Unit,
     onCodeSend: () -> Unit,
@@ -133,6 +134,13 @@ private fun SignUpPhoneScreenContent(
                 onPhoneChanged = onPhoneChanged,
             )//전화번호 입력 텍스트 필드
 
+            CodeSendResultItem(
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .padding(start = 6.dp),
+                result = isCodeSent
+            )//에러 메세지 컴포넌트
+
             CodeItem(
                 modifier = Modifier
                     .padding(top = 24.dp)
@@ -144,7 +152,9 @@ private fun SignUpPhoneScreenContent(
             )//전화번호 인증 컴포넌트
 
             PhoneResultItem(
-                modifier = Modifier.padding(top = 10.dp).padding(start = 6.dp),
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .padding(start = 6.dp),
                 result = isPhoneOk
             )//에러 메세지 컴포넌트
 
@@ -182,12 +192,12 @@ private fun TextFieldPhoneItem(
 @Composable
 private fun CodeItem(
     modifier: Modifier,
-    isCodeSent: Boolean,
+    isCodeSent: SignUpVerificationResult?,
     code: String,
     onCodeChanged: (String) -> Unit,
     onCodeSend: () -> Unit
 ) {
-    if (!isCodeSent) return
+    if (isCodeSent == null) return
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         DefaultTextField(
             modifier = Modifier.weight(1f),
@@ -221,10 +231,39 @@ private fun CodeItem(
 }
 
 @Composable
-private fun PhoneResultItem(modifier: Modifier = Modifier, result: Boolean?) {
-    if (result != false) return
+private fun CodeSendResultItem(modifier: Modifier = Modifier, result: SignUpVerificationResult?) {
+    val text = when (result) {
+        SignUpVerificationResult.AlreadyRegistered -> stringResource(R.string.signup_phone_code_error_already_registered)
+        SignUpVerificationResult.TooManyAttempts -> stringResource(R.string.signup_phone_code_error_iooMany_attempts)
+        SignUpVerificationResult.InvalidPhoneFormat -> stringResource(R.string.signup_phone_code_error_invalid_phone_format)
+        SignUpVerificationResult.SmsSendFailed -> stringResource(R.string.signup_phone_code_error_sms_send_failed)
+        SignUpVerificationResult.Unauthenticated -> stringResource(R.string.signup_phone_code_error_unauthenticated)
+        SignUpVerificationResult.Unknown -> stringResource(R.string.signup_phone_code_error)
+        else -> return
+    }
+
     Text(
-        text = stringResource(R.string.signup_phone_code_error),
+        text = text,
+        color = ErrorRed,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        modifier = modifier
+            .clip(RoundedCornerShape(50))
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    )
+}
+
+@Composable
+private fun PhoneResultItem(modifier: Modifier = Modifier, result: SignUpVerificationResult?) {
+    if(result == null) return
+    val text = when (result) {
+        SignUpVerificationResult.CodeMismatch -> stringResource(R.string.signup_phone_code_error_mismatch)
+        SignUpVerificationResult.CodeExpired -> stringResource(R.string.signup_phone_code_error_expired)
+        else -> stringResource(R.string.signup_phone_code_error)
+    }
+
+    Text(
+        text = text,
         color = ErrorRed,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
@@ -237,13 +276,13 @@ private fun PhoneResultItem(modifier: Modifier = Modifier, result: Boolean?) {
 @Composable
 private fun BottomButtonItem(
     modifier: Modifier,
-    isCodeSent: Boolean,
+    isCodeSent: SignUpVerificationResult?,
     isPhoneValid: Boolean,
     isCodeValid: Boolean,
     onSend: () -> Unit,
     onNext: () -> Unit
 ) {
-    if (!isCodeSent) {
+    if (isCodeSent == null) {
         DefaultAuthButton(
             modifier = modifier,
             title = stringResource(R.string.signup_phone_send_code),

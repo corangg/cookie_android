@@ -91,6 +91,7 @@ firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore
 firebase-database = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabase" }
 firebase-appcheck-playintegrity = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity", version.ref = "appcheck" }
 firebase-appcheck-debug = { group = "com.google.firebase", name = "firebase-appcheck-debug", version.ref = "appcheck" }
+firebase-functions = { group = "com.google.firebase", name = "firebase-functions-ktx" }
 
 # Test
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }

@@ -1,4 +1,5 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https";
+import { onSchedule } from "firebase-functions/v2/scheduler";
 import * as admin from "firebase-admin";
 import * as crypto from "crypto";
 import { sendSms } from "./solapi";
@@ -182,5 +183,33 @@ export const verifyCodeAndFindEmail = onCall(
     }
 
     return { email: userSnap.val().email };
+  }
+);
+
+// 4) 매일 1회: 30일 지난 익명 계정 자동 삭제
+export const cleanupAnonymousUsers = onSchedule(
+  { schedule: "every 24 hours", region: "asia-northeast3" },
+  async () => {
+    const auth = admin.auth();
+    let nextPageToken: string | undefined;
+    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000; // 30일 전
+
+    do {
+      const result = await auth.listUsers(1000, nextPageToken);
+      const toDelete = result.users
+        .filter(
+          (u) =>
+            u.providerData.length === 0 &&
+            new Date(u.metadata.creationTime).getTime() < cutoff
+        )
+        .map((u) => u.uid);
+
+      if (toDelete.length > 0) {
+        await auth.deleteUsers(toDelete);
+        console.log(`삭제된 익명 계정 수: ${toDelete.length}`);
+      }
+
+      nextPageToken = result.pageToken;
+    } while (nextPageToken);
   }
 );

@@ -2,6 +2,7 @@ package com.nuecoo.feature.auth.domain
 
 import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.SignUpResult
+import com.nuecoo.feature.auth.domain.model.SignUpVerificationResult
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
@@ -9,6 +10,8 @@ interface AuthRepository {
     suspend fun trySignUp(authModel: AuthModel): SignUpResult
     suspend fun logIn(email: String, password: String): Boolean
     suspend fun logOut(): Boolean
+    suspend fun sendVerificationCode(phoneNumber: String): SignUpVerificationResult
+    suspend fun verifyCode(phoneNumber: String, code: String): SignUpVerificationResult
 
 
     /* suspend fun isLoggedIn(): Boolean
