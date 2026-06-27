@@ -27,6 +27,7 @@ function toDomesticFormat(e164Phone: string): string {
   return e164Phone.replace(/^\+82/, "0");
 }
 
+// 1) 인증번호 발송 (이메일 찾기 / 회원가입 공용)
 export const sendVerificationCode = onCall(
   {
     region: "asia-northeast3",
@@ -37,9 +38,19 @@ export const sendVerificationCode = onCall(
       throw new HttpsError("unauthenticated", "인증되지 않은 요청입니다.");
     }
 
-    const { phoneNumber } = request.data;
+    const { phoneNumber, purpose } = request.data;
+    // purpose: "SIGNUP" | "FIND_EMAIL"
+
     if (!phoneNumber || !/^\+82\d{9,10}$/.test(phoneNumber)) {
       throw new HttpsError("invalid-argument", "전화번호 형식이 올바르지 않습니다.");
+    }
+
+    if (purpose === "SIGNUP") {
+      const domesticPhone = toDomesticFormat(phoneNumber);
+      const existingSnap = await rtdb.ref(`phoneToUid/${encodeKey(domesticPhone)}`).get();
+      if (existingSnap.exists()) {
+        throw new HttpsError("already-exists", "이미 가입된 휴대폰 번호입니다.");
+      }
     }
 
     const codeRef = rtdb.ref(`verificationCodes/${encodeKey(phoneNumber)}`);
@@ -74,10 +85,53 @@ export const sendVerificationCode = onCall(
   }
 );
 
+// 2) 회원가입용: 인증번호 확인만 (이메일 조회 없음)
+export const verifyPhoneForSignup = onCall(
+  {
+    region: "asia-northeast3",
+  },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "인증되지 않은 요청입니다.");
+    }
+
+    const { phoneNumber, code } = request.data;
+    if (!phoneNumber || !code) {
+      throw new HttpsError("invalid-argument", "필수 값이 누락되었습니다.");
+    }
+
+    const codeRef = rtdb.ref(`verificationCodes/${encodeKey(phoneNumber)}`);
+    const snap = await codeRef.get();
+
+    if (!snap.exists()) {
+      throw new HttpsError("not-found", "인증 요청 내역이 없습니다.");
+    }
+
+    const data = snap.val();
+
+    if ((data.attempts ?? 0) >= MAX_ATTEMPTS) {
+      throw new HttpsError("resource-exhausted", "시도 횟수를 초과했습니다.");
+    }
+
+    if (data.expiresAt < Date.now()) {
+      throw new HttpsError("deadline-exceeded", "인증번호가 만료되었습니다.");
+    }
+
+    if (data.code !== hashCode(code)) {
+      await codeRef.update({ attempts: (data.attempts ?? 0) + 1 });
+      throw new HttpsError("permission-denied", "인증번호가 일치하지 않습니다.");
+    }
+
+    await codeRef.update({ verified: true });
+
+    return { success: true };
+  }
+);
+
+// 3) 이메일 찾기용: 인증번호 확인 + 이메일 조회
 export const verifyCodeAndFindEmail = onCall(
   {
     region: "asia-northeast3",
-    secrets: ["SOLAPI_API_KEY", "SOLAPI_API_SECRET", "SOLAPI_SENDER"],
   },
   async (request) => {
     if (!request.auth) {
