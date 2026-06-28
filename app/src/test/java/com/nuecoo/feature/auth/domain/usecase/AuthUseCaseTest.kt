@@ -587,3 +587,241 @@ class VerifyFindEmailCodeUseCaseTest {
         coVerify(exactly = 1) { repository.verifyCodeForFindEmail(any(), any()) }
     }
 }
+
+// ──────────────────────────────────────────────
+// SendResetPasswordPhoneCodeUseCase
+// 비밀번호 재설정 흐름에서 국내 전화번호를 E164 형식으로 변환 후
+// 인증코드 발송을 요청하는 UseCase 테스트
+// ──────────────────────────────────────────────
+
+class SendResetPasswordPhoneCodeUseCaseTest {
+
+    private lateinit var repository: AuthRepository
+    private lateinit var useCase: SendResetPasswordPhoneCodeUseCase
+
+    @Before
+    fun setUp() {
+        repository = mockk()
+        useCase = SendResetPasswordPhoneCodeUseCase(repository)
+    }
+
+    @Test
+    fun `성공 시 Success를 반환한다`() = runTest {
+        // 가입된 번호로 비밀번호 재설정 코드 발송 성공
+        coEvery { repository.sendResetPasswordVerificationCode(any()) } returns VerificationResult.Success
+
+        val result = useCase("01012345678")
+
+        assertEquals(VerificationResult.Success, result)
+    }
+
+    @Test
+    fun `재발송 한도 초과 시 TooManyAttempts를 반환한다`() = runTest {
+        // 쿨다운·횟수 초과: 서버에서 RESOURCE_EXHAUSTED 오류가 내려온 경우
+        coEvery { repository.sendResetPasswordVerificationCode(any()) } returns VerificationResult.TooManyAttempts
+
+        val result = useCase("01012345678")
+
+        assertEquals(VerificationResult.TooManyAttempts, result)
+    }
+
+    @Test
+    fun `SMS 발송 실패 시 SmsSendFailed를 반환한다`() = runTest {
+        // Solapi 연동 오류: 서버에서 INTERNAL 오류가 내려온 경우
+        coEvery { repository.sendResetPasswordVerificationCode(any()) } returns VerificationResult.SmsSendFailed
+
+        val result = useCase("01012345678")
+
+        assertEquals(VerificationResult.SmsSendFailed, result)
+    }
+
+    @Test
+    fun `국내 번호를 E164 형식으로 변환하여 Repository에 전달한다`() = runTest {
+        // 010-1234-5678 → +821012345678 변환 후 전달
+        val capturedPhone = slot<String>()
+        coEvery { repository.sendResetPasswordVerificationCode(capture(capturedPhone)) } returns VerificationResult.Success
+
+        useCase("01012345678")
+
+        assertEquals("+821012345678", capturedPhone.captured)
+    }
+
+    @Test
+    fun `하이픈이 포함된 번호도 E164 형식으로 변환된다`() = runTest {
+        // 사용자가 010-1234-5678 형태로 입력해도 올바르게 변환
+        val capturedPhone = slot<String>()
+        coEvery { repository.sendResetPasswordVerificationCode(capture(capturedPhone)) } returns VerificationResult.Success
+
+        useCase("010-1234-5678")
+
+        assertEquals("+821012345678", capturedPhone.captured)
+    }
+
+    @Test
+    fun `Repository의 sendResetPasswordVerificationCode를 정확히 한 번 호출한다`() = runTest {
+        // UseCase 가 중복 호출 없이 위임하는지 확인
+        coEvery { repository.sendResetPasswordVerificationCode(any()) } returns VerificationResult.Success
+
+        useCase("01012345678")
+
+        coVerify(exactly = 1) { repository.sendResetPasswordVerificationCode(any()) }
+    }
+}
+
+// ──────────────────────────────────────────────
+// VerifyResetPwCodeUseCase
+// 비밀번호 재설정 흐름에서 인증번호를 확인하는 UseCase 테스트
+// ──────────────────────────────────────────────
+
+class VerifyResetPwCodeUseCaseTest {
+
+    private lateinit var repository: AuthRepository
+    private lateinit var useCase: VerifyResetPwCodeUseCase
+
+    @Before
+    fun setUp() {
+        repository = mockk()
+        useCase = VerifyResetPwCodeUseCase(repository)
+    }
+
+    @Test
+    fun `인증번호 일치 시 Success를 반환한다`() = runTest {
+        // 사용자가 올바른 인증번호를 입력한 경우
+        coEvery { repository.verifyCodeForResetPassword(any(), any()) } returns VerificationResult.Success
+
+        val result = useCase("01012345678", "123456")
+
+        assertEquals(VerificationResult.Success, result)
+    }
+
+    @Test
+    fun `인증번호 불일치 시 CodeMismatch를 반환한다`() = runTest {
+        // 잘못된 인증번호 입력: 서버에서 PERMISSION_DENIED 오류가 내려온 경우
+        coEvery { repository.verifyCodeForResetPassword(any(), any()) } returns VerificationResult.CodeMismatch
+
+        val result = useCase("01012345678", "000000")
+
+        assertEquals(VerificationResult.CodeMismatch, result)
+    }
+
+    @Test
+    fun `인증번호 만료 시 CodeExpired를 반환한다`() = runTest {
+        // 3분 유효시간 초과: 서버에서 DEADLINE_EXCEEDED 오류가 내려온 경우
+        coEvery { repository.verifyCodeForResetPassword(any(), any()) } returns VerificationResult.CodeExpired
+
+        val result = useCase("01012345678", "123456")
+
+        assertEquals(VerificationResult.CodeExpired, result)
+    }
+
+    @Test
+    fun `인증 요청 내역이 없으면 RequestNotFound를 반환한다`() = runTest {
+        // sendCode 를 거치지 않고 checkCode 를 먼저 호출한 경우: 서버에서 NOT_FOUND
+        coEvery { repository.verifyCodeForResetPassword(any(), any()) } returns VerificationResult.RequestNotFound
+
+        val result = useCase("01012345678", "123456")
+
+        assertEquals(VerificationResult.RequestNotFound, result)
+    }
+
+    @Test
+    fun `국내 번호를 E164 형식으로 변환하여 Repository에 전달한다`() = runTest {
+        // 전화번호 변환 검증: 010-1234-5678 → +821012345678
+        val capturedPhone = slot<String>()
+        coEvery { repository.verifyCodeForResetPassword(capture(capturedPhone), any()) } returns VerificationResult.Success
+
+        useCase("01012345678", "123456")
+
+        assertEquals("+821012345678", capturedPhone.captured)
+    }
+
+    @Test
+    fun `인증번호가 Repository에 그대로 전달된다`() = runTest {
+        // UseCase 가 code 파라미터를 가공하지 않고 그대로 전달해야 함
+        val capturedCode = slot<String>()
+        coEvery { repository.verifyCodeForResetPassword(any(), capture(capturedCode)) } returns VerificationResult.Success
+
+        useCase("01012345678", "987654")
+
+        assertEquals("987654", capturedCode.captured)
+    }
+
+    @Test
+    fun `Repository의 verifyCodeForResetPassword를 정확히 한 번 호출한다`() = runTest {
+        // UseCase 가 중복 호출 없이 위임하는지 확인
+        coEvery { repository.verifyCodeForResetPassword(any(), any()) } returns VerificationResult.Success
+
+        useCase("01012345678", "123456")
+
+        coVerify(exactly = 1) { repository.verifyCodeForResetPassword(any(), any()) }
+    }
+}
+
+// ──────────────────────────────────────────────
+// ResetPwUseCase
+// 인증된 전화번호를 기반으로 새 비밀번호로 재설정을 요청하는 UseCase 테스트
+// ──────────────────────────────────────────────
+
+class ResetPwUseCaseTest {
+
+    private lateinit var repository: AuthRepository
+    private lateinit var useCase: ResetPwUseCase
+
+    @Before
+    fun setUp() {
+        repository = mockk()
+        useCase = ResetPwUseCase(repository)
+    }
+
+    @Test
+    fun `비밀번호 재설정 성공 시 Success를 반환한다`() = runTest {
+        // 새 비밀번호가 서버에 정상 반영된 경우
+        coEvery { repository.resetPassword(any(), any()) } returns VerificationResult.Success
+
+        val result = useCase("01012345678", "NewPassword1!")
+
+        assertEquals(VerificationResult.Success, result)
+    }
+
+    @Test
+    fun `비밀번호 재설정 실패 시 Unknown을 반환한다`() = runTest {
+        // 네트워크 오류 또는 알 수 없는 서버 오류로 재설정 실패
+        coEvery { repository.resetPassword(any(), any()) } returns VerificationResult.Unknown
+
+        val result = useCase("01012345678", "NewPassword1!")
+
+        assertEquals(VerificationResult.Unknown, result)
+    }
+
+    @Test
+    fun `국내 전화번호를 E164 형식으로 변환하여 Repository에 전달한다`() = runTest {
+        // 010-1234-5678 → +821012345678 변환 후 전달
+        val capturedPhone = slot<String>()
+        coEvery { repository.resetPassword(capture(capturedPhone), any()) } returns VerificationResult.Success
+
+        useCase("01012345678", "NewPassword1!")
+
+        assertEquals("+821012345678", capturedPhone.captured)
+    }
+
+    @Test
+    fun `새 비밀번호가 Repository에 그대로 전달된다`() = runTest {
+        // UseCase 가 password 파라미터를 가공하지 않고 그대로 전달해야 함
+        val capturedPassword = slot<String>()
+        coEvery { repository.resetPassword(any(), capture(capturedPassword)) } returns VerificationResult.Success
+
+        useCase("01012345678", "NewPassword1!")
+
+        assertEquals("NewPassword1!", capturedPassword.captured)
+    }
+
+    @Test
+    fun `Repository의 resetPassword를 정확히 한 번 호출한다`() = runTest {
+        // UseCase 가 중복 호출 없이 위임하는지 확인
+        coEvery { repository.resetPassword(any(), any()) } returns VerificationResult.Success
+
+        useCase("01012345678", "NewPassword1!")
+
+        coVerify(exactly = 1) { repository.resetPassword(any(), any()) }
+    }
+}
