@@ -100,7 +100,9 @@ class AuthRepositoryImpl @Inject constructor(
         runCatching {
             firebaseAuthDataSource.resetPassword(phoneNumber, newPassword)
             VerificationResult.Success
-        }.getOrElse { e -> e.toVerificationResult() }
+        }.getOrElse { e ->
+            e.toVerificationResult()
+        }
     }
 
     private suspend fun sendCode(phoneNumber: String, purpose: String) = withContext(ioDispatcher) {

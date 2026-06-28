@@ -20,7 +20,10 @@ object Route {
         const val FIND_EMAIL_COMPLETE = "login/find_email_complete/{maskedEmail}"
 
         fun findEmailComplete(maskedEmail: String) = "login/find_email_complete/${Uri.encode(maskedEmail)}"
-        const val FIND_PW    = "login/find_pw"
+        const val FIND_PW_EMAIL = "login/find_pw_email"
+        const val FIND_PW_PHONE = "login/find_pw_phone"
+        const val FIND_PW_RESET = "login/find_pw_reset"
+        const val FIND_PW_COMPLETE = "login/find_pw_complete"
     }
 
     object SignUp {

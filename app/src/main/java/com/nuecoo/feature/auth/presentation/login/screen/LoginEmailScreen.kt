@@ -135,7 +135,7 @@ private fun LoginEmailScreenContent(
             FindAuthItem(
                 modifier = Modifier.padding(top = 10.dp),
                 onFindEmail = { navController.navigate(Route.Login.FIND_EMAIL) },
-                onFindPW = { navController.navigate(Route.Login.FIND_PW) }
+                onFindPW = { navController.navigate(Route.Login.FIND_PW_EMAIL) }
             )//아이디/비밀번호 찾기 텍스트
         }
         LoadingOverlay(isLoading = isLoading, onCancel = onCancelLoading)

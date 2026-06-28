@@ -10,6 +10,8 @@ sealed class EmailCheckResult {
     object Available : EmailCheckResult()
     object Duplicated : EmailCheckResult()
     object NotValid : EmailCheckResult()
+
+    object NOtFind : EmailCheckResult()
     object Error : EmailCheckResult()
 }
 
@@ -17,6 +19,7 @@ sealed class PwCheckResult {
     object Success : PwCheckResult()
     object NotAccordance : PwCheckResult()
     object NotValid : PwCheckResult()
+    object Error : PwCheckResult()
 }
 
 data class AuthModel(

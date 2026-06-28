@@ -26,32 +26,27 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.nuecoo.R
 import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
 import com.nuecoo.core.presetation.ui.component.MainTitleItem
 import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
-import com.nuecoo.ui.theme.ItemCardBackground
 import com.nuecoo.ui.theme.MailBackground
 import com.nuecoo.ui.theme.MailIcon
 import com.nuecoo.ui.theme.MainButton
 import com.nuecoo.ui.theme.MainText
+import com.nuecoo.ui.theme.SubText
 import com.nuecoo.ui.theme.White
 
 @Composable
-fun FindEmailCompleteScreen(
-    navController: NavController,
-    maskedEmail: String,
-) {
-    FindEmailCompleteScreenContent(
-        email = maskedEmail,
+fun FindPwCompleteScreen(navController: NavHostController) {
+    FindPwCompleteScreenContent(
         onLogin = { navController.popBackStack() }
     )
 }
 
 @Composable
-private fun FindEmailCompleteScreenContent(
-    email: String,
+private fun FindPwCompleteScreenContent(
     onLogin: () -> Unit
 ) {
     DefaultScreenWrapper {
@@ -74,15 +69,16 @@ private fun FindEmailCompleteScreenContent(
                     .padding(top = 28.dp)
                     .padding(start = 10.dp)
                     .align(Alignment.CenterHorizontally),
-                text = stringResource(R.string.find_email_complete_main)
+                text = stringResource(R.string.find_pw_complete_main)
             )//메인 텍스트
 
-            FindEmailItem(
+            FindPwSubTextItem(
                 modifier = Modifier
-                    .padding(top = 24.dp)
+                    .padding(top = 8.dp)
+                    .padding(start = 10.dp)
                     .align(Alignment.CenterHorizontally),
-                text = email
-            )//찾은 이메일 컴포넌트
+                text = stringResource(R.string.find_pw_complete_sub)
+            )//서브 텍스트
 
             Spacer(Modifier.weight(1f))
 
@@ -118,7 +114,7 @@ private fun ImageItem(modifier: Modifier) {
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(R.drawable.ic_mail),
+            painter = painterResource(R.drawable.ic_check),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             colorFilter = ColorFilter.tint(MailIcon),
@@ -143,23 +139,14 @@ private fun FindEmailMainTextItem(modifier: Modifier, text: String, fontSize: In
 }
 
 @Composable
-private fun FindEmailItem(modifier: Modifier, text: String) {
-    Box(
-        modifier = modifier
-            .padding(vertical = 8.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(ItemCardBackground)
-            .padding(vertical = 16.dp, horizontal = 24.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = text,
-            color = MainText,
-            fontSize = 20.sp,
-            fontFamily = FontFamily(Font(R.font.title_font)),
-            fontWeight = FontWeight.Medium,
-        )
-    }
+private fun FindPwSubTextItem(modifier: Modifier, text: String, fontSize: Int = 16) {
+    Text(
+        modifier = modifier,
+        text = text,
+        fontWeight = FontWeight.Medium,
+        color = SubText,
+        fontSize = fontSize.sp
+    )
 }
 
 @Composable

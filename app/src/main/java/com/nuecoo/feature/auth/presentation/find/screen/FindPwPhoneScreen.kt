@@ -27,9 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.nuecoo.R
 import com.nuecoo.core.navigation.Route
 import com.nuecoo.core.presetation.ui.component.BackButton
@@ -40,7 +39,9 @@ import com.nuecoo.core.presetation.ui.component.MainTitleItem
 import com.nuecoo.feature.auth.domain.model.FindEmailResult
 import com.nuecoo.feature.auth.domain.model.VerificationResult
 import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
-import com.nuecoo.feature.auth.presentation.signup.viewmodel.FindEmailViewModel
+import com.nuecoo.feature.auth.presentation.find.screen.FindPwTopItem
+import com.nuecoo.feature.auth.presentation.find.screen.PhoneResultItem
+import com.nuecoo.feature.auth.presentation.find.viewmodel.FindPwViewModel
 import com.nuecoo.ui.theme.ErrorRed
 import com.nuecoo.ui.theme.MainButton
 import com.nuecoo.ui.theme.MainText
@@ -49,9 +50,9 @@ import com.nuecoo.ui.theme.SubText
 import com.nuecoo.ui.theme.White
 
 @Composable
-fun FindEmailScreen(
-    navController: NavController,
-    viewModel: FindEmailViewModel = hiltViewModel()
+fun FindPwPhoneScreen(
+    navController: NavHostController,
+    viewModel: FindPwViewModel
 ) {
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val phone by viewModel.phone.collectAsStateWithLifecycle()
@@ -59,17 +60,14 @@ fun FindEmailScreen(
     val isCodeSent by viewModel.isCodeSent.collectAsStateWithLifecycle()
     val findResult by viewModel.isFindResult.collectAsStateWithLifecycle()
 
-    LaunchedEffect(findResult) {
-        val result = findResult
-        if (result is FindEmailResult.Success) {
-            navController.navigate(Route.Login.findEmailComplete(result.maskedEmail)) {
-                popUpTo(Route.Login.FIND_EMAIL) { inclusive = true }
-                launchSingleTop = true
-            }
+    LaunchedEffect(findResult){
+        if (findResult == VerificationResult.Success) {
+            navController.navigate(Route.Login.FIND_PW_RESET)
         }
     }
 
-    FindEmailScreenContent(
+
+    FindPwPhoneScreenContent(
         isLoading = isLoading,
         phone = phone,
         code = code,
@@ -85,11 +83,11 @@ fun FindEmailScreen(
 }
 
 @Composable
-fun FindEmailScreenContent(
+private fun FindPwPhoneScreenContent(
     isLoading: Boolean,
     phone: String,
     code: String,
-    findResult: FindEmailResult?,
+    findResult: VerificationResult?,
     isCodeSent: VerificationResult?,
     onPhoneChanged: (String) -> Unit,
     onCodeChanged: (String) -> Unit,
@@ -106,7 +104,7 @@ fun FindEmailScreenContent(
                 .imePadding()
                 .padding(horizontal = 24.dp)
         ) {
-            FindEmailTopItem(modifier = Modifier.padding(top = 16.dp), onBack = onBack)//상단 타이틀
+            FindPwTopItem(modifier = Modifier.padding(top = 16.dp), onBack = onBack)//상단 타이틀
 
             FindEmailMainTextItem(
                 modifier = Modifier
@@ -169,7 +167,7 @@ fun FindEmailScreenContent(
 }
 
 @Composable
-private fun FindEmailTopItem(modifier: Modifier, onBack: () -> Unit) {
+private fun FindPwTopItem(modifier: Modifier, onBack: () -> Unit) {
     Row(
         modifier = modifier
             .fillMaxWidth(),
@@ -179,8 +177,8 @@ private fun FindEmailTopItem(modifier: Modifier, onBack: () -> Unit) {
 
         MainTitleItem(
             modifier = Modifier.padding(start = 8.dp),
-            subTitle = stringResource(R.string.find_email_title_sub),
-            mainTitle = stringResource(R.string.find_email_title_main)
+            subTitle = stringResource(R.string.find_pw_title_sub),
+            mainTitle = stringResource(R.string.find_pw_title_main)
         )
     }
 }
@@ -289,8 +287,8 @@ private fun CodeSendResultItem(modifier: Modifier = Modifier, result: Verificati
 }
 
 @Composable
-private fun PhoneResultItem(modifier: Modifier = Modifier, result: FindEmailResult?) {
-    if (result == null || result is FindEmailResult.Success || result == VerificationResult.Success) return
+private fun PhoneResultItem(modifier: Modifier = Modifier, result: VerificationResult?) {
+    if (result == null || result == VerificationResult.Success) return
     val text = when (result) {
         VerificationResult.CodeMismatch -> stringResource(R.string.signup_phone_code_error_mismatch)
         VerificationResult.CodeExpired -> stringResource(R.string.signup_phone_code_error_expired)

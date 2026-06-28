@@ -103,9 +103,21 @@
     <string name="find_email_re_send">재전송</string>
     <string name="find_email_send_code">인증번호 보내기</string>
 
-    <string name="find_email_complete_main">가입된 이메일이에요</string>
-    <string name="find_email_complete_login_button">로그인하러 가기</string>
+    <string name="find_email_complete_main">이메일 찾기 완료!</string>
+    <string name="find_complete_login_button">로그인하러 가기</string>
 
+    <!--Find Pw-->
+    <string name="find_pw_title_main">비밀번호 찾기</string>
+    <string name="find_pw_title_sub">FIND PW</string>
+    <string name="find_pw_email_main">회원가입시 등록한 이메일을 입력해 주세요</string>
+    <string name="find_pw_email_hint">yookoo@example.com</string>
+    <string name="find_pw_email_error_not_find">등록되지 않은 이메일 입니다. 다시 확인해 주세요</string>
+
+    <string name="find_pw_reset_main">변경하실 비밀번호를 입력해 주세요</string>
+
+    <string name="find_pw_complete_main">비밀번호 찾기 완료!</string>
+    <string name="find_pw_complete_sub">새 비밀번호로 로그인해 주세요</string>
+    <string name="find_pw_error">비밀번호변경에 실패했습니다. 다시 시도해 주세요</string>
 
     <!-- Oven -->
     <string name="text_oven_title">오늘의 쿠키</string>

@@ -16,7 +16,11 @@ import androidx.navigation.navigation
 import com.nuecoo.core.navigation.Route
 import com.nuecoo.feature.auth.presentation.find.screen.FindEmailCompleteScreen
 import com.nuecoo.feature.auth.presentation.find.screen.FindEmailScreen
-import com.nuecoo.feature.auth.presentation.find.screen.FindPwScreen
+import com.nuecoo.feature.auth.presentation.find.screen.FindPwCompleteScreen
+import com.nuecoo.feature.auth.presentation.find.screen.FindPwEmailScreen
+import com.nuecoo.feature.auth.presentation.find.screen.FindPwPhoneScreen
+import com.nuecoo.feature.auth.presentation.find.screen.FindPwResetScreen
+import com.nuecoo.feature.auth.presentation.find.viewmodel.FindPwViewModel
 import com.nuecoo.feature.auth.presentation.login.screen.LoginEmailScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginHomeScreen
 import com.nuecoo.feature.auth.presentation.login.screen.LoginKaKaoScreen
@@ -57,8 +61,29 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
             val maskedEmail = backStackEntry.arguments?.getString("maskedEmail").orEmpty()
             FindEmailCompleteScreen(navController = navController, maskedEmail = maskedEmail)
         }
-        composable(Route.Login.FIND_PW) {
-            FindPwScreen(navController = navController)
+        composable(Route.Login.FIND_PW_EMAIL) { entry ->
+            val parentEntry = remember(entry) {
+                navController.getBackStackEntry(Route.Login.GRAPH)
+            }
+            val viewModel: FindPwViewModel = hiltViewModel(parentEntry)
+            FindPwEmailScreen(navController = navController, viewModel = viewModel)
+        }
+        composable(Route.Login.FIND_PW_PHONE) { entry ->
+            val parentEntry = remember(entry) {
+                navController.getBackStackEntry(Route.Login.GRAPH)
+            }
+            val viewModel: FindPwViewModel = hiltViewModel(parentEntry)
+            FindPwPhoneScreen(navController = navController, viewModel = viewModel)
+        }
+        composable(Route.Login.FIND_PW_RESET) { entry ->
+            val parentEntry = remember(entry) {
+                navController.getBackStackEntry(Route.Login.GRAPH)
+            }
+            val viewModel: FindPwViewModel = hiltViewModel(parentEntry)
+            FindPwResetScreen(navController = navController, viewModel = viewModel)
+        }
+        composable(Route.Login.FIND_PW_COMPLETE) {
+            FindPwCompleteScreen(navController = navController)
         }
     }
 

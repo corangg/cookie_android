@@ -93,7 +93,8 @@ private fun SignUpCompleteScreenContent(
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .align(Alignment.CenterHorizontally),
-                    signupResult = signupResult
+                    signupResult = signupResult,
+                    nickname = nickname
                 )//서브 텍스트
 
                 Spacer(Modifier.weight(1f))
@@ -135,7 +136,7 @@ private fun MainTextItem(modifier: Modifier, signupResult: SignUpResult) {
 }
 
 @Composable
-private fun SubTextItem(modifier: Modifier, signupResult: SignUpResult) {
+private fun SubTextItem(modifier: Modifier, signupResult: SignUpResult, nickname: String) {
     val text = stringResource(
         when (signupResult) {
             SignUpResult.Success -> R.string.signup_complete_success_sub
@@ -148,7 +149,7 @@ private fun SubTextItem(modifier: Modifier, signupResult: SignUpResult) {
     )
     SignUpMainTextItem(
         modifier = modifier,
-        text = text,
+        text = "$nickname$text",
         fontSize = 16
     )
 }
