@@ -40,8 +40,8 @@ private val COOKIE_TYPE_RESOURCES = listOf(
             R.drawable.img_cookie_cheering_1,
             R.drawable.img_cookie_cheering_2,
             R.drawable.img_cookie_cheering_3,
-            R.drawable.img_cookie_cheering_5,
             R.drawable.img_cookie_cheering_4,
+            R.drawable.img_cookie_cheering_5,
             R.drawable.img_cookie_cheering_6
         ),
         mainTextRes = R.string.text_open_cookie_cheer_main,
