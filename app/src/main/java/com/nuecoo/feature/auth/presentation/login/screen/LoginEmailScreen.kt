@@ -39,11 +39,11 @@ import com.nuecoo.core.presetation.ui.component.LoadingOverlay
 import com.nuecoo.feature.auth.domain.model.LoginResult
 import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
 import com.nuecoo.feature.auth.presentation.login.viewmodel.LoginViewModel
-import com.nuecoo.ui.theme.ErrorRed
-import com.nuecoo.ui.theme.MainButton
-import com.nuecoo.ui.theme.MainText
-import com.nuecoo.ui.theme.SubText
-import com.nuecoo.ui.theme.White
+import com.nuecoo.core.theme.ErrorRed
+import com.nuecoo.core.theme.MainButton
+import com.nuecoo.core.theme.MainText
+import com.nuecoo.core.theme.SubText
+import com.nuecoo.core.theme.White
 
 @Composable
 fun LoginEmailScreen(

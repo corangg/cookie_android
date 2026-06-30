@@ -1,4 +1,4 @@
-package com.nuecoo.ui.util
+package com.nuecoo.core.presetation.ui.component
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween

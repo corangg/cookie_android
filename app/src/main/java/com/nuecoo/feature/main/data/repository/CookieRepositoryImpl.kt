@@ -1,43 +1,96 @@
 package com.nuecoo.feature.main.data.repository
 
-import android.content.Context
+import com.nuecoo.core.data.mapper.toDomain
+import com.nuecoo.core.data.model.local.CookieEventEntity
+import com.nuecoo.core.data.model.local.CookieTypeCountEntity
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.LocalDataSources
-import com.nuecoo.feature.main.data.datasource.cookie.CookieDataSource
-import com.nuecoo.feature.main.data.mapper.toExternal
-import com.nuecoo.feature.main.data.mapper.toLocal
-import com.nuecoo.feature.main.domain.model.DailyCookieItemData
+import com.nuecoo.core.di.RemoteDataSources
+import com.nuecoo.core.util.nowAsYyyyMMddHHmm
+import com.nuecoo.core.util.todayAsYyyyMMdd
+import com.nuecoo.feature.main.data.datasource.local.CookieEventDataSource
+import com.nuecoo.feature.main.data.datasource.local.CookieTypeCountLocalDataSource
+import com.nuecoo.feature.main.data.datasource.remote.CookieRemoteDataSource
+import com.nuecoo.feature.main.data.worker.CookieSyncScheduler
+import com.nuecoo.feature.main.domain.model.CookieSyncStatus
 import com.nuecoo.feature.main.domain.repository.CookieRepository
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.util.UUID
 import javax.inject.Inject
 
 class CookieRepositoryImpl @Inject constructor(
-    @LocalDataSources private val cookieDataSource: CookieDataSource,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @ApplicationContext private val context: Context
+    @param:LocalDataSources private val cookieEventDataSource: CookieEventDataSource,
+    @param:LocalDataSources private val cookieTypeCountLocalDataSource: CookieTypeCountLocalDataSource,
+    @param:RemoteDataSources private val cookieRemoteDataSource: CookieRemoteDataSource,
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    private val cookieSyncScheduler: CookieSyncScheduler,
 ) : CookieRepository {
-    override fun getFlowDailyCookieData(): Flow<DailyCookieItemData?> {
-        return cookieDataSource.observeLastDailyCookieData().map { data ->
-            data?.toExternal()
+    override suspend fun openCookie(type: Int) {
+        val eventId = UUID.randomUUID().toString()
+        insertCookieEvent(type, eventId)
+        cookieSyncScheduler.schedule(eventId)
+    }
+
+    override fun observeEventsForToday() =
+        cookieEventDataSource.observeEventsForToday(todayAsYyyyMMdd())
+            .map { list ->
+                list.map {
+                    it.toDomain()
+                }
+            }
+
+    override fun observeAllEvents() = cookieEventDataSource.observeAllEvents().map { list -> list.map { it.toDomain() } }
+
+    override suspend fun getAllEvents() = withContext(ioDispatcher) { cookieEventDataSource.getAllEvents().map { it.toDomain() } }
+
+    override suspend fun refreshCounts() {
+        runCatching {
+            val counts = cookieRemoteDataSource.getCookieTypeCounts()
+            val entities = counts.map { (type, maxCount) ->
+                CookieTypeCountEntity(type = type, maxCount = maxCount)
+            }
+            cookieTypeCountLocalDataSource.upsertCookieTypeCount(entities)
         }
     }
 
-    override fun getFlowCookieDataList(): Flow<List<DailyCookieItemData>> {
-        return cookieDataSource.observeCookieList().map { list ->
-            list.map { it.toExternal() }
+    override suspend fun canOpenCookie(type: Int) = withContext(ioDispatcher) {
+        val maxCount = cookieTypeCountLocalDataSource.getMaxCount(type) ?: return@withContext true
+        val collectedCount = cookieEventDataSource.getDistinctCollectedCount(type)
+        return@withContext collectedCount < maxCount
+    }
+
+    override fun observeCollectionProgress(type: Int) =
+        combine(
+            cookieEventDataSource.observeDistinctCollectedCount(type),
+            cookieTypeCountLocalDataSource.getCookieTypeCountFlow()
+        ) { collected, allCounts ->
+            val maxCount = allCounts.find { it.type == type }?.maxCount
+            collected to maxCount
+        }
+
+    override suspend fun syncAllEventsFromServer() {
+        runCatching {
+            val events = cookieRemoteDataSource.fetchAllCookieEvents()
+            cookieEventDataSource.deleteAll()
+            cookieEventDataSource.insertAll(events)
         }
     }
 
-    override suspend fun getCookieDataList() = withContext(ioDispatcher) {
-        cookieDataSource.getCookieList().map { it.toExternal() }
+    private suspend fun insertCookieEvent(type: Int, eventId: String) {
+        val now = nowAsYyyyMMddHHmm()
+        cookieEventDataSource.insertCookieEvent(
+            CookieEventEntity(
+                eventId = eventId,
+                datetime = now,
+                claimDate = todayAsYyyyMMdd(),
+                type = type,
+                cookieNo = null,
+                message = null,
+                syncStatus = CookieSyncStatus.PENDING
+            )
+        )
     }
-
-    override suspend fun upsertDailyCookieData(data: DailyCookieItemData)=
-        withContext(ioDispatcher) {
-            runCatching { cookieDataSource.upsertCookieData(data.toLocal()) }.isSuccess
-        }
 }

@@ -44,8 +44,8 @@ import com.nuecoo.feature.main.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
 import com.nuecoo.feature.main.presentation.oven.screen.CookieOpenScreen
-import com.nuecoo.ui.theme.MainText
-import com.nuecoo.ui.theme.NueCooTheme
+import com.nuecoo.core.theme.MainText
+import com.nuecoo.core.theme.NueCooTheme
 import getCookieTypeColor
 import getCookieTypeMainTextRes
 import kotlin.math.hypot

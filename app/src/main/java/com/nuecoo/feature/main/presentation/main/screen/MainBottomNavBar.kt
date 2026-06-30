@@ -35,8 +35,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.nuecoo.ui.theme.MainBorder
-import com.nuecoo.ui.theme.NavBackground
+import com.nuecoo.core.theme.MainBorder
+import com.nuecoo.core.theme.NavBackground
 
 @Composable
 fun MainBottomNavBar(navController: NavController) {

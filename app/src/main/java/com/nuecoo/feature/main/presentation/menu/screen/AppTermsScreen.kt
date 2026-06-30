@@ -20,8 +20,8 @@ import com.nuecoo.R
 import com.nuecoo.core.presetation.ui.component.BackButton
 import com.nuecoo.core.presetation.ui.component.DefaultItemBox
 import com.nuecoo.core.presetation.ui.component.MainTitleItem
-import com.nuecoo.ui.theme.MainBackground
-import com.nuecoo.ui.theme.SubText
+import com.nuecoo.core.theme.MainBackground
+import com.nuecoo.core.theme.SubText
 
 @Composable
 fun AppTermsScreen(onBack: () -> Unit) {

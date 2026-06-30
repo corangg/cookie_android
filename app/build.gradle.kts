@@ -88,6 +88,11 @@ dependencies {
     debugImplementation(libs.firebase.appcheck.debug)
     implementation(libs.firebase.functions)
 
+    // WorkManager + Hilt-Work
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
+
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

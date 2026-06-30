@@ -33,9 +33,9 @@ import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
 import com.nuecoo.feature.auth.presentation.find.viewmodel.FindPwViewModel
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpMainTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpSubTextItem
-import com.nuecoo.ui.theme.ErrorRed
-import com.nuecoo.ui.theme.MainButton
-import com.nuecoo.ui.theme.White
+import com.nuecoo.core.theme.ErrorRed
+import com.nuecoo.core.theme.MainButton
+import com.nuecoo.core.theme.White
 
 @Composable
 fun FindPwResetScreen(

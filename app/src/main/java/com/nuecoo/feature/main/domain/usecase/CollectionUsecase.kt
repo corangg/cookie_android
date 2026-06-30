@@ -2,24 +2,18 @@ package com.nuecoo.feature.main.domain.usecase
 
 import com.nuecoo.feature.main.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CookieType
-import com.nuecoo.feature.main.domain.model.DailyCookieItemData
+import com.nuecoo.feature.main.domain.model.isSaved
 import com.nuecoo.feature.main.domain.repository.CookieRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetCollectionByTypeUseCase @Inject constructor(
     private val repository: CookieRepository
 ) {
     suspend operator fun invoke(type: Int, totalSize: Int): List<CollectionDisplayItem> {
-        val allData = repository.getCookieDataList()
-
-        val collectedNos = allData.flatMap { daily ->
-            daily.list
-                .filter { it.type == type && it.isOpened == true && it.no != null }
-                .map { Pair(it.no!!, daily.date) }
-        }.distinctBy { it.first }
-
-        val collectedMap = collectedNos.associate { it.first to it.second }
+        val savedEvents = repository.getAllEvents()
+            .filter { it.type == type && it.isSaved && it.cookieNo != null }
+            .distinctBy { it.cookieNo }
+        val collectedMap = savedEvents.associate { it.cookieNo!! to it.claimDate }
 
         return (1..totalSize).map { no ->
             CollectionDisplayItem(
@@ -36,31 +30,14 @@ class GetCollectionListUseCase @Inject constructor(
     private val repository: CookieRepository
 ) {
     suspend operator fun invoke(collectionSize: List<Pair<CookieType, Int>>): List<CollectionDisplayItem> {
-        val allData = repository.getCookieDataList()
-
-        val collectedMap = allData
-            .flatMap { daily ->
-                daily.list
-                    .filter { it.isOpened == true && it.no != null }
-                    .map { cookie ->
-                        Triple(
-                            cookie.type,
-                            cookie.no!!,
-                            daily.date
-                        )
-                    }
-            }
-            .distinctBy { it.first to it.second }
-            .associate { (type, no, date) ->
-                (type to no) to date
-            }
+        val savedEvents = repository.getAllEvents()
+            .filter { it.isSaved && it.cookieNo != null }
+            .distinctBy { it.type to it.cookieNo }
+        val collectedMap = savedEvents.associate { (it.type to it.cookieNo!!) to it.claimDate }
 
         return collectionSize.flatMap { (cookieType, size) ->
-
             (1..size).map { no ->
-
                 val date = collectedMap[cookieType.type to no]
-
                 CollectionDisplayItem(
                     no = no,
                     type = cookieType.type,
@@ -69,30 +46,5 @@ class GetCollectionListUseCase @Inject constructor(
                 )
             }
         }
-    }
-}
-
-class ObserveCookieListUseCase @Inject constructor(
-    private val repository: CookieRepository
-) {
-    operator fun invoke(): Flow<List<DailyCookieItemData>> = repository.getFlowCookieDataList()
-}
-
-class GetNewCookieNumberUseCase @Inject constructor(
-    private val repository: CookieRepository
-) {
-    suspend operator fun invoke(type: Int, size: Int): Int {
-        val list = repository.getCookieDataList()
-        val openNoList =
-            list.flatMap { it.list }.filter { it.type == type }.mapNotNull { it.no }.distinct()
-
-        return randomExclude(size, openNoList) ?: 0
-
-    }
-
-    private fun randomExclude(cookieLength: Int, excludeList: List<Int>): Int? {
-        val candidates = (1..cookieLength)
-            .filterNot { it in excludeList }
-        return candidates.randomOrNull()
     }
 }

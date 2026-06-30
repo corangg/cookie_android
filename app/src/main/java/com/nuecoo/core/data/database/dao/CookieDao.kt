@@ -1,31 +1,80 @@
 package com.nuecoo.core.data.database.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
-import com.nuecoo.core.data.model.local.LocalDailyCookieData
+import com.nuecoo.core.data.model.local.CookieEventEntity
+import com.nuecoo.core.data.model.local.CookieTypeCountEntity
+import com.nuecoo.feature.main.domain.model.CookieSyncStatus
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface CookieDao {
+interface CookieEventDao {
+    @Insert
+    suspend fun insert(event: CookieEventEntity)
+
+    @Query("SELECT * FROM CookieEventEntity WHERE claimDate = :date")
+    fun observeEventsForDate(date: String): Flow<List<CookieEventEntity>>
+
+    @Query("SELECT * FROM CookieEventEntity")
+    fun observeAllEvents(): Flow<List<CookieEventEntity>>
+
+    @Query("SELECT * FROM CookieEventEntity")
+    suspend fun getAllEvents(): List<CookieEventEntity>
+
+    @Query("SELECT * FROM CookieEventEntity WHERE eventId = :eventId")
+    suspend fun getById(eventId: String): CookieEventEntity?
+
+    @Query("""
+        UPDATE CookieEventEntity
+        SET syncStatus = :status,
+            cookieNo = COALESCE(:cookieNo, cookieNo),
+            message = COALESCE(:message, message),
+            viaTicketGroupId = COALESCE(:ticketGroupId, viaTicketGroupId)
+        WHERE eventId = :eventId
+    """)
+    suspend fun updateStatus(
+        eventId: String,
+        status: CookieSyncStatus,
+        cookieNo: Int? = null,
+        message: String? = null,
+        ticketGroupId: String? = null
+    )
+
+    @Query("""
+    SELECT COUNT(DISTINCT cookieNo) FROM CookieEventEntity 
+    WHERE type = :type AND syncStatus IN ('SAVED', 'SAVED_VIA_TICKET')
+""")
+    suspend fun getDistinctCollectedCount(type: Int): Int
+
+    @Query("""
+    SELECT COUNT(DISTINCT cookieNo) FROM CookieEventEntity 
+    WHERE type = :type AND syncStatus IN ('SAVED', 'SAVED_VIA_TICKET')
+""")
+    fun observeDistinctCollectedCount(type: Int): Flow<Int>
+
+    @Query("SELECT * FROM CookieEventEntity WHERE syncStatus = :status")
+    suspend fun getAllByStatus(status: CookieSyncStatus): List<CookieEventEntity>
+
+    @Query("DELETE FROM CookieEventEntity")
+    suspend fun deleteAll()
+
+    @Insert
+    suspend fun insertAll(events: List<CookieEventEntity>)
+}
+
+@Dao
+interface CookieTypeCountDao {
     @Upsert
-    suspend fun upsertCookieData(entity: LocalDailyCookieData)
+    suspend fun upsertCookieTypeCounts(entities: List<CookieTypeCountEntity>)
 
-    @Upsert
-    suspend fun upsertCookieListData(entity: List<LocalDailyCookieData>)
+    @Query("SELECT * FROM CookieTypeCountEntity")
+    suspend fun getCookieTypeCount(): List<CookieTypeCountEntity>
 
-    @Query("SELECT * FROM LocalDailyCookieData ORDER BY date DESC LIMIT 1")
-    suspend fun getLastDailyCookieData(): LocalDailyCookieData?
+    @Query("SELECT maxCount FROM CookieTypeCountEntity WHERE type = :type")
+    suspend fun getMaxCount(type: Int): Int?
 
-    @Query("SELECT * FROM LocalDailyCookieData")
-    suspend fun getCookieList(): List<LocalDailyCookieData>
-
-    @Query("SELECT * FROM LocalDailyCookieData ORDER BY date DESC LIMIT 1")
-    fun observeLastDailyCookieData(): Flow<LocalDailyCookieData?>
-
-    @Query("SELECT * FROM LocalDailyCookieData")
-    fun observeCookieList(): Flow<List<LocalDailyCookieData>>
-
-    @Query("DELETE FROM LocalDailyCookieData")
-    suspend fun deleteCookieData()
+    @Query("SELECT * FROM CookieTypeCountEntity")
+    fun getCookieTypeCountFlow(): Flow<List<CookieTypeCountEntity>>
 }

@@ -22,7 +22,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.nuecoo.R
-import com.nuecoo.ui.theme.MainBackground
+import com.nuecoo.core.theme.MainBackground
 import kotlinx.coroutines.delay
 
 @Composable

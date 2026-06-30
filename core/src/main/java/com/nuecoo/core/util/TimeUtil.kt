@@ -14,6 +14,12 @@ fun getLocalTimeToString(): String {
     return SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
 }
 
+fun nowAsYyyyMMddHHmm(): String =
+    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))
+
+fun todayAsYyyyMMdd(): String =
+    LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+
 fun getDayOfWeek(dateString: String, language: String): String {
     val formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
     val dateTime = LocalDateTime.parse(dateString, formatter)

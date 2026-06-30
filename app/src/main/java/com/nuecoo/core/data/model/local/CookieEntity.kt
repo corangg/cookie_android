@@ -2,20 +2,23 @@ package com.nuecoo.core.data.model.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
-import com.nuecoo.core.data.database.converter.CookieConverter
+import com.nuecoo.feature.main.domain.model.CookieSyncStatus
 
 @Entity
-@TypeConverters(CookieConverter::class)
-data class LocalDailyCookieData(
-    @PrimaryKey val date: String,
-    val list: List<LocalCookieData>
+data class CookieEventEntity(
+    @PrimaryKey val eventId: String,
+    val datetime: String,
+    val claimDate: String,
+    val type: Int,
+    val message: String?,
+    val cookieNo: Int? = null,
+    val syncStatus: CookieSyncStatus = CookieSyncStatus.PENDING,
+    val viaTicketGroupId: String? = null,
+    val hasBeenViewed: Boolean = false
 )
 
-data class LocalCookieData(
-    val time: String? = null,
-    val type: Int,
-    val isFull: Boolean = false,
-    val no: Int? = null,
-    val isOpened: Boolean? = false,
+@Entity
+data class CookieTypeCountEntity(
+    @PrimaryKey val type: Int,
+    val maxCount: Int
 )

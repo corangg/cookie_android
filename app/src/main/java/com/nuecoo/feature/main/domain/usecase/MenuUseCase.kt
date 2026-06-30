@@ -1,8 +1,8 @@
 package com.nuecoo.feature.main.domain.usecase
 
 import com.nuecoo.feature.auth.domain.AuthRepository
-import com.nuecoo.feature.main.domain.model.DailyCookieItemData
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
+import com.nuecoo.feature.main.domain.model.isSaved
 import com.nuecoo.feature.main.domain.repository.CookieRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -14,25 +14,22 @@ class GetAttendanceCount @Inject constructor(
     private val repository: CookieRepository
 ) {
     operator fun invoke(): Flow<Int> {
-        return repository.getFlowCookieDataList().map { itemData ->
-            val list = itemData.map { it.date }
-            getAttendanceStreak(list)
+        return repository.observeAllEvents().map { events ->
+            val attendanceDates = events
+                .filter { it.isSaved }
+                .map { it.claimDate }
+                .toSet()
+            getAttendanceStreak(attendanceDates.toList())
         }
     }
 
     private fun getAttendanceStreak(dateList: List<String>): Int {
         val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
-
         val attendanceDates = dateList
-            .mapNotNull { date ->
-                runCatching {
-                    LocalDate.parse(date, formatter)
-                }.getOrNull()
-            }
+            .mapNotNull { runCatching { LocalDate.parse(it, formatter) }.getOrNull() }
             .toSet()
 
         val today = LocalDate.now()
-
         val startDate = when {
             attendanceDates.contains(today) -> today
             attendanceDates.contains(today.minusDays(1)) -> today.minusDays(1)
@@ -41,12 +38,10 @@ class GetAttendanceCount @Inject constructor(
 
         var streak = 0
         var currentDate = startDate
-
         while (attendanceDates.contains(currentDate)) {
             streak++
             currentDate = currentDate.minusDays(1)
         }
-
         return streak
     }
 }
@@ -54,43 +49,30 @@ class GetAttendanceCount @Inject constructor(
 class CheckTodayAttendance @Inject constructor(
     private val repository: CookieRepository
 ) {
-    operator fun invoke(): Flow<Boolean> {
-        return repository.getFlowDailyCookieData().map { data ->
-            val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
-            if (data == null || data.date != today) return@map false
-            data.list.any { it.no != null }
-        }
-    }
+    operator fun invoke(): Flow<Boolean> =
+        repository.observeEventsForToday().map { events -> events.any { it.isSaved } }
 }
 
 class GetWeeklyAttendance @Inject constructor(
     private val repository: CookieRepository
 ) {
     operator fun invoke(): Flow<List<WeeklyAttendanceModel>> {
-        return repository.getFlowCookieDataList().map { data ->
+        return repository.observeAllEvents().map { events ->
             val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
             val today = LocalDate.now()
             val sunday = today.minusDays(today.dayOfWeek.value % 7L)
+            val savedDates = events.filter { it.isSaved }.map { it.claimDate }.toSet()
 
             (0..6).map { index ->
                 val date = sunday.plusDays(index.toLong()).format(formatter)
-
-                WeeklyAttendanceModel(
-                    dayIndex = index,
-                    isAttendance = date.checkAttendance(data)
-                )
+                WeeklyAttendanceModel(dayIndex = index, isAttendance = savedDates.contains(date))
             }
         }
-    }
-
-    private fun String.checkAttendance(list: List<DailyCookieItemData>): Boolean {
-        val data = list.find { it.date == this } ?: return false
-        return data.list.any { it.no != null }
     }
 }
 
 class LogOutUseCase @Inject constructor(
     private val repository: AuthRepository
-){
+) {
     suspend operator fun invoke() = repository.logOut()
 }

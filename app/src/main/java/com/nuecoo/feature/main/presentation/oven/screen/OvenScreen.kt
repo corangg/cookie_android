@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,15 +61,15 @@ import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
 import com.nuecoo.core.presetation.ui.component.MainTitleItem
 import com.nuecoo.feature.main.presentation.oven.viewmodel.OvenViewModel
-import com.nuecoo.ui.theme.MainBackground
-import com.nuecoo.ui.theme.MainBorder
-import com.nuecoo.ui.theme.MainText
-import com.nuecoo.ui.theme.MainTitle
-import com.nuecoo.ui.theme.NueCooTheme
-import com.nuecoo.ui.theme.ProgressBackground
-import com.nuecoo.ui.theme.SubText
-import com.nuecoo.ui.theme.SubTitle
-import com.nuecoo.ui.theme.White
+import com.nuecoo.core.theme.MainBackground
+import com.nuecoo.core.theme.MainBorder
+import com.nuecoo.core.theme.MainText
+import com.nuecoo.core.theme.MainTitle
+import com.nuecoo.core.theme.NueCooTheme
+import com.nuecoo.core.theme.ProgressBackground
+import com.nuecoo.core.theme.SubText
+import com.nuecoo.core.theme.SubTitle
+import com.nuecoo.core.theme.White
 import getCookieMessageResMap
 import getCookieTypeAllCollectedTextRes
 import getCookieTypeBackgroundColor
@@ -83,7 +82,7 @@ import toUiItem
 @Composable
 fun OvenScreen(viewModel: OvenViewModel = hiltViewModel(), onMoveCollection: () -> Unit) {
     val context = LocalContext.current
-    val dailyCookieData by viewModel.dailyCookieData.collectAsStateWithLifecycle()
+    val dailyCookieSlots by viewModel.dailyCookieSlots.collectAsStateWithLifecycle()
     val notOpenedCookies by viewModel.notOpenedCookies.collectAsStateWithLifecycle()
     val remainTime by viewModel.remainTime.collectAsStateWithLifecycle()
     val selectedCookie by viewModel.selectedCookie.collectAsStateWithLifecycle()
@@ -94,28 +93,18 @@ fun OvenScreen(viewModel: OvenViewModel = hiltViewModel(), onMoveCollection: () 
         stringArrayResource(entry.value).toList()
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.initDailyCookie(context.getCookieTypeListSize())
-    }
-
     OvenScreenContent(
         remainTime = remainTime,
-        cookieList = dailyCookieData?.list?.map { it.toUiItem() } ?: emptyList(),
+        cookieList = dailyCookieSlots.map { it.toUiItem() },
         notOpenedCookies = notOpenedCookies,
         selectedCookie = selectedCookie,
         cookieNameMap = cookieNameMap,
         onCookieClick = { uiItem ->
-            val domainItem = dailyCookieData?.list?.find { it.type == uiItem.type }
-            if (domainItem?.isOpened != null) {
-                viewModel.selectCookie(uiItem)
-            }
+            viewModel.selectCookie(uiItem.type)
         },
         onCookieClose = { viewModel.clearSelectedCookie() },
         onCookieOpened = { type ->
-            viewModel.updateOpenCookieData(
-                type,
-                size = cookieNameMap[type]?.size ?: 0
-            )
+            viewModel.openCookie(type)
         },
         onMoveCollection = onMoveCollection
     )
@@ -320,50 +309,6 @@ fun CookieItem(data: CookieUIItemData, onMoveCollection: () -> Unit, onClick: ()
                 }
             }
     )
-}
-
-@Preview(
-    showBackground = true,
-    name = "Oven Screen",
-    widthDp = 360,
-    heightDp = 800
-)
-@Composable
-private fun OvenScreenPreview() {
-    NueCooTheme {
-        OvenScreenContent(
-            remainTime = "08 : 30 : 00",
-            cookieList = listOf(
-                CookieUIItemData(
-                    type = CookieType.Cheering.type,
-                    isOpened = false,
-                    imgRes = R.drawable.img_cookie_cheering_1
-                ),
-                CookieUIItemData(
-                    type = CookieType.Comfort.type,
-                    isOpened = true,
-                    imgRes = R.drawable.img_cookie_comfort_6
-                ),
-                CookieUIItemData(
-                    type = CookieType.Passion.type,
-                    isOpened = false,
-                    imgRes = R.drawable.img_cookie_passion_1
-                ),
-                CookieUIItemData(
-                    type = CookieType.Sermon.type,
-                    isOpened = null,
-                    imgRes = R.drawable.img_cookie_deactive
-                ),
-            ),
-            selectedCookie = null,
-            cookieNameMap = emptyMap(),
-            onCookieClick = {},
-            onCookieClose = {},
-            onCookieOpened = {},
-            onMoveCollection = {},
-            notOpenedCookies = 1
-        )
-    }
 }
 
 @Composable

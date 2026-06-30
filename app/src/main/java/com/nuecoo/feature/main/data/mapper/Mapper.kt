@@ -1,3 +1,4 @@
+/*
 package com.nuecoo.feature.main.data.mapper
 
 import com.nuecoo.core.data.model.local.LocalCookieData
@@ -29,4 +30,4 @@ fun LocalCookieData.toExternal() = CookieItemData(
     isFull = this.isFull,
     no = this.no,
     isOpened = this.isOpened
-)
+)*/

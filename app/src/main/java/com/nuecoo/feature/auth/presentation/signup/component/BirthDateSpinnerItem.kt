@@ -29,9 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nuecoo.R
-import com.nuecoo.ui.theme.MainText
-import com.nuecoo.ui.theme.MenuSubBoxBackground
-import com.nuecoo.ui.theme.SubText
+import com.nuecoo.core.theme.MainText
+import com.nuecoo.core.theme.MenuSubBoxBackground
+import com.nuecoo.core.theme.SubText
 import kotlin.math.abs
 
 private val ITEM_HEIGHT = 52.dp

@@ -13,8 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.nuecoo.ui.theme.WidgetActive
-import com.nuecoo.ui.theme.WidgetInActive
+import com.nuecoo.core.theme.WidgetActive
+import com.nuecoo.core.theme.WidgetInActive
 
 @Composable
 fun SignUpRateItem(

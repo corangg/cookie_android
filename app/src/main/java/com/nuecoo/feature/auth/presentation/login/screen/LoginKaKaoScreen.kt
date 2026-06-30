@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.nuecoo.ui.theme.MainBackground
-import com.nuecoo.ui.theme.NueCooTheme
+import com.nuecoo.core.theme.MainBackground
+import com.nuecoo.core.theme.NueCooTheme
 
 @Composable
 fun LoginKaKaoScreen() {

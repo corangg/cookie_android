@@ -41,11 +41,11 @@ import com.nuecoo.feature.auth.presentation.signup.component.SignUpRateItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpSubTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpTopItem
 import com.nuecoo.feature.auth.presentation.signup.viewmodel.SignUpViewModel
-import com.nuecoo.ui.theme.ErrorRed
-import com.nuecoo.ui.theme.MainButton
-import com.nuecoo.ui.theme.MenuSubBoxBackground
-import com.nuecoo.ui.theme.SubText
-import com.nuecoo.ui.theme.White
+import com.nuecoo.core.theme.ErrorRed
+import com.nuecoo.core.theme.MainButton
+import com.nuecoo.core.theme.MenuSubBoxBackground
+import com.nuecoo.core.theme.SubText
+import com.nuecoo.core.theme.White
 
 @Composable
 fun SignUpPhoneScreen(

@@ -1,4 +1,4 @@
-package com.nuecoo.ui.theme
+package com.nuecoo.core.theme
 
 import androidx.compose.ui.graphics.Color
 

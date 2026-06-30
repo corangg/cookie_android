@@ -11,7 +11,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.nuecoo.core.navigation.Route
 import com.nuecoo.feature.main.navigation.MainNavHost
-import com.nuecoo.ui.theme.MainBackground
+import com.nuecoo.core.theme.MainBackground
 
 private val bottomBarHiddenRoutes = setOf(
     Route.APP_INFO,

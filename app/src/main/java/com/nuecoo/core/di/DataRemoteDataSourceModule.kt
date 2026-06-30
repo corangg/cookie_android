@@ -15,5 +15,4 @@ abstract class DataRemoteDataSourceModule {
     @Singleton
     @RemoteDataSources
     abstract fun bindRemoteDataDataSource(impl: FirebaseDataDataSourceImpl): FirebaseDataDataSource
-
 }

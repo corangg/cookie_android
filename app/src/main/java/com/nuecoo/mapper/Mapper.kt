@@ -1,21 +1,22 @@
 import android.content.Context
 import androidx.compose.ui.graphics.Color
 import com.nuecoo.R
-import com.nuecoo.feature.main.domain.model.CookieItemData
+import com.nuecoo.feature.main.domain.model.CookieSlotUi
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.CookieTypeData
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
-import com.nuecoo.ui.theme.CheeringBackgroundColor
-import com.nuecoo.ui.theme.CheeringColor
-import com.nuecoo.ui.theme.ComfortBackgroundColor
-import com.nuecoo.ui.theme.ComfortColor
-import com.nuecoo.ui.theme.LoveBackgroundColor
-import com.nuecoo.ui.theme.LoveColor
-import com.nuecoo.ui.theme.PassionBackgroundColor
-import com.nuecoo.ui.theme.PassionColor
-import com.nuecoo.ui.theme.SermonBackgroundColor
-import com.nuecoo.ui.theme.SermonColor
-import com.nuecoo.ui.theme.UnknownColor
+import com.nuecoo.feature.main.domain.model.isSaved
+import com.nuecoo.core.theme.CheeringBackgroundColor
+import com.nuecoo.core.theme.CheeringColor
+import com.nuecoo.core.theme.ComfortBackgroundColor
+import com.nuecoo.core.theme.ComfortColor
+import com.nuecoo.core.theme.LoveBackgroundColor
+import com.nuecoo.core.theme.LoveColor
+import com.nuecoo.core.theme.PassionBackgroundColor
+import com.nuecoo.core.theme.PassionColor
+import com.nuecoo.core.theme.SermonBackgroundColor
+import com.nuecoo.core.theme.SermonColor
+import com.nuecoo.core.theme.UnknownColor
 
 data class CookieTypeResource(
     val type: CookieType,
@@ -132,27 +133,35 @@ private fun getCookieTypeResource(type: Int?): CookieTypeResource? {
     return COOKIE_TYPE_RESOURCES.find { it.type.type == type }
 }
 
-fun CookieItemData.toUiItem(): CookieUIItemData {
+fun CookieSlotUi.toUiItem(): CookieUIItemData {
     val resource = getCookieTypeResource(this.type)
-
-    val img = if (!this.isFull) {
-        when (this.isOpened) {
-            null -> R.drawable.img_cookie_deactive
-            true -> resource?.openedImgRes ?: R.drawable.img_cookie_deactive
-            false -> resource?.closedImgRes ?: R.drawable.img_cookie_deactive
+    return when (this) {
+        is CookieSlotUi.Empty -> CookieUIItemData(
+            type = type,
+            isFull = false,
+            isOpened = false,
+            no = null,
+            imgRes = resource?.closedImgRes ?: R.drawable.img_cookie_deactive
+        )
+        is CookieSlotUi.InProgress -> CookieUIItemData(
+            type = type,
+            isFull = false,
+            isOpened = false,
+            no = null,
+            imgRes = resource?.closedImgRes ?: R.drawable.img_cookie_deactive
+        )
+        is CookieSlotUi.Filled -> {
+            val savedEvent = events.firstOrNull { it.isSaved }
+            CookieUIItemData(
+                type = type,
+                isFull = false,
+                isOpened = savedEvent != null,
+                no = savedEvent?.cookieNo,
+                imgRes = if (savedEvent != null) resource?.openedImgRes ?: R.drawable.img_cookie_deactive
+                         else resource?.closedImgRes ?: R.drawable.img_cookie_deactive
+            )
         }
-    } else {
-        R.drawable.img_cookie_deactive
     }
-
-    return CookieUIItemData(
-        time = this.time,
-        type = this.type,
-        isFull = this.isFull,
-        no = this.no,
-        isOpened = this.isOpened,
-        imgRes = img
-    )
 }
 
 fun getCollectionTypeImages(type: Int?): List<Int> {

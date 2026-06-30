@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.nuecoo.ui.theme.SubText
+import com.nuecoo.core.theme.SubText
 
 @Composable
 fun SignUpSubTextItem(modifier: Modifier, text: String, fontSize: Int = 16) {

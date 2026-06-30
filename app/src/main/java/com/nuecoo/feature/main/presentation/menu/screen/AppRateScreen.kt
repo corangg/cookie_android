@@ -25,10 +25,10 @@ import com.nuecoo.R
 import com.nuecoo.core.presetation.ui.component.BackButton
 import com.nuecoo.core.presetation.ui.component.DefaultItemBox
 import com.nuecoo.core.presetation.ui.component.MainTitleItem
-import com.nuecoo.ui.theme.MainBackground
-import com.nuecoo.ui.theme.MainButton
-import com.nuecoo.ui.theme.SubText
-import com.nuecoo.ui.theme.White
+import com.nuecoo.core.theme.MainBackground
+import com.nuecoo.core.theme.MainButton
+import com.nuecoo.core.theme.SubText
+import com.nuecoo.core.theme.White
 
 @Composable
 fun AppRateScreen(onBack: () -> Unit, onMoveStore: () -> Unit) {

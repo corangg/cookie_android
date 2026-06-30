@@ -35,10 +35,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nuecoo.R
-import com.nuecoo.ui.theme.TextFieldBackground
-import com.nuecoo.ui.theme.TextFieldBorder
-import com.nuecoo.ui.theme.TextFieldHint
-import com.nuecoo.ui.theme.TextFieldText
+import com.nuecoo.core.theme.TextFieldBackground
+import com.nuecoo.core.theme.TextFieldBorder
+import com.nuecoo.core.theme.TextFieldHint
+import com.nuecoo.core.theme.TextFieldText
 
 @Composable
 fun DefaultTextField(

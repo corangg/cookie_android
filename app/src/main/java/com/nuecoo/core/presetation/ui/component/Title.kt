@@ -11,8 +11,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nuecoo.R
-import com.nuecoo.ui.theme.MainTitle
-import com.nuecoo.ui.theme.SubTitle
+import com.nuecoo.core.theme.MainTitle
+import com.nuecoo.core.theme.SubTitle
 
 @Composable
 fun MainTitleItem(modifier: Modifier = Modifier, subTitle: String, mainTitle: String) {

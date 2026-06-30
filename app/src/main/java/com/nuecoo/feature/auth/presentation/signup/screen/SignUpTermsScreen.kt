@@ -36,15 +36,15 @@ import com.nuecoo.feature.auth.presentation.signup.component.SignUpRateItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpSubTextItem
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpTopItem
 import com.nuecoo.feature.auth.presentation.signup.viewmodel.SignUpViewModel
-import com.nuecoo.ui.theme.AccentText
-import com.nuecoo.ui.theme.AuthChecked
-import com.nuecoo.ui.theme.AuthUnCheckBorder
-import com.nuecoo.ui.theme.DividerLine
-import com.nuecoo.ui.theme.ItemCardBackground
-import com.nuecoo.ui.theme.MainButton
-import com.nuecoo.ui.theme.MainText
-import com.nuecoo.ui.theme.SubText
-import com.nuecoo.ui.theme.White
+import com.nuecoo.core.theme.AccentText
+import com.nuecoo.core.theme.AuthChecked
+import com.nuecoo.core.theme.AuthUnCheckBorder
+import com.nuecoo.core.theme.DividerLine
+import com.nuecoo.core.theme.ItemCardBackground
+import com.nuecoo.core.theme.MainButton
+import com.nuecoo.core.theme.MainText
+import com.nuecoo.core.theme.SubText
+import com.nuecoo.core.theme.White
 
 @Composable
 fun SignUpTermsScreen(

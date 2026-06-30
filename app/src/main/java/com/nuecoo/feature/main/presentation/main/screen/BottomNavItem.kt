@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
 import com.nuecoo.R
-import com.nuecoo.ui.theme.White
+import com.nuecoo.core.theme.White
 
 sealed class BottomNavItem(
     val route: String,

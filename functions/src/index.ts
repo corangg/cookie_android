@@ -25,25 +25,20 @@ function encodeKey(value: string): string {
   return encodeURIComponent(value);
 }
 
-// +821012345678 -> 01012345678 (users/phoneToUid 저장 형식과 통일)
 function toDomesticFormat(e164Phone: string): string {
   return e164Phone.replace(/^\+82/, "0");
 }
 
-// test01@test.com -> tes***@test.com
 function maskEmail(email: string): string {
   const [local, domain] = email.split("@");
-
   const maskLength =
     local.length <= 3 ? 1 :
     local.length <= 5 ? 2 :
     3;
-
   const visible = local.slice(0, local.length - maskLength);
   return `${visible}${"*".repeat(maskLength)}@${domain}`;
 }
 
-// 공통: 인증번호 검증 (purpose 일치 여부까지 확인)
 async function verifyStoredCode(
   phoneNumber: string,
   code: string,
@@ -59,10 +54,7 @@ async function verifyStoredCode(
   const data = snap.val();
 
   if (data.purpose !== expectedPurpose) {
-    throw new HttpsError(
-      "failed-precondition",
-      "잘못된 인증 요청입니다. 다시 인증번호를 요청해주세요."
-    );
+    throw new HttpsError("failed-precondition", "잘못된 인증 요청입니다. 다시 인증번호를 요청해주세요.");
   }
 
   if ((data.attempts ?? 0) >= MAX_ATTEMPTS) {
@@ -81,7 +73,66 @@ async function verifyStoredCode(
   await codeRef.update({ verified: true });
 }
 
-// 1) 인증번호 발송 (회원가입 / 이메일 찾기 / 비밀번호 재설정 공용)
+// 사용자가 아직 받지 못한 번호 중에서만 랜덤 선택. 다 모았으면 ALL_COLLECTED 에러
+async function pickCookieMessage(
+  uid: string,
+  type: number
+): Promise<{ cookieNo: number; message: string }> {
+  const [allSnap, collectedSnap] = await Promise.all([
+    rtdb.ref(`cookieMessages/${type}`).get(),
+    rtdb.ref(`userCollectedCookies/${uid}/${type}`).get(),
+  ]);
+
+  if (!allSnap.exists()) {
+    throw new HttpsError("not-found", `쿠키 메시지를 찾을 수 없습니다. (type: ${type})`);
+  }
+
+  const allMessages = allSnap.val() as Record<string, { text: string }>;
+  const allKeys = Object.keys(allMessages);
+  const collectedKeys = collectedSnap.exists()
+    ? Object.keys(collectedSnap.val())
+    : [];
+  const remainingKeys = allKeys.filter((k) => !collectedKeys.includes(k));
+
+  if (remainingKeys.length === 0) {
+    throw new HttpsError(
+      "failed-precondition",
+      "이미 모든 메시지를 수집했습니다",
+      { reason: "ALL_COLLECTED" }
+    );
+  }
+
+  const randomKey =
+    remainingKeys[Math.floor(Math.random() * remainingKeys.length)];
+
+  return {
+    cookieNo: parseInt(randomKey),
+    message: allMessages[randomKey].text,
+  };
+}
+
+async function findEarliestApplicableTicketGroup(
+  uid: string,
+  type: number
+): Promise<string | null> {
+  const snap = await rtdb
+    .ref(`eventTicketBalance/${uid}`)
+    .orderByChild("issuedAt")
+    .get();
+  if (!snap.exists()) return null;
+
+  let result: string | null = null;
+  snap.forEach((child) => {
+    if (result !== null) return true;
+    const data = child.val();
+    if (data.appliesToType === type && (data.available ?? 0) > 0) {
+      result = child.key;
+    }
+    return false;
+  });
+  return result;
+}
+
 export const sendVerificationCode = onCall(
   {
     region: "asia-northeast3",
@@ -113,7 +164,6 @@ export const sendVerificationCode = onCall(
         throw new HttpsError("already-exists", "이미 가입된 휴대폰 번호입니다.");
       }
     } else {
-      // FIND_EMAIL / RESET_PASSWORD: 가입된 번호여야만 발송
       const existingSnap = await rtdb.ref(`phoneToUid/${encodeKey(domesticPhone)}`).get();
       if (!existingSnap.exists()) {
         throw new HttpsError("not-found", "등록되지 않은 전화번호입니다.");
@@ -153,7 +203,6 @@ export const sendVerificationCode = onCall(
   }
 );
 
-// 2) 회원가입용: 인증번호 확인만 (이메일 조회 없음)
 export const verifyPhoneForSignup = onCall(
   { region: "asia-northeast3" },
   async (request) => {
@@ -167,12 +216,10 @@ export const verifyPhoneForSignup = onCall(
     }
 
     await verifyStoredCode(phoneNumber, code, "SIGNUP");
-
     return { success: true };
   }
 );
 
-// 3) 이메일 찾기용: 인증번호 확인 + 마스킹된 이메일 조회
 export const verifyCodeAndFindEmail = onCall(
   { region: "asia-northeast3" },
   async (request) => {
@@ -201,14 +248,11 @@ export const verifyCodeAndFindEmail = onCall(
       throw new HttpsError("not-found", "일치하는 계정을 찾을 수 없습니다.");
     }
 
-    // 인증 완료 후 코드 즉시 폐기 (재사용 방지)
     await rtdb.ref(`verificationCodes/${encodeKey(phoneNumber)}`).remove();
-
     return { maskedEmail: maskEmail(userSnap.val().email) };
   }
 );
 
-// 4) 비밀번호 재설정용: 인증번호 확인만 (비밀번호 변경은 별도 단계)
 export const verifyCodeForResetPassword = onCall(
   { region: "asia-northeast3" },
   async (request) => {
@@ -234,7 +278,6 @@ export const verifyCodeForResetPassword = onCall(
   }
 );
 
-// 5) 비밀번호 재설정 실행 — verified=true + purpose 일치 확인 후에만 변경
 export const resetPassword = onCall(
   { region: "asia-northeast3" },
   async (request) => {
@@ -244,10 +287,7 @@ export const resetPassword = onCall(
 
     const { phoneNumber, newPassword } = request.data;
     if (!phoneNumber || !newPassword || newPassword.length < 8) {
-      throw new HttpsError(
-        "invalid-argument",
-        "필수 값이 누락되었거나 비밀번호가 너무 짧습니다."
-      );
+      throw new HttpsError("invalid-argument", "필수 값이 누락되었거나 비밀번호가 너무 짧습니다.");
     }
 
     const codeRef = rtdb.ref(`verificationCodes/${encodeKey(phoneNumber)}`);
@@ -275,21 +315,173 @@ export const resetPassword = onCall(
     }
 
     const uid = phoneIndexSnap.val();
-
     await admin.auth().updateUser(uid, { password: newPassword });
-    await codeRef.remove(); // 재사용 방지
-
+    await codeRef.remove();
     return { success: true };
   }
 );
 
-// 6) 매일 1회: 30일 지난 익명 계정 자동 삭제
+// 쿠키 이벤트 서버 동기화 (멱등성, 일일 제한, 티켓 차감, 중복 없는 랜덤 선택)
+export const syncCookieEvent = onCall(
+  { region: "asia-northeast3" },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "인증되지 않은 요청입니다.");
+    }
+
+    const uid = request.auth.uid;
+    const { eventId, type, datetime } = request.data as {
+      eventId?: string;
+      type?: number;
+      datetime?: string;
+    };
+
+    if (!eventId || type === undefined || !datetime) {
+      throw new HttpsError("invalid-argument", "필수 값이 누락되었습니다.");
+    }
+
+    // 멱등성 체크: 이미 처리된 이벤트인지 확인
+    const idempotencyRef = rtdb.ref(`cookieEvents/${uid}/${eventId}`);
+    const existing = await idempotencyRef.get();
+    if (existing.exists()) {
+      const data = existing.val();
+      const result: Record<string, unknown> = {
+        cookieNo: data.cookieNo,
+        message: data.message,
+      };
+      if (data.viaTicket) result["viaTicket"] = data.viaTicket;
+      return result;
+    }
+
+    const date = datetime.substring(0, 8); // yyyyMMdd
+
+    // 일일 제한 트랜잭션
+    const claimRef = rtdb.ref(`dailyCookieClaims/${uid}/${date}/${type}`);
+    const claimResult = await claimRef.transaction((current: number | null) => {
+      if (current !== null) return undefined;
+      return 1;
+    });
+
+    if (claimResult.committed) {
+      const { cookieNo, message } = await pickCookieMessage(uid, type);
+      await Promise.all([
+        idempotencyRef.set({ type, cookieNo, message, datetime, claimDate: date }),
+        rtdb.ref(`userCollectedCookies/${uid}/${type}/${cookieNo}`).set(true),
+      ]);
+      return { cookieNo, message };
+    }
+
+    // 일일 제한 초과 → 티켓 소모 시도
+    const ticketGroupId = await findEarliestApplicableTicketGroup(uid, type);
+    if (!ticketGroupId) {
+      throw new HttpsError("failed-precondition", "일일 제한 초과", {
+        reason: "DAILY_LIMIT_AND_NO_TICKET",
+      });
+    }
+
+    const ticketRef = rtdb.ref(
+      `eventTicketBalance/${uid}/${ticketGroupId}/available`
+    );
+    const ticketResult = await ticketRef.transaction(
+      (current: number | null) => {
+        if (current === null || current <= 0) return undefined;
+        return current - 1;
+      }
+    );
+
+    if (!ticketResult.committed) {
+      throw new HttpsError(
+        "failed-precondition",
+        "티켓 소진 (동시 요청)",
+        { reason: "TICKET_EXHAUSTED_CONCURRENT" }
+      );
+    }
+
+    const { cookieNo, message } = await pickCookieMessage(uid, type);
+    await Promise.all([
+      idempotencyRef.set({
+        type,
+        cookieNo,
+        message,
+        datetime,
+        claimDate: date,
+        viaTicket: ticketGroupId,
+      }),
+      rtdb.ref(`userCollectedCookies/${uid}/${type}/${cookieNo}`).set(true),
+      rtdb.ref(`ticketUsageLog/${uid}/${eventId}`).set({
+        ticketGroupId,
+        usedAt: admin.database.ServerValue.TIMESTAMP,
+      }),
+    ]);
+
+    return { cookieNo, message, viaTicket: ticketGroupId };
+  }
+);
+
+// 타입별 최대 쿠키 메시지 개수 — 앱 실행 시 1회 호출해 로컬에 캐시
+export const getCookieTypeCounts = onCall(
+  { region: "asia-northeast3" },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "인증되지 않은 요청입니다.");
+    }
+
+    const snap = await rtdb.ref("cookieMessages").get();
+    if (!snap.exists()) {
+      return { counts: {} };
+    }
+
+    const counts: Record<string, number> = {};
+    snap.forEach((typeChild) => {
+      counts[typeChild.key!] = typeChild.numChildren();
+      return false;
+    });
+
+    return { counts };
+  }
+);
+
+// 로그인 시 계정의 전체 쿠키 오픈 히스토리를 클라이언트로 내려줌 (서버→로컬 동기화용)
+export const fetchCookieEvents = onCall(
+  { region: "asia-northeast3" },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "인증되지 않은 요청입니다.");
+    }
+
+    const uid = request.auth.uid;
+    const snap = await rtdb.ref(`cookieEvents/${uid}`).get();
+
+    if (!snap.exists()) {
+      return { events: [] };
+    }
+
+    const events: Record<string, unknown>[] = [];
+    snap.forEach((child) => {
+      const data = child.val();
+      events.push({
+        eventId: child.key,
+        type: data.type,
+        cookieNo: data.cookieNo ?? null,
+        message: data.message ?? null,
+        datetime: data.datetime,
+        claimDate: data.claimDate,
+        viaTicket: data.viaTicket ?? null,
+      });
+      return false;
+    });
+
+    return { events };
+  }
+);
+
+// 매일 1회: 30일 지난 익명 계정 자동 삭제
 export const cleanupAnonymousUsers = onSchedule(
   { schedule: "every 24 hours", region: "asia-northeast3" },
   async () => {
     const auth = admin.auth();
     let nextPageToken: string | undefined;
-    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000; // 30일 전
+    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
 
     do {
       const result = await auth.listUsers(1000, nextPageToken);

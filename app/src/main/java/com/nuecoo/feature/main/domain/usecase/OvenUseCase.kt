@@ -1,9 +1,7 @@
 package com.nuecoo.feature.main.domain.usecase
 
-import com.nuecoo.core.util.getLocalTimeToString
-import com.nuecoo.feature.main.domain.model.CookieItemData
-import com.nuecoo.feature.main.domain.model.CookieType
-import com.nuecoo.feature.main.domain.model.DailyCookieItemData
+import com.nuecoo.feature.main.domain.model.CookieSlotUi
+import com.nuecoo.feature.main.domain.model.buildDailyCookieView
 import com.nuecoo.feature.main.domain.repository.CookieRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -12,80 +10,21 @@ import javax.inject.Inject
 class ObserveDailyCookieData @Inject constructor(
     private val cookieRepository: CookieRepository
 ) {
-    operator fun invoke(): Flow<DailyCookieItemData?>{
-        return cookieRepository.getFlowDailyCookieData()
-    }
-}
-
-class InitDailyCookieUseCase @Inject constructor(
-    private val cookieRepository: CookieRepository
-) {
-    suspend operator fun invoke(list: List<Pair<CookieType, Int>>) {
-        val today = getLocalTimeToString().take(8)
-        val dailyDataList = cookieRepository.getCookieDataList()
-
-        if(dailyDataList.none { it.date == today }){
-            cookieRepository.upsertDailyCookieData(
-                DailyCookieItemData(
-                    date = today,
-                    list = createCookieItemDataList(list = list, dailyList = dailyDataList)
-                )
-            )
-        }
-    }
-
-    private fun createCookieItemDataList(
-        list: List<Pair<CookieType, Int>>,
-        dailyList: List<DailyCookieItemData>
-    ): List<CookieItemData> {
-        return CookieType.entries
-            .filter { it != CookieType.Unknown }
-            .map { cookieType ->
-                val cookieItemList = dailyList.flatMap { dailyData ->
-                    dailyData.list.filter { it.type == cookieType.type && it.no != null }
-                }
-                val isFull = cookieItemList.size >= (list.find { it.first == cookieType }?.second ?: 0)
-
-                CookieItemData(
-                    type = cookieType.type,
-                    isFull = isFull,
-                    isOpened = false,
-                    no = null
-                )
-            }
-    }
-}
-
-class UpdateOpenCookieDataUseCase @Inject constructor(
-    private val cookieRepository: CookieRepository
-) {
-    suspend operator fun invoke(
-        type: Int,
-        newNo: Int
-    ) {
-        val today = getLocalTimeToString().take(8)
-        val todayData = cookieRepository.getCookieDataList().find { it.date == today } ?: return
-
-        val newData = todayData.copy(
-            list = todayData.list.map { item ->
-                if (item.type == type) {
-                    item.copy(no = newNo, isOpened = true)
-                } else {
-                    item
-                }
-            }
-        )
-        cookieRepository.upsertDailyCookieData(newData)
-    }
+    operator fun invoke(): Flow<List<CookieSlotUi>> =
+        cookieRepository.observeEventsForToday().map { events -> buildDailyCookieView(events) }
 }
 
 class ObserveNotOpenedCookies @Inject constructor(
     private val repository: CookieRepository
 ) {
-    operator fun invoke(): Flow<Int> {
-        return repository.getFlowDailyCookieData().map { data ->
-            data?.list?.count { it.no == null } ?: 0
+    operator fun invoke(): Flow<Int> =
+        repository.observeEventsForToday().map { events ->
+            buildDailyCookieView(events).count { it is CookieSlotUi.Empty }
         }
-    }
 }
 
+class OpenCookieUseCase @Inject constructor(
+    private val repository: CookieRepository
+){
+    suspend operator fun invoke(type: Int) = repository.openCookie(type)
+}

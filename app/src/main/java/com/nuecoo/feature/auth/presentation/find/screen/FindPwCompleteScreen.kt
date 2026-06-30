@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,12 +30,12 @@ import com.nuecoo.R
 import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
 import com.nuecoo.core.presetation.ui.component.MainTitleItem
 import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
-import com.nuecoo.ui.theme.MailBackground
-import com.nuecoo.ui.theme.MailIcon
-import com.nuecoo.ui.theme.MainButton
-import com.nuecoo.ui.theme.MainText
-import com.nuecoo.ui.theme.SubText
-import com.nuecoo.ui.theme.White
+import com.nuecoo.core.theme.MailBackground
+import com.nuecoo.core.theme.MailIcon
+import com.nuecoo.core.theme.MainButton
+import com.nuecoo.core.theme.MainText
+import com.nuecoo.core.theme.SubText
+import com.nuecoo.core.theme.White
 
 @Composable
 fun FindPwCompleteScreen(navController: NavHostController) {

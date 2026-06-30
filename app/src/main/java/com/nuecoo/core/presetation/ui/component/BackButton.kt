@@ -14,7 +14,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.nuecoo.R
-import com.nuecoo.ui.theme.BackButtonBackground
+import com.nuecoo.core.theme.BackButtonBackground
 
 @Composable
 fun BackButton(

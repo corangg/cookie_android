@@ -53,9 +53,9 @@ import androidx.compose.ui.unit.sp
 import com.nuecoo.R
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
-import com.nuecoo.ui.theme.MainText
-import com.nuecoo.ui.theme.NueCooTheme
-import com.nuecoo.ui.util.CommonRoundButton
+import com.nuecoo.core.theme.MainText
+import com.nuecoo.core.theme.NueCooTheme
+import com.nuecoo.core.presetation.ui.component.CommonRoundButton
 import getCookieAnimationFrames
 import getCookieTypeColor
 import getCookieTypeMainTextRes
@@ -82,13 +82,13 @@ fun CookieOpenScreen(
     LaunchedEffect(triggerAnimation) {
         if (!triggerAnimation || isOpened || isAnimating) return@LaunchedEffect
         isAnimating = true
+        onCookieOpened(cookieData.type)
         for (i in getCookieAnimationFrames(cookieData.type).indices) {
             currentFrame = i
             delay(800L)
         }
         isOpened = true
         isAnimating = false
-        onCookieOpened(cookieData.type)
     }
 
     val displayImage = when {

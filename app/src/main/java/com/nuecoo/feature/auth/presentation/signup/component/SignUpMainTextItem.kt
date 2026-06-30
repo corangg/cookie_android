@@ -8,7 +8,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.nuecoo.R
-import com.nuecoo.ui.theme.MainText
+import com.nuecoo.core.theme.MainText
 
 @Composable
 fun SignUpMainTextItem(modifier: Modifier, text: String, fontSize: Int = 22) {

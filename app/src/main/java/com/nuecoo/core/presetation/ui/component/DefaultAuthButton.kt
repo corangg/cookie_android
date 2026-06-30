@@ -23,8 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nuecoo.R
-import com.nuecoo.ui.theme.Black
-import com.nuecoo.ui.theme.White
+import com.nuecoo.core.theme.Black
+import com.nuecoo.core.theme.White
 
 @Composable
 fun DefaultAuthButton(

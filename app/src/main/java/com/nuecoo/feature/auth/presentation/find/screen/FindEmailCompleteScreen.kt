@@ -31,12 +31,12 @@ import com.nuecoo.R
 import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
 import com.nuecoo.core.presetation.ui.component.MainTitleItem
 import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
-import com.nuecoo.ui.theme.ItemCardBackground
-import com.nuecoo.ui.theme.MailBackground
-import com.nuecoo.ui.theme.MailIcon
-import com.nuecoo.ui.theme.MainButton
-import com.nuecoo.ui.theme.MainText
-import com.nuecoo.ui.theme.White
+import com.nuecoo.core.theme.ItemCardBackground
+import com.nuecoo.core.theme.MailBackground
+import com.nuecoo.core.theme.MailIcon
+import com.nuecoo.core.theme.MainButton
+import com.nuecoo.core.theme.MainText
+import com.nuecoo.core.theme.White
 
 @Composable
 fun FindEmailCompleteScreen(

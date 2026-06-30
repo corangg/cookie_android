@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.nuecoo.ui.theme.ItemCardBackground
+import com.nuecoo.core.theme.ItemCardBackground
 
 @Composable
 fun DefaultItemBox(

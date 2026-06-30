@@ -5,7 +5,8 @@ import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.nuecoo.core.data.database.NueCooDatabase
-import com.nuecoo.core.data.database.dao.CookieDao
+import com.nuecoo.core.data.database.dao.CookieEventDao
+import com.nuecoo.core.data.database.dao.CookieTypeCountDao
 import com.nuecoo.core.data.database.dao.UserInfoDao
 import dagger.Module
 import dagger.Provides
@@ -17,22 +18,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
-    val MIGRATION_1_2 = object : Migration(1, 2) {
-        override fun migrate(db: SupportSQLiteDatabase) {
-            db.execSQL("""
-            CREATE TABLE IF NOT EXISTS `LocalUserInfo` (
-                `id` INTEGER NOT NULL,
-                `email` TEXT NOT NULL,
-                `nickname` TEXT NOT NULL,
-                `phone` TEXT NOT NULL,
-                `birth` TEXT NOT NULL,
-                `gender` INTEGER NOT NULL,
-                PRIMARY KEY(`id`)
-            )
-        """.trimIndent())
-        }
-    }
-
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context) =
@@ -40,11 +25,12 @@ object DatabaseModule {
             context.applicationContext,
             NueCooDatabase::class.java,
             "Database.db"
-        ).addMigrations(MIGRATION_1_2).build()
+        ).build()
 
     @Provides
-    fun provideCookieDao(database: NueCooDatabase): CookieDao = database.cookieDao()
-
+    fun provideCookieEventDao(database: NueCooDatabase): CookieEventDao = database.cookieEventDao()
+    @Provides
+    fun provideCookieTypeCountDao(database: NueCooDatabase): CookieTypeCountDao = database.cookieTypeCountDao()
     @Provides
     fun provideUserInfoDao(database: NueCooDatabase): UserInfoDao = database.userInfoDao()
 }

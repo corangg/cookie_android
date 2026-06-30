@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nuecoo.core.presetation.ui.model.CommonDropDownItem
-import com.nuecoo.ui.theme.MainText
+import com.nuecoo.core.theme.MainText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

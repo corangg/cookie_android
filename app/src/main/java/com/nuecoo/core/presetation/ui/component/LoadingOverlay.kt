@@ -24,8 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import com.nuecoo.ui.theme.MainButton
-import com.nuecoo.ui.theme.OverlayBackground
+import com.nuecoo.core.theme.MainButton
+import com.nuecoo.core.theme.OverlayBackground
 import kotlinx.coroutines.delay
 
 private const val LOADING_TIMEOUT_MS = 60_000L

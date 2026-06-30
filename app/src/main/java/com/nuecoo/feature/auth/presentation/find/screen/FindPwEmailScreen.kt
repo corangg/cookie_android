@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,16 +31,13 @@ import com.nuecoo.core.presetation.ui.component.DefaultTextField
 import com.nuecoo.core.presetation.ui.component.LoadingOverlay
 import com.nuecoo.core.presetation.ui.component.MainTitleItem
 import com.nuecoo.feature.auth.domain.model.EmailCheckResult
-import com.nuecoo.feature.auth.domain.model.FindEmailResult
-import com.nuecoo.feature.auth.domain.model.VerificationResult
 import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
-import com.nuecoo.feature.auth.presentation.find.screen.TextFieldEmailItem
 import com.nuecoo.feature.auth.presentation.find.viewmodel.FindPwViewModel
-import com.nuecoo.ui.theme.ErrorRed
-import com.nuecoo.ui.theme.MainButton
-import com.nuecoo.ui.theme.MainText
-import com.nuecoo.ui.theme.SubText
-import com.nuecoo.ui.theme.White
+import com.nuecoo.core.theme.ErrorRed
+import com.nuecoo.core.theme.MainButton
+import com.nuecoo.core.theme.MainText
+import com.nuecoo.core.theme.SubText
+import com.nuecoo.core.theme.White
 
 @Composable
 fun FindPwEmailScreen(

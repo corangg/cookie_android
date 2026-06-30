@@ -16,9 +16,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.nuecoo.R
-import com.nuecoo.ui.theme.MainBorder
-import com.nuecoo.ui.theme.Transparent
-import com.nuecoo.ui.theme.White
+import com.nuecoo.core.theme.MainBorder
+import com.nuecoo.core.theme.Transparent
+import com.nuecoo.core.theme.White
 
 @Composable
 fun DefaultCheckItem(
