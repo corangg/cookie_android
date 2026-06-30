@@ -60,8 +60,10 @@ class FirebaseAuthDataSourceImpl @Inject constructor(
             .await()
 
         @Suppress("UNCHECKED_CAST")
-        val data = result.getData() as Map<String, Any>
-        return data["maskedEmail"] as String
+        val data = result.getData() as? Map<*, *>
+            ?: throw IllegalStateException("응답 형식 오류: 데이터가 없습니다")
+        return data["maskedEmail"] as? String
+            ?: throw IllegalStateException("응답 형식 오류: maskedEmail이 없습니다")
     }
 
     override suspend fun verifyCodeForResetPassword(phoneNumber: String, code: String) {

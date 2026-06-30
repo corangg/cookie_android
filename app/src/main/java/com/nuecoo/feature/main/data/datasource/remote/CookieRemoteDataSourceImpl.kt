@@ -48,36 +48,50 @@ class CookieRemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getCookieTypeCounts(): Map<Int, Int> {
-        val result = functions
-            .getHttpsCallable("getCookieTypeCounts")
-            .call()
-            .await()
-            .getData() as Map<*, *>
+        return runCatching {
+            val result = functions
+                .getHttpsCallable("getCookieTypeCounts")
+                .call()
+                .await()
 
-        val counts = result["counts"] as Map<*, *>
+            val data = result.getData() as? Map<*, *> ?: return emptyMap()
+            val counts = data["counts"] as? Map<*, *> ?: return emptyMap()
 
-        return counts.entries.associate { (key, value) ->
-            (key as String).toInt() to (value as Long).toInt()
-        }
+            counts.entries.mapNotNull { (key, value) ->
+                val type = (key as? String)?.toIntOrNull() ?: return@mapNotNull null
+                val count = (value as? Number)?.toInt() ?: return@mapNotNull null
+                type to count
+            }.toMap()
+        }.getOrElse { emptyMap() }
     }
 
     override suspend fun fetchAllCookieEvents(): List<CookieEventEntity> {
-        val result = functions.getHttpsCallable("fetchCookieEvents").call().await().getData() as Map<*, *>
-        val events = result["events"] as List<*>
+        return runCatching {
+            val result = functions
+                .getHttpsCallable("fetchCookieEvents")
+                .call()
+                .await()
 
-        return events.map { raw ->
-            val data = raw as Map<*, *>
-            CookieEventEntity(
-                eventId = data["eventId"] as String,
-                datetime = data["datetime"] as String,
-                claimDate = data["claimDate"] as String,
-                type = (data["type"] as Number).toInt(),
-                message = data["message"] as? String,
-                cookieNo = (data["cookieNo"] as? Number)?.toInt(),
-                syncStatus = if (data["viaTicket"] != null) CookieSyncStatus.SAVED_VIA_TICKET else CookieSyncStatus.SAVED,
-                viaTicketGroupId = data["viaTicket"] as? String,
-                hasBeenViewed = false
-            )
-        }
+            val data = result.getData() as? Map<*, *> ?: return emptyList()
+            val events = data["events"] as? List<*> ?: return emptyList()
+
+            events.mapNotNull { raw ->
+                val event = raw as? Map<*, *> ?: return@mapNotNull null
+                runCatching {
+                    CookieEventEntity(
+                        eventId = event["eventId"] as? String ?: return@mapNotNull null,
+                        datetime = event["datetime"] as? String ?: return@mapNotNull null,
+                        claimDate = event["claimDate"] as? String ?: return@mapNotNull null,
+                        type = (event["type"] as? Number)?.toInt() ?: return@mapNotNull null,
+                        message = event["message"] as? String,
+                        cookieNo = (event["cookieNo"] as? Number)?.toInt(),
+                        syncStatus = if (event["viaTicket"] != null)
+                            CookieSyncStatus.SAVED_VIA_TICKET else CookieSyncStatus.SAVED,
+                        viaTicketGroupId = event["viaTicket"] as? String,
+                        hasBeenViewed = false
+                    )
+                }.getOrNull()
+            }
+        }.getOrElse { emptyList() }
     }
 }
