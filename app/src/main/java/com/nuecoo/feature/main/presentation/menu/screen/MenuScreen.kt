@@ -29,6 +29,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -88,6 +91,7 @@ import com.nuecoo.core.theme.WidgetOn
 import getCookieTypeColor
 import getCookieTypeList
 import getCookieTypeListSize
+import java.time.LocalDate
 
 @Composable
 fun MenuScreen(
@@ -101,6 +105,7 @@ fun MenuScreen(
     val attendanceCount by viewModel.attendanceCount.collectAsStateWithLifecycle()
     val isTodayAttendance by viewModel.isTodayAttendance.collectAsStateWithLifecycle()
     val weeklyAttendance by viewModel.weeklyAttendance.collectAsStateWithLifecycle()
+    val attendanceDates by viewModel.attendanceDates.collectAsStateWithLifecycle()
     val widgetEnabled by viewModel.widgetEnabled.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -113,6 +118,7 @@ fun MenuScreen(
         attendanceCount = attendanceCount ?: 0,
         isTodayAttendance = isTodayAttendance,
         weeklyAttendance = weeklyAttendance,
+        attendanceDates = attendanceDates,
         isWidgetEnabled = widgetEnabled,
         onMoveOven = onMoveOven,
         onMoveAppInfo = onMoveAppInfo,
@@ -131,6 +137,7 @@ private fun MenuScreenContent(
     attendanceCount: Int,
     isTodayAttendance: Boolean,
     weeklyAttendance: List<WeeklyAttendanceModel>,
+    attendanceDates: Set<LocalDate>,
     isWidgetEnabled: Boolean,
     onMoveOven: () -> Unit,
     onMoveAppInfo: () -> Unit,
@@ -158,7 +165,8 @@ private fun MenuScreenContent(
             attendanceCount = attendanceCount,
             isTodayAttendance = isTodayAttendance,
             onClick = onMoveOven,
-            weeklyAttendance = weeklyAttendance
+            weeklyAttendance = weeklyAttendance,
+            attendanceDates = attendanceDates
         )//출석체크 컴포넌트
 
         CollectionProgressItem(
@@ -273,8 +281,11 @@ private fun CheckInDayItem(
     attendanceCount: Int,
     isTodayAttendance: Boolean,
     weeklyAttendance: List<WeeklyAttendanceModel>,
+    attendanceDates: Set<LocalDate>,
     onClick: () -> Unit
 ) {
+    var showAttendanceCalendar by remember { mutableStateOf(false) }
+
     DefaultItemBox(modifier = modifier) {
         Column {
             Row(
@@ -292,10 +303,18 @@ private fun CheckInDayItem(
             WeeklyAttendanceCard(
                 modifier = Modifier
                     .padding(top = 16.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .clickable { showAttendanceCalendar = true },
                 list = weeklyAttendance
-            )//주간 출석 컴포넌트
+            )//주간 출석 컴포넌트 (클릭 시 전체 출석 기록 표시)
         }
+    }
+
+    if (showAttendanceCalendar) {
+        AttendanceCalendarDialog(
+            attendanceDates = attendanceDates,
+            onDismiss = { showAttendanceCalendar = false }
+        )
     }
 }
 

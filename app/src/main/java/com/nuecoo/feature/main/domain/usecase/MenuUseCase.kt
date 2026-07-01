@@ -78,6 +78,20 @@ class GetWeeklyAttendanceUseCase @Inject constructor(
     }
 }
 
+class GetAttendanceDatesUseCase @Inject constructor(
+    private val repository: CookieRepository
+) {
+    operator fun invoke(): Flow<Set<LocalDate>> {
+        return repository.observeDailyClaimDates().map { dates ->
+            dates.mapNotNull { runCatching { LocalDate.parse(it, FORMATTER) }.getOrNull() }.toSet()
+        }
+    }
+
+    companion object {
+        private val FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
+    }
+}
+
 class LogOutUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {

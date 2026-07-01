@@ -8,6 +8,7 @@ import com.nuecoo.core.di.MainDispatcher
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.usecase.CheckTodayAttendanceUseCase
 import com.nuecoo.feature.main.domain.usecase.GetAttendanceCount
+import com.nuecoo.feature.main.domain.usecase.GetAttendanceDatesUseCase
 import com.nuecoo.feature.main.domain.usecase.GetCollectionByTypeUseCase
 import com.nuecoo.feature.main.domain.usecase.GetWeeklyAttendanceUseCase
 import com.nuecoo.feature.main.domain.usecase.LogOutUseCase
@@ -32,6 +33,7 @@ class MenuViewModel @Inject constructor(
     getAttendanceCount: GetAttendanceCount,
     checkTodayAttendanceUseCase: CheckTodayAttendanceUseCase,
     getWeeklyAttendanceUseCase: GetWeeklyAttendanceUseCase,
+    getAttendanceDatesUseCase: GetAttendanceDatesUseCase,
     getWidgetEnabledUseCase: GetWidgetEnabledUseCase,
     @MainDispatcher mainDispatcher: MainCoroutineDispatcher,
     @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
@@ -44,6 +46,7 @@ class MenuViewModel @Inject constructor(
     val attendanceCount = getAttendanceCount().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
     val isTodayAttendance = checkTodayAttendanceUseCase().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     val weeklyAttendance = getWeeklyAttendanceUseCase().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val attendanceDates = getAttendanceDatesUseCase().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
     val widgetEnabled = getWidgetEnabledUseCase().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     private val _isLoggedIn = MutableStateFlow(true)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
