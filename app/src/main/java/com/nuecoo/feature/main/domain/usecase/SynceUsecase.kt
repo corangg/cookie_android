@@ -13,7 +13,7 @@ class OnLoginConfirmedUseCase @Inject constructor(
     private val cookieSyncReconciler: CookieSyncReconciler
 ) {
     suspend operator fun invoke() = coroutineScope {
-        //launch { runCatching { userRepository.refreshUserInfo() } }
+        launch { userRepository.refreshUserInfo() }
         launch { cookieRepository.refreshCounts() }
         launch { cookieSyncReconciler.reconcilePendingEvents() }
         launch { cookieRepository.syncAllEventsFromServer() }

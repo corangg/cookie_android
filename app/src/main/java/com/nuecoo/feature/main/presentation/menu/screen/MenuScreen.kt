@@ -59,10 +59,7 @@ import com.nuecoo.BuildConfig
 import com.nuecoo.R
 import com.nuecoo.core.presetation.ui.component.DefaultItemBox
 import com.nuecoo.core.presetation.ui.component.LoadingOverlay
-import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
 import com.nuecoo.core.presetation.ui.component.MainTitleItem
-import com.nuecoo.feature.main.presentation.menu.viewmodel.CollectionProgress
-import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
 import com.nuecoo.core.theme.AttendanceActive
 import com.nuecoo.core.theme.AttendanceComplete
 import com.nuecoo.core.theme.AttendanceInActive
@@ -88,6 +85,9 @@ import com.nuecoo.core.theme.WidgetInActive
 import com.nuecoo.core.theme.WidgetInActiveBackground
 import com.nuecoo.core.theme.WidgetOff
 import com.nuecoo.core.theme.WidgetOn
+import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
+import com.nuecoo.feature.main.presentation.menu.viewmodel.CollectionProgress
+import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
 import getCookieTypeColor
 import getCookieTypeList
 import getCookieTypeListSize
@@ -102,12 +102,14 @@ fun MenuScreen(
     val context = LocalContext.current
     val progress by viewModel.collectionProgress.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val nickname by viewModel.nickname.collectAsStateWithLifecycle()
     val attendanceCount by viewModel.attendanceCount.collectAsStateWithLifecycle()
     val isTodayAttendance by viewModel.isTodayAttendance.collectAsStateWithLifecycle()
     val weeklyAttendance by viewModel.weeklyAttendance.collectAsStateWithLifecycle()
     val attendanceDates by viewModel.attendanceDates.collectAsStateWithLifecycle()
     val widgetEnabled by viewModel.widgetEnabled.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) { viewModel.refreshUserInfo() }
     LaunchedEffect(Unit) {
         viewModel.loadCollectionProgress(context.getCookieTypeListSize())
     }
@@ -115,6 +117,7 @@ fun MenuScreen(
     MenuScreenContent(
         progress = progress,
         isLoading = isLoading,
+        nickname = nickname,
         attendanceCount = attendanceCount ?: 0,
         isTodayAttendance = isTodayAttendance,
         weeklyAttendance = weeklyAttendance,
@@ -134,6 +137,7 @@ fun MenuScreen(
 private fun MenuScreenContent(
     progress: List<CollectionProgress>,
     isLoading: Boolean,
+    nickname: String?,
     attendanceCount: Int,
     isTodayAttendance: Boolean,
     weeklyAttendance: List<WeeklyAttendanceModel>,
@@ -158,7 +162,7 @@ private fun MenuScreenContent(
             mainTitle = stringResource(R.string.text_menu_title)
         )//메인 타이틀
 
-        ProfileItem(modifier = Modifier.padding(top = 16.dp))//프로필 컴포넌트
+        ProfileItem(modifier = Modifier.padding(top = 16.dp), nickname = nickname)//프로필 컴포넌트
 
         CheckInDayItem(
             modifier = Modifier.padding(top = 16.dp),
@@ -186,7 +190,9 @@ private fun MenuScreenContent(
         )//앱 정보 컴포넌트
 
         LogOutItem(
-            modifier = Modifier.padding(top = 16.dp).clickable(onClick = onLogOut)
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .clickable(onClick = onLogOut)
         )//로그아웃 컴포넌트
 
         AppVersionItem(
@@ -197,7 +203,7 @@ private fun MenuScreenContent(
 }
 
 @Composable
-private fun ProfileItem(modifier: Modifier) {
+private fun ProfileItem(modifier: Modifier, nickname: String?) {
     DefaultItemBox(modifier = modifier) {
         Row(
             verticalAlignment = Alignment.Top,
@@ -216,11 +222,11 @@ private fun ProfileItem(modifier: Modifier) {
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(R.drawable.img_cookie_passion_1),//추후 데이터로 이미지 변경
+                    painter = painterResource(R.drawable.ic_profile_default),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(40.dp)
+                        .fillMaxSize()
                         .clip(CircleShape)
 
                 )
@@ -232,7 +238,7 @@ private fun ProfileItem(modifier: Modifier) {
                     .padding(end = 16.dp)
             ) {
                 Text(
-                    text = "이강현",//추후 데이터로 이름변경
+                    text = nickname?:"",
                     color = MainText,
                     fontFamily = FontFamily(Font(R.font.title_font)),
                     fontWeight = FontWeight.SemiBold,
@@ -244,7 +250,7 @@ private fun ProfileItem(modifier: Modifier) {
                     modifier = Modifier.padding(top = 14.dp)
                 )
                 Text(
-                    text = "상태 메세지sfafawfwafajlfjwalfjwaljflawjflksajlkfjsaljfsalkjflksajflksajflkjsalkfjslakjflsajflksajflsjal",//추후 데이터로 상태 메세지 변경
+                    text = "",//추후 데이터로 상태 메세지 변경
                     color = SubText,
                     modifier = Modifier.padding(top = 6.dp),
                     overflow = TextOverflow.Ellipsis,
@@ -286,7 +292,7 @@ private fun CheckInDayItem(
 ) {
     var showAttendanceCalendar by remember { mutableStateOf(false) }
 
-    DefaultItemBox(modifier = modifier) {
+    DefaultItemBox(modifier = modifier.clickable { showAttendanceCalendar = true }) {
         Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -303,8 +309,7 @@ private fun CheckInDayItem(
             WeeklyAttendanceCard(
                 modifier = Modifier
                     .padding(top = 16.dp)
-                    .fillMaxWidth()
-                    .clickable { showAttendanceCalendar = true },
+                    .fillMaxWidth(),
                 list = weeklyAttendance
             )//주간 출석 컴포넌트 (클릭 시 전체 출석 기록 표시)
         }

@@ -4,10 +4,14 @@ import android.content.Context
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.nuecoo.core.data.datasource.local.UserInfoDataSource
 import com.nuecoo.core.data.datasource.remote.FirebaseDataDataSource
+import com.nuecoo.core.data.mapper.toDomain
+import com.nuecoo.core.data.mapper.toLocal
 import com.nuecoo.core.data.mapper.toRemote
 import com.nuecoo.core.data.mapper.toUserInfo
 import com.nuecoo.core.di.IoDispatcher
+import com.nuecoo.core.di.LocalDataSources
 import com.nuecoo.core.di.RemoteDataSources
 import com.nuecoo.feature.auth.data.remote.VerificationPurpose
 import com.nuecoo.feature.auth.data.remote.datasource.FirebaseAuthDataSource
@@ -16,18 +20,20 @@ import com.nuecoo.feature.auth.domain.AuthRepository
 import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.FindEmailResult
 import com.nuecoo.feature.auth.domain.model.SignUpResult
+import com.nuecoo.feature.auth.domain.model.UserInfo
 import com.nuecoo.feature.auth.domain.model.VerificationResult
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    @RemoteDataSources private val firebaseAuthDataSource: FirebaseAuthDataSource,
-    @RemoteDataSources private val firebaseDataDataSource: FirebaseDataDataSource,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @ApplicationContext private val context: Context
+    @param:RemoteDataSources private val firebaseAuthDataSource: FirebaseAuthDataSource,
+    @param:RemoteDataSources private val firebaseDataDataSource: FirebaseDataDataSource,
+    @param:LocalDataSources private val userInfoDataSource: UserInfoDataSource,
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : AuthRepository {
     override fun observeAuthState(): Flow<Boolean?> = firebaseAuthDataSource.observeAuthState()
 
@@ -112,43 +118,14 @@ class AuthRepositoryImpl @Inject constructor(
         }.getOrElse { e -> e.toVerificationResult() }
     }
 
+    override suspend fun refreshUserInfo() {
+        runCatching {
+            val userInfo = firebaseDataDataSource.getUserInfo()?.toDomain()?.toLocal()?: return
+            userInfoDataSource.upsertUserInfo(userInfo)
+        }.getOrElse { e -> e.printStackTrace() }
+    }
 
-
-
-
-
-
-
-
-    /*override suspend fun isLoggedIn(): Boolean = firebaseAuthDataSourceImpl.isLoggedIn()
-
-    override suspend fun login(email: String, password: String): Boolean =
-        firebaseAuthDataSourceImpl.login(email, password)
-
-    override suspend fun logout(): Boolean = firebaseAuthDataSourceImpl.logout()
-
-    override suspend fun checkEmailExists(email: String): Boolean =
-        firebaseAuthDataSourceImpl.checkEmailExists(email)
-
-    override suspend fun sendVerificationCode(phoneNumber: String): String =
-        firebaseAuthDataSourceImpl.sendVerificationCode(phoneNumber)
-
-    override suspend fun verifySmsCode(verificationId: String, code: String): Boolean =
-        firebaseAuthDataSourceImpl.verifySmsCode(verificationId, code)
-
-    override suspend fun signUp(
-        email: String,
-        password: String,
-        verificationId: String,
-        smsCode: String,
-        phone: String,
-        gender: Boolean,
-        birth: String
-    ): Boolean = runCatching {
-        val phoneVerified = if (verificationId.isNotEmpty()) {
-            firebaseAuthDataSourceImpl.verifySmsCode(verificationId, smsCode)
-        } else true
-        if (!phoneVerified) return@runCatching false
-        firebaseAuthDataSourceImpl.createAccount(email, password)
-    }.getOrElse { false }*/
+    override fun observeUserInfo(): Flow<UserInfo?> {
+        return userInfoDataSource.getUserInfoFlow().map { it?.toDomain() }
+    }
 }

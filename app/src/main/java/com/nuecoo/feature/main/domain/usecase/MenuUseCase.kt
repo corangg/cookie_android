@@ -1,5 +1,6 @@
 package com.nuecoo.feature.main.domain.usecase
 
+import com.nuecoo.core.data.datasource.remote.FirebaseDataDataSource
 import com.nuecoo.feature.auth.domain.AuthRepository
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
 import com.nuecoo.feature.main.domain.repository.CookieRepository
@@ -96,4 +97,16 @@ class LogOutUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
     suspend operator fun invoke() = repository.logOut()
+}
+
+class RefreshUserInfoUseCase @Inject constructor(
+    private val repository: AuthRepository
+){
+    suspend operator fun invoke() = repository.refreshUserInfo()
+}
+
+class ObserveUserInfoUseCase @Inject constructor(
+    private val repository: AuthRepository
+){
+    operator fun invoke() = repository.observeUserInfo()
 }

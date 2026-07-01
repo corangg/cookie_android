@@ -12,6 +12,8 @@ import com.nuecoo.feature.main.domain.usecase.GetAttendanceDatesUseCase
 import com.nuecoo.feature.main.domain.usecase.GetCollectionByTypeUseCase
 import com.nuecoo.feature.main.domain.usecase.GetWeeklyAttendanceUseCase
 import com.nuecoo.feature.main.domain.usecase.LogOutUseCase
+import com.nuecoo.feature.main.domain.usecase.ObserveUserInfoUseCase
+import com.nuecoo.feature.main.domain.usecase.RefreshUserInfoUseCase
 import com.nuecoo.feature.widget.domain.usecase.GetWidgetEnabledUseCase
 import com.nuecoo.feature.widget.domain.usecase.SaveWidgetEnabledUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +22,7 @@ import kotlinx.coroutines.MainCoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -30,6 +33,8 @@ class MenuViewModel @Inject constructor(
     private val getCollectionByTypeUseCase: GetCollectionByTypeUseCase,
     private val logoutUseCase: LogOutUseCase,
     private val saveWidgetEnabledUseCase: SaveWidgetEnabledUseCase,
+    private val refreshUserInfoUseCase: RefreshUserInfoUseCase,
+    observeUserInfoUseCase: ObserveUserInfoUseCase,
     getAttendanceCount: GetAttendanceCount,
     checkTodayAttendanceUseCase: CheckTodayAttendanceUseCase,
     getWeeklyAttendanceUseCase: GetWeeklyAttendanceUseCase,
@@ -39,7 +44,7 @@ class MenuViewModel @Inject constructor(
     @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
     @IoDispatcher ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel(mainDispatcher, defaultDispatcher, ioDispatcher) {
-
+    val nickname = observeUserInfoUseCase().map { it?.nickname }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
     private val _collectionProgress = MutableStateFlow<List<CollectionProgress>>(emptyList())
     val collectionProgress: StateFlow<List<CollectionProgress>> = _collectionProgress
 
@@ -70,5 +75,9 @@ class MenuViewModel @Inject constructor(
 
     fun logout() = onIoWork {
         _isLoggedIn.value = logoutUseCase()
+    }
+
+    fun refreshUserInfo() = onIoWork {
+        refreshUserInfoUseCase()
     }
 }

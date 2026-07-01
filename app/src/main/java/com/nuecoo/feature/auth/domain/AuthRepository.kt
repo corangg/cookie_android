@@ -3,6 +3,7 @@ package com.nuecoo.feature.auth.domain
 import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.FindEmailResult
 import com.nuecoo.feature.auth.domain.model.SignUpResult
+import com.nuecoo.feature.auth.domain.model.UserInfo
 import com.nuecoo.feature.auth.domain.model.VerificationResult
 import kotlinx.coroutines.flow.Flow
 
@@ -18,22 +19,6 @@ interface AuthRepository {
     suspend fun sendResetPasswordVerificationCode(phoneNumber: String): VerificationResult
     suspend fun verifyCodeForResetPassword(phoneNumber: String, code: String): VerificationResult
     suspend fun resetPassword(phoneNumber: String, newPassword: String): VerificationResult
-
-
-
-    /* suspend fun isLoggedIn(): Boolean
-     suspend fun login(email: String, password: String): Boolean
-     suspend fun logout(): Boolean
-     suspend fun checkEmailExists(email: String): Boolean
-     suspend fun sendVerificationCode(phoneNumber: String): String
-     suspend fun verifySmsCode(verificationId: String, code: String): Boolean
-     suspend fun signUp(
-         email: String,
-         password: String,
-         verificationId: String,
-         smsCode: String,
-         phone: String,
-         gender: Boolean,
-         birth: String
-     ): Boolean*/
+    suspend fun refreshUserInfo()
+    fun observeUserInfo(): Flow<UserInfo?>
 }
