@@ -2,7 +2,6 @@ package com.nuecoo.feature.main.domain.usecase
 
 import com.nuecoo.feature.auth.domain.AuthRepository
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
-import com.nuecoo.feature.main.domain.model.isSaved
 import com.nuecoo.feature.main.domain.repository.CookieRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -14,12 +13,8 @@ class GetAttendanceCount @Inject constructor(
     private val repository: CookieRepository
 ) {
     operator fun invoke(): Flow<Int> {
-        return repository.observeAllEvents().map { events ->
-            val attendanceDates = events
-                .filter { it.isSaved }
-                .map { it.claimDate }
-                .toSet()
-            getAttendanceStreak(attendanceDates.toList())
+        return repository.observeDailyClaimDates().map { dates ->
+            getAttendanceStreak(dates)
         }
     }
 
@@ -46,28 +41,40 @@ class GetAttendanceCount @Inject constructor(
     }
 }
 
-class CheckTodayAttendance @Inject constructor(
+class CheckTodayAttendanceUseCase @Inject constructor(
     private val repository: CookieRepository
 ) {
-    operator fun invoke(): Flow<Boolean> =
-        repository.observeEventsForToday().map { events -> events.any { it.isSaved } }
+    operator fun invoke(): Flow<Boolean> = repository.observeDailyClaimDates().map { dates ->
+        dates.contains(todayAsString())
+    }
+
+    private fun todayAsString(): String = LocalDate.now().format(FORMATTER)
+
+    companion object {
+        private val FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
+    }
 }
 
-class GetWeeklyAttendance @Inject constructor(
+class GetWeeklyAttendanceUseCase @Inject constructor(
     private val repository: CookieRepository
 ) {
     operator fun invoke(): Flow<List<WeeklyAttendanceModel>> {
-        return repository.observeAllEvents().map { events ->
-            val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+        return repository.observeDailyClaimDates().map { dates->
+            val attendanceDates = dates.toSet()
             val today = LocalDate.now()
             val sunday = today.minusDays(today.dayOfWeek.value % 7L)
-            val savedDates = events.filter { it.isSaved }.map { it.claimDate }.toSet()
-
             (0..6).map { index ->
-                val date = sunday.plusDays(index.toLong()).format(formatter)
-                WeeklyAttendanceModel(dayIndex = index, isAttendance = savedDates.contains(date))
+                val date = sunday.plusDays(index.toLong())
+                WeeklyAttendanceModel(
+                    dayIndex = index,
+                    isAttendance = attendanceDates.contains(date.format(FORMATTER)
+                    )
+                )
             }
         }
+    }
+    companion object {
+        private val FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd")
     }
 }
 

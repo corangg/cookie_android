@@ -62,6 +62,12 @@ interface CookieEventDao {
 
     @Insert
     suspend fun insertAll(events: List<CookieEventEntity>)
+
+    @Query("""
+        SELECT DISTINCT claimDate FROM CookieEventEntity 
+        ORDER BY claimDate DESC
+    """)
+    fun observeAllClaimDates(): Flow<List<String>>
 }
 
 @Dao

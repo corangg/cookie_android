@@ -95,12 +95,12 @@ class GetAttendanceCountTest {
 class CheckTodayAttendanceTest {
 
     private lateinit var repository: CookieRepository
-    private lateinit var useCase: CheckTodayAttendance
+    private lateinit var useCase: CheckTodayAttendanceUseCase
 
     @Before
     fun setUp() {
         repository = mockk()
-        useCase = CheckTodayAttendance(repository)
+        useCase = CheckTodayAttendanceUseCase(repository)
     }
 
     @Test
@@ -129,12 +129,12 @@ class CheckTodayAttendanceTest {
 class GetWeeklyAttendanceTest {
 
     private lateinit var repository: CookieRepository
-    private lateinit var useCase: GetWeeklyAttendance
+    private lateinit var useCase: GetWeeklyAttendanceUseCase
 
     @Before
     fun setUp() {
         repository = mockk()
-        useCase = GetWeeklyAttendance(repository)
+        useCase = GetWeeklyAttendanceUseCase(repository)
     }
 
     @Test

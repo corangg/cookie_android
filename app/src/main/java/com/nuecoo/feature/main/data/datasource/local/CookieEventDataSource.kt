@@ -22,4 +22,6 @@ interface CookieEventDataSource {
     suspend fun getAllByStatus(status: CookieSyncStatus): List<CookieEventEntity>
     suspend fun deleteAll()
     suspend fun insertAll(events: List<CookieEventEntity>)
+
+    fun observeDailyClaimDates(): Flow<List<String>>
 }

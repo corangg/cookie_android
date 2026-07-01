@@ -3,6 +3,7 @@ package com.nuecoo.feature.main.data.datasource.local
 import com.nuecoo.core.data.database.dao.CookieEventDao
 import com.nuecoo.core.data.model.local.CookieEventEntity
 import com.nuecoo.feature.main.domain.model.CookieSyncStatus
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class CookieEventDataSourceImpl @Inject constructor(
@@ -25,4 +26,5 @@ class CookieEventDataSourceImpl @Inject constructor(
     override suspend fun getAllByStatus(status: CookieSyncStatus) = cookieEventDao.getAllByStatus(status)
     override suspend fun deleteAll() = cookieEventDao.deleteAll()
     override suspend fun insertAll(events: List<CookieEventEntity>) = cookieEventDao.insertAll(events)
+    override fun observeDailyClaimDates() = cookieEventDao.observeAllClaimDates()
 }

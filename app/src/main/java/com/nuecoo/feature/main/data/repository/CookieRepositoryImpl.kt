@@ -79,6 +79,8 @@ class CookieRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun observeDailyClaimDates() = cookieEventDataSource.observeDailyClaimDates()
+
     private suspend fun insertCookieEvent(type: Int, eventId: String) {
         val now = nowAsYyyyMMddHHmm()
         cookieEventDataSource.insertCookieEvent(

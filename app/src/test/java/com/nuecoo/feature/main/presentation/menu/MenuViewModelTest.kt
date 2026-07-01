@@ -3,10 +3,10 @@ package com.nuecoo.feature.main.presentation.menu
 import com.nuecoo.feature.main.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
-import com.nuecoo.feature.main.domain.usecase.CheckTodayAttendance
+import com.nuecoo.feature.main.domain.usecase.CheckTodayAttendanceUseCase
 import com.nuecoo.feature.main.domain.usecase.GetAttendanceCount
 import com.nuecoo.feature.main.domain.usecase.GetCollectionByTypeUseCase
-import com.nuecoo.feature.main.domain.usecase.GetWeeklyAttendance
+import com.nuecoo.feature.main.domain.usecase.GetWeeklyAttendanceUseCase
 import com.nuecoo.feature.main.domain.usecase.LogOutUseCase
 import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
 import com.nuecoo.feature.widget.domain.usecase.GetWidgetEnabledUseCase
@@ -53,8 +53,8 @@ class MenuViewModelTest {
     private lateinit var logoutUseCase: LogOutUseCase
     private lateinit var saveWidgetEnabledUseCase: SaveWidgetEnabledUseCase
     private lateinit var getAttendanceCount: GetAttendanceCount
-    private lateinit var checkTodayAttendance: CheckTodayAttendance
-    private lateinit var getWeeklyAttendance: GetWeeklyAttendance
+    private lateinit var checkTodayAttendanceUseCase: CheckTodayAttendanceUseCase
+    private lateinit var getWeeklyAttendanceUseCase: GetWeeklyAttendanceUseCase
     private lateinit var getWidgetEnabledUseCase: GetWidgetEnabledUseCase
     private lateinit var viewModel: MenuViewModel
 
@@ -69,14 +69,14 @@ class MenuViewModelTest {
         logoutUseCase = mockk()
         saveWidgetEnabledUseCase = mockk()
         getAttendanceCount = mockk()
-        checkTodayAttendance = mockk()
-        getWeeklyAttendance = mockk()
+        checkTodayAttendanceUseCase = mockk()
+        getWeeklyAttendanceUseCase = mockk()
         getWidgetEnabledUseCase = mockk()
 
         // ViewModel 생성 시 property initializer에서 호출되므로 사전에 반환값 지정
         every { getAttendanceCount() } returns flowOf(5)
-        every { checkTodayAttendance() } returns flowOf(true)
-        every { getWeeklyAttendance() } returns flowOf(fakeWeekly)
+        every { checkTodayAttendanceUseCase() } returns flowOf(true)
+        every { getWeeklyAttendanceUseCase() } returns flowOf(fakeWeekly)
         every { getWidgetEnabledUseCase() } returns flowOf(false)
 
         viewModel = MenuViewModel(
@@ -84,8 +84,8 @@ class MenuViewModelTest {
             logoutUseCase = logoutUseCase,
             saveWidgetEnabledUseCase = saveWidgetEnabledUseCase,
             getAttendanceCount = getAttendanceCount,
-            checkTodayAttendance = checkTodayAttendance,
-            getWeeklyAttendance = getWeeklyAttendance,
+            checkTodayAttendanceUseCase = checkTodayAttendanceUseCase,
+            getWeeklyAttendanceUseCase = getWeeklyAttendanceUseCase,
             getWidgetEnabledUseCase = getWidgetEnabledUseCase,
             mainDispatcher = Dispatchers.Main as MainCoroutineDispatcher,
             defaultDispatcher = testDispatcher,

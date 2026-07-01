@@ -12,4 +12,6 @@ interface CookieRepository {
     suspend fun canOpenCookie(type: Int): Boolean
     fun observeCollectionProgress(type: Int): Flow<Pair<Int, Int?>>
     suspend fun syncAllEventsFromServer()
+
+    fun observeDailyClaimDates(): Flow<List<String>>
 }
