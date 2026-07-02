@@ -73,7 +73,7 @@ val CheeringColor = Color(0xFFFFC83D)
 val ComfortColor = Color(0xFFECDDB8)
 val PassionColor = Color(0xFFFF9D46)
 val SermonColor = Color(0xFF8A5A33)
-val LoveColor = Color(0xFFE58599)
+val LoveColor = Color(0xFFF7A6B6)
 val UnknownColor = Color(0xFF9CA3AF)
 
 val CheeringBackgroundColor = Color(0xFFFFF0C2)
