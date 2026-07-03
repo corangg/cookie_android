@@ -1,11 +1,16 @@
 package com.nuecoo.feature.main.presentation.oven.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,9 +43,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -51,11 +58,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nuecoo.R
-import com.nuecoo.feature.main.domain.model.CookieType
-import com.nuecoo.feature.main.domain.model.CookieUIItemData
+import com.nuecoo.core.presetation.ui.component.CommonRoundButton
 import com.nuecoo.core.theme.MainText
 import com.nuecoo.core.theme.NueCooTheme
-import com.nuecoo.core.presetation.ui.component.CommonRoundButton
+import com.nuecoo.feature.main.domain.model.CookieType
+import com.nuecoo.feature.main.domain.model.CookieUIItemData
 import getCookieAnimationFrames
 import getCookieTypeColor
 import getCookieTypeMainTextRes
@@ -79,16 +86,36 @@ fun CookieOpenScreen(
     val animFrames = remember(cookieData.type) { getCookieAnimationFrames(cookieData.type) }
     var triggerAnimation by remember { mutableStateOf(false) }
 
+    val haptic = LocalHapticFeedback.current
+    val openScale = remember { Animatable(1f) }
+
     LaunchedEffect(triggerAnimation) {
         if (!triggerAnimation || isOpened || isAnimating) return@LaunchedEffect
         isAnimating = true
         onCookieOpened(cookieData.type)
-        for (i in getCookieAnimationFrames(cookieData.type).indices) {
+
+        val frames = getCookieAnimationFrames(cookieData.type)
+        frames.indices.forEach { i ->
             currentFrame = i
-            delay(800L)
+            delay(400L)
         }
+
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
         isOpened = true
         isAnimating = false
+    }
+
+    LaunchedEffect(currentFrame, isAnimating) {
+        if (isAnimating) {
+            openScale.animateTo(
+                targetValue = 1.15f,
+                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
+            )
+            openScale.animateTo(
+                targetValue = 1f,
+                animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy)
+            )
+        }
     }
 
     val displayImage = when {
@@ -135,27 +162,30 @@ fun CookieOpenScreen(
                     initialValue = -4f,
                     targetValue = 4f,
                     animationSpec = infiniteRepeatable(
-                        animation = tween(
-                            durationMillis = 1200,
-                            easing = LinearEasing
-                        ),
+                        animation = tween(durationMillis = 1200, easing = LinearEasing),
                         repeatMode = RepeatMode.Reverse
                     ),
                     label = ""
                 )
+                val appliedRotation = if (isAnimating) 0f else rotation
 
-                Image(
-                    painter = painterResource(displayImage),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillWidth,
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 48.dp)
                         .padding(top = 24.dp)
-                        .graphicsLayer {
-                            rotationZ = rotation
-                        }
-                )
+                        .height(220.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(displayImage),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer { rotationZ = appliedRotation }
+                    )
+                }
 
                 if (!isOpened && !isAnimating) {
                     Spacer(Modifier.height(96.dp))
@@ -168,39 +198,44 @@ fun CookieOpenScreen(
                     )
                 }
 
-                if (isOpened) {
-                    MessageBackgroundBox(message = message)
-                    Spacer(Modifier.height(24.dp))
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.padding(horizontal = 28.dp)
-                    ) {
-                        CommonRoundButton(
-                            text = stringResource(R.string.close),
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(52.dp),
+                AnimatedVisibility(
+                    visible = isOpened,
+                    enter = fadeIn(animationSpec = tween(300))
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        MessageBackgroundBox(message = message)
+                        Spacer(Modifier.height(24.dp))
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier.padding(horizontal = 28.dp)
+                        ) {
+                            CommonRoundButton(
+                                text = stringResource(R.string.close),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(52.dp),
 
-                            backgroundColor = Color(0x66FFFFFF),
-                            borderColor = Color.White.copy(alpha = 0.5f),
-                            cornerRadius = 24.dp,
-                            textColor = Color.White,
+                                backgroundColor = Color(0x66FFFFFF),
+                                borderColor = Color.White.copy(alpha = 0.5f),
+                                cornerRadius = 24.dp,
+                                textColor = Color.White,
 
-                            onClick = { onClose() }
-                        )
+                                onClick = { onClose() }
+                            )
 
-                        CommonRoundButton(
-                            text = stringResource(R.string.text_open_cookie_start_collection),
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(52.dp),
+                            CommonRoundButton(
+                                text = stringResource(R.string.text_open_cookie_start_collection),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(52.dp),
 
-                            backgroundColor = getCookieTypeColor(cookieData.type),
-                            cornerRadius = 24.dp,
-                            textColor = Color.White,
+                                backgroundColor = getCookieTypeColor(cookieData.type),
+                                cornerRadius = 24.dp,
+                                textColor = Color.White,
 
-                            onClick = { onMoveCollection() }
-                        )
+                                onClick = { onMoveCollection() }
+                            )
+                        }
                     }
                 }
             }

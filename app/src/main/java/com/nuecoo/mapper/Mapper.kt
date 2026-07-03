@@ -55,14 +55,19 @@ private val COOKIE_TYPE_RESOURCES = listOf(
         type = CookieType.Comfort,
         messageArrayRes = R.array.cookie_type_consolation,
         closedImgRes = R.drawable.img_cookie_comfort_1,
-        openedImgRes = R.drawable.img_cookie_comfort_6,
+        openedImgRes = R.drawable.img_cookie_comfort_11,
         collectionImages = listOf(
             R.drawable.img_cookie_comfort_1,
             R.drawable.img_cookie_comfort_2,
             R.drawable.img_cookie_comfort_3,
             R.drawable.img_cookie_comfort_4,
             R.drawable.img_cookie_comfort_5,
-            R.drawable.img_cookie_comfort_6
+            R.drawable.img_cookie_comfort_6,
+            R.drawable.img_cookie_comfort_7,
+            R.drawable.img_cookie_comfort_8,
+            R.drawable.img_cookie_comfort_9,
+            R.drawable.img_cookie_comfort_10,
+            R.drawable.img_cookie_comfort_11
         ),
         mainTextRes = R.string.text_open_cookie_comfort_main,
         subTextRes = R.string.text_open_cookie_comfort_sub,
