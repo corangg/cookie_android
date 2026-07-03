@@ -18,8 +18,16 @@ local.properties
 functions/node_modules/
 functions/lib/
 
-# Test script (╥ндц юЭ©К)
+# Test script (О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫)
 node_modules/
 test-call.js
 
 .kotlin/
+
+# Signing
+keystore
+*.jks
+*.keystore
+
+# Build artifacts
+/app/release/
