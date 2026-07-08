@@ -1,8 +1,8 @@
 package com.nuecoo.feature.auth.data.remote.datasource
 
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.functions.FirebaseFunctions
+import com.nuecoo.core.data.model.remote.RemoteAuthModel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -23,7 +23,24 @@ class FirebaseAuthDataSourceImpl @Inject constructor(
             auth.removeAuthStateListener(listener)
         }
     }
-    override suspend fun trySignUp(email: String, password: String): AuthResult = auth.createUserWithEmailAndPassword(email, password).await()
+
+    override suspend fun trySignUp(authModel: RemoteAuthModel) {
+        ensureAuthenticated()
+        functions
+            .getHttpsCallable("signUp")
+            .call(
+                mapOf(
+                    "email" to authModel.email,
+                    "password" to authModel.password,
+                    "phone" to authModel.phone,
+                    "nickname" to authModel.nickname,
+                    "birth" to authModel.birth,
+                    "gender" to authModel.gender
+                )
+            )
+            .await()
+    }
+
     override suspend fun logIn(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password).await()
     }

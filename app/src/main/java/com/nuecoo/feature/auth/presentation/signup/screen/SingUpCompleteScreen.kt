@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.google.android.play.integrity.internal.s
 import com.nuecoo.R
 import com.nuecoo.core.navigation.Route
 import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
@@ -147,9 +148,10 @@ private fun SubTextItem(modifier: Modifier, signupResult: SignUpResult, nickname
             SignUpResult.Failed -> R.string.signup_complete_fail_sub
         }
     )
+    val nicknameText = if(signupResult == SignUpResult.Success) nickname else ""
     SignUpMainTextItem(
         modifier = modifier,
-        text = "$nickname$text",
+        text = "$nicknameText$text",
         fontSize = 16
     )
 }

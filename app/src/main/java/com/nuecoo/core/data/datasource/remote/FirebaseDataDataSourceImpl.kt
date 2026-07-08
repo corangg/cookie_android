@@ -19,23 +19,6 @@ class FirebaseDataDataSourceImpl @Inject constructor(
     private val database: FirebaseDatabase,
     private val auth: FirebaseAuth
 ) : FirebaseDataDataSource {
-    override suspend fun saveSignUpData(
-        uid: String,
-        userInfo: RemoteUserInfo,
-        email: String,
-        phone: String
-    ) {
-        val updates = hashMapOf(
-            "users/$uid" to userInfo,
-            "emails/${email.toRTDBForm()}" to true,
-            "phoneToUid/${encodePhoneKey(phone)}" to uid
-        )
-        database.reference.updateChildren(updates).await()
-    }
-
-    private fun encodePhoneKey(phone: String): String =
-        URLEncoder.encode(phone, "UTF-8")
-
     override suspend fun checkEmailExists(email: String): Boolean {
         val snapshot = database.reference
             .child("emails")

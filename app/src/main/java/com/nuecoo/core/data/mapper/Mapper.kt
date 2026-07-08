@@ -1,6 +1,5 @@
 package com.nuecoo.core.data.mapper
 
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.DataSnapshot
 import com.nuecoo.core.data.model.local.CookieEventEntity
 import com.nuecoo.core.data.model.local.LocalUserInfo

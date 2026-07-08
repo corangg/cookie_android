@@ -16,7 +16,17 @@ class ObserveAuthStateUseCase @Inject constructor(
 class SignUpUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke(authData: AuthModel): SignUpResult = repository.trySignUp(authData)
+    suspend operator fun invoke(authData: AuthModel): SignUpResult{
+        val data = authData.copy(
+            phone = toE164Format(authData.phone)
+        )
+        return repository.trySignUp(data)
+    }
+
+    private fun toE164Format(domesticPhone: String): String {
+        val digitsOnly = domesticPhone.filter { it.isDigit() }
+        return "+82" + digitsOnly.removePrefix("0")
+    }
 }
 
 class CheckEmailExistsUseCase @Inject constructor(

@@ -1,11 +1,11 @@
 package com.nuecoo.feature.auth.data.remote.datasource
 
-import com.google.firebase.auth.AuthResult
+import com.nuecoo.core.data.model.remote.RemoteAuthModel
 import kotlinx.coroutines.flow.Flow
 
 interface FirebaseAuthDataSource {
     fun observeAuthState(): Flow<Boolean?>
-    suspend fun trySignUp(email: String, password: String): AuthResult
+    suspend fun trySignUp(authModel: RemoteAuthModel)
     suspend fun logIn(email: String, password: String)
     suspend fun logOut()
     suspend fun sendVerificationCode(phoneNumber: String, purpose: String)

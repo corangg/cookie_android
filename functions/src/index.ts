@@ -29,6 +29,10 @@ function toDomesticFormat(e164Phone: string): string {
   return e164Phone.replace(/^\+82/, "0");
 }
 
+function encodeEmailKey(email: string): string {
+  return email.replace(/\./g, ",");
+}
+
 function maskEmail(email: string): string {
   const [local, domain] = email.split("@");
   const maskLength =
@@ -216,6 +220,96 @@ export const verifyPhoneForSignup = onCall(
     }
 
     await verifyStoredCode(phoneNumber, code, "SIGNUP");
+    return { success: true };
+  }
+);
+
+// 서버사이드 회원가입: 계정 생성 + users/emails/phoneToUid 원자적 저장
+export const signUp = onCall(
+  { region: "asia-northeast3" },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "인증되지 않은 요청입니다.");
+    }
+
+    const { email, password, phone, nickname, birth, gender } = request.data as {
+      email?: string;
+      password?: string;
+      phone?: string;
+      nickname?: string;
+      birth?: string;
+      gender?: boolean;
+    };
+
+    if (!email || !password || !phone || !nickname || !birth || gender === undefined) {
+      throw new HttpsError("invalid-argument", "필수 값이 누락되었습니다.");
+    }
+
+    if (!/^\+82\d{9,10}$/.test(phone)) {
+      throw new HttpsError("invalid-argument", "전화번호 형식이 올바르지 않습니다.");
+    }
+
+    // 1. 휴대폰 인증 완료 여부 확인 (verifyPhoneForSignup에서 verified: true로 마킹됨)
+    const codeRef = rtdb.ref(`verificationCodes/${encodeKey(phone)}`);
+    const codeSnap = await codeRef.get();
+
+    if (!codeSnap.exists()) {
+      throw new HttpsError("permission-denied", "휴대폰 인증을 먼저 완료해주세요.");
+    }
+
+    const codeData = codeSnap.val();
+    if (codeData.purpose !== "SIGNUP" || codeData.verified !== true) {
+      throw new HttpsError("permission-denied", "휴대폰 인증을 먼저 완료해주세요.");
+    }
+
+    if (codeData.expiresAt < Date.now()) {
+      throw new HttpsError("deadline-exceeded", "인증이 만료되었습니다. 다시 인증해주세요.");
+    }
+
+    // 2. 중복 가입 재확인 (발송 시점과 가입 시점 사이 동시 요청 대비)
+    const domesticPhone = toDomesticFormat(phone);
+    const phoneIndexSnap = await rtdb.ref(`phoneToUid/${encodeKey(domesticPhone)}`).get();
+    if (phoneIndexSnap.exists()) {
+      throw new HttpsError("already-exists", "이미 가입된 휴대폰 번호입니다.", { reason: "PHONE_DUPLICATED" });
+    }
+
+    // 3. Firebase Auth 계정 생성 (이메일 중복/형식/비밀번호 강도는 Admin SDK가 검증)
+    let uid: string;
+    try {
+      const userRecord = await admin.auth().createUser({ email, password });
+      uid = userRecord.uid;
+    } catch (e: any) {
+      switch (e.code) {
+        case "auth/email-already-exists":
+          throw new HttpsError("already-exists", "이미 가입된 이메일입니다.", { reason: "EMAIL_DUPLICATED" });
+        case "auth/invalid-email":
+          throw new HttpsError("invalid-argument", "이메일 형식이 올바르지 않습니다.", { reason: "INVALID_EMAIL" });
+        case "auth/invalid-password":
+          throw new HttpsError("invalid-argument", "비밀번호가 너무 짧습니다.", { reason: "WEAK_PASSWORD" });
+        default:
+          console.error("계정 생성 실패:", e);
+          throw new HttpsError("internal", "계정 생성에 실패했습니다.");
+      }
+    }
+
+    // 4. RTDB atomic write: users/{uid} + emails/{encodedEmail} + phoneToUid/{encodedPhone}
+    const userInfo = { email, nickname, phone, birth, gender };
+    const updates: Record<string, unknown> = {
+      [`users/${uid}`]: userInfo,
+      [`emails/${encodeEmailKey(email)}`]: true,
+      [`phoneToUid/${encodeKey(domesticPhone)}`]: uid,
+    };
+
+    try {
+      await rtdb.ref().update(updates);
+    } catch (e) {
+      console.error("DB 저장 실패, 계정 롤백:", e);
+      await admin.auth().deleteUser(uid).catch((err) => console.error("계정 롤백 실패:", err));
+      throw new HttpsError("internal", "회원정보 저장에 실패했습니다.", { reason: "DB_SAVE_FAILED" });
+    }
+
+    await codeRef.remove();
+
     return { success: true };
   }
 );
