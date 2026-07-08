@@ -1,14 +1,11 @@
 package com.nuecoo.feature.main.presentation.oven.screen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.Image
@@ -47,6 +44,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -57,6 +55,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.res.ResourcesCompat
 import com.nuecoo.R
 import com.nuecoo.core.presetation.ui.component.CommonRoundButton
 import com.nuecoo.core.theme.MainText
@@ -68,7 +67,9 @@ import getCookieTypeColor
 import getCookieTypeMainTextRes
 import getCookieTypeSubTextRes
 import getOpenedCookieImage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import kotlin.math.hypot
 
 @Composable
@@ -79,7 +80,7 @@ fun CookieOpenScreen(
     onCookieOpened: (Int) -> Unit,
     onMoveCollection: () -> Unit
 ) {
-    val isAlreadyOpened = cookieData.isOpened == true
+    val isAlreadyOpened = false//cookieData.isOpened == true
     var isOpened by remember { mutableStateOf(isAlreadyOpened) }
     var isAnimating by remember { mutableStateOf(false) }
     var currentFrame by remember { mutableIntStateOf(0) }
@@ -87,35 +88,31 @@ fun CookieOpenScreen(
     var triggerAnimation by remember { mutableStateOf(false) }
 
     val haptic = LocalHapticFeedback.current
-    val openScale = remember { Animatable(1f) }
+    val context = LocalContext.current
+
+    LaunchedEffect(cookieData.type) {
+        withContext(Dispatchers.IO) {
+            (animFrames + getOpenedCookieImage(cookieData.type)).forEach { resId ->
+                runCatching { ResourcesCompat.getDrawable(context.resources, resId, null) }
+            }
+        }
+    }
 
     LaunchedEffect(triggerAnimation) {
         if (!triggerAnimation || isOpened || isAnimating) return@LaunchedEffect
         isAnimating = true
         onCookieOpened(cookieData.type)
 
-        val frames = getCookieAnimationFrames(cookieData.type)
-        frames.indices.forEach { i ->
-            currentFrame = i
-            delay(400L)
+        if (animFrames.isNotEmpty()) {
+            animFrames.indices.forEach { i ->
+                currentFrame = i
+                delay(400L)
+            }
         }
 
         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
         isOpened = true
         isAnimating = false
-    }
-
-    LaunchedEffect(currentFrame, isAnimating) {
-        if (isAnimating) {
-            openScale.animateTo(
-                targetValue = 1.15f,
-                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)
-            )
-            openScale.animateTo(
-                targetValue = 1f,
-                animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy)
-            )
-        }
     }
 
     val displayImage = when {
@@ -162,30 +159,27 @@ fun CookieOpenScreen(
                     initialValue = -4f,
                     targetValue = 4f,
                     animationSpec = infiniteRepeatable(
-                        animation = tween(durationMillis = 1200, easing = LinearEasing),
+                        animation = tween(
+                            durationMillis = 1200,
+                            easing = LinearEasing
+                        ),
                         repeatMode = RepeatMode.Reverse
                     ),
                     label = ""
                 )
-                val appliedRotation = if (isAnimating) 0f else rotation
 
-                Box(
+                Image(
+                    painter = painterResource(displayImage),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillWidth,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 48.dp)
                         .padding(top = 24.dp)
-                        .height(220.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(displayImage),
-                        contentDescription = null,
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .graphicsLayer { rotationZ = appliedRotation }
-                    )
-                }
+                        .graphicsLayer {
+                            rotationZ = rotation
+                        }
+                )
 
                 if (!isOpened && !isAnimating) {
                     Spacer(Modifier.height(96.dp))
@@ -366,6 +360,8 @@ private fun Modifier.cookiePinchOpenDetector(
         val activePointers = mutableMapOf<Long, Offset>()
         var initialDistance = 0f
 
+        val threshold = with(density) { 80.dp.toPx() }
+
         awaitPointerEventScope {
             while (true) {
                 val event = awaitPointerEvent()
@@ -397,7 +393,9 @@ private fun Modifier.cookiePinchOpenDetector(
                                 (pts[0].y - pts[1].y).toDouble()
                             ).toFloat()
 
-                            if (currentDistance - initialDistance > 200f) {
+
+
+                            if (currentDistance - initialDistance > threshold) {
                                 onOpen()
                                 activePointers.clear()
                             }
