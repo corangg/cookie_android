@@ -1,5 +1,10 @@
 package com.nuecoo.feature.main.presentation.menu.screen
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -88,6 +93,7 @@ import com.nuecoo.core.theme.WidgetOn
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
 import com.nuecoo.feature.main.presentation.menu.viewmodel.CollectionProgress
 import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
+import com.nuecoo.feature.widget.presentation.FloatingWidgetService
 import getCookieTypeColor
 import getCookieTypeList
 import getCookieTypeListSize
@@ -109,6 +115,15 @@ fun MenuScreen(
     val attendanceDates by viewModel.attendanceDates.collectAsStateWithLifecycle()
     val widgetEnabled by viewModel.widgetEnabled.collectAsStateWithLifecycle()
 
+    val overlayPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (Settings.canDrawOverlays(context)) {
+            viewModel.saveWidgetEnabled(true)
+            FloatingWidgetService.start(context)
+        }
+    }
+
     LaunchedEffect(Unit) { viewModel.refreshUserInfo() }
     LaunchedEffect(Unit) {
         viewModel.loadCollectionProgress(context.getCookieTypeListSize())
@@ -125,8 +140,23 @@ fun MenuScreen(
         isWidgetEnabled = widgetEnabled,
         onMoveOven = onMoveOven,
         onMoveAppInfo = onMoveAppInfo,
-        onSaveWidgetEnabled = {
-            viewModel.saveWidgetEnabled(it)
+        onSaveWidgetEnabled = { enabled ->
+            if (enabled) {
+                if (Settings.canDrawOverlays(context)) {
+                    viewModel.saveWidgetEnabled(true)
+                    FloatingWidgetService.start(context)
+                } else {
+                    overlayPermissionLauncher.launch(
+                        Intent(
+                            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                            Uri.parse("package:${context.packageName}")
+                        )
+                    )
+                }
+            } else {
+                viewModel.saveWidgetEnabled(false)
+                FloatingWidgetService.stop(context)
+            }
         },
         onLogOut = viewModel::logout,
         onCancelLoading = viewModel::cancelCurrentWork

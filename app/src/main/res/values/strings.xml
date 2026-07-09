@@ -175,6 +175,9 @@
     <string name="text_menu_widget">위젯</string>
     <string name="text_menu_widget_on">홈 화면에서 쿠키 준비 중</string>
     <string name="text_menu_widget_off">위젯이 꺼져 있어요</string>
+    <string name="text_floating_widget_channel_name">플로팅 위젯</string>
+    <string name="text_floating_widget_notification_title">NueCoo 위젯이 실행 중이에요</string>
+    <string name="text_floating_widget_close_hint">드래그해서 종료</string>
     <string name="text_menu_app_info">앱 정보</string>
     <string name="text_menu_app_logout">로그아웃</string>
 

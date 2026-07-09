@@ -9,15 +9,24 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.nuecoo.core.navigation.AppNavigation
 import com.nuecoo.core.ui.BaseActivity
 import com.nuecoo.core.ui.showSimpleDialog
 import com.nuecoo.core.util.hasNotificationPermission
 import com.nuecoo.core.theme.NueCooTheme
+import com.nuecoo.feature.widget.domain.usecase.GetWidgetEnabledUseCase
+import com.nuecoo.feature.widget.presentation.FloatingWidgetService
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
+
+    @Inject
+    lateinit var getWidgetEnabledUseCase: GetWidgetEnabledUseCase
 
     private lateinit var requestPermissionsLauncher: ActivityResultLauncher<Array<String>>
 
@@ -66,10 +75,20 @@ class MainActivity : BaseActivity() {
         }
 
         checkPermissions()
+        startFloatingWidgetIfEnabled()
 
         setContent {
             NueCooTheme {
                 AppNavigation()
+            }
+        }
+    }
+
+    private fun startFloatingWidgetIfEnabled() {
+        lifecycleScope.launch {
+            val enabled = getWidgetEnabledUseCase().first()
+            if (enabled && Settings.canDrawOverlays(this@MainActivity)) {
+                FloatingWidgetService.start(this@MainActivity)
             }
         }
     }
