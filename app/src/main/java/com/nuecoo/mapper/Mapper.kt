@@ -79,14 +79,19 @@ private val COOKIE_TYPE_RESOURCES = listOf(
         type = CookieType.Passion,
         messageArrayRes = R.array.cookie_type_passion,
         closedImgRes = R.drawable.img_cookie_passion_1,
-        openedImgRes = R.drawable.img_cookie_passion_6,
+        openedImgRes = R.drawable.img_cookie_passion_11,
         collectionImages = listOf(
             R.drawable.img_cookie_passion_1,
             R.drawable.img_cookie_passion_2,
             R.drawable.img_cookie_passion_3,
             R.drawable.img_cookie_passion_4,
             R.drawable.img_cookie_passion_5,
-            R.drawable.img_cookie_passion_6
+            R.drawable.img_cookie_passion_6,
+            R.drawable.img_cookie_passion_7,
+            R.drawable.img_cookie_passion_8,
+            R.drawable.img_cookie_passion_9,
+            R.drawable.img_cookie_passion_10,
+            R.drawable.img_cookie_passion_11
         ),
         mainTextRes = R.string.text_open_cookie_passion_main,
         subTextRes = R.string.text_open_cookie_passion_sub,
