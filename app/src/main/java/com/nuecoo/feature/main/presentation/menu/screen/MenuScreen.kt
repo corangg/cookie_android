@@ -192,7 +192,7 @@ private fun MenuScreenContent(
             mainTitle = stringResource(R.string.text_menu_title)
         )//메인 타이틀
 
-        ProfileItem(modifier = Modifier.padding(top = 16.dp), nickname = nickname)//프로필 컴포넌트
+        //ProfileItem(modifier = Modifier.padding(top = 16.dp), nickname = nickname)//프로필 컴포넌트
 
         CheckInDayItem(
             modifier = Modifier.padding(top = 16.dp),
@@ -208,11 +208,11 @@ private fun MenuScreenContent(
             progressList = progress
         )//콜랙션 컴포넌트
 
-        WidgetItem(
+        /*WidgetItem(
             modifier = Modifier.padding(top = 16.dp),
             isWidget = isWidgetEnabled,
             onSaveWidgetEnabled = onSaveWidgetEnabled
-        )//위젯 컴포넌트
+        )//위젯 컴포넌트*/
 
         AppInfoItem(
             modifier = Modifier.padding(top = 16.dp),

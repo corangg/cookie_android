@@ -80,7 +80,7 @@ fun CookieOpenScreen(
     onCookieOpened: (Int) -> Unit,
     onMoveCollection: () -> Unit
 ) {
-    val isAlreadyOpened = false//cookieData.isOpened == true
+    val isAlreadyOpened = cookieData.isOpened == true
     var isOpened by remember { mutableStateOf(isAlreadyOpened) }
     var isAnimating by remember { mutableStateOf(false) }
     var currentFrame by remember { mutableIntStateOf(0) }

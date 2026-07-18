@@ -79,8 +79,8 @@ private fun AppInfoScreenContent(
             modifier = Modifier.padding(top = 24.dp)
         )
 
-        AppRateItem(modifier = Modifier.padding(top = 16.dp), onClick = {}/*onMoveRate*/)//앱 평가 컴포넌트, 화면은 추후 추가
-        AppCsItem(modifier = Modifier.padding(top = 16.dp), onClick = {}/*onMoveCs*/)//문의하기 컴포넌트, 화면은 추후 추가
+        //AppRateItem(modifier = Modifier.padding(top = 16.dp), onClick = {}/*onMoveRate*/)//앱 평가 컴포넌트, 화면은 추후 추가
+        //AppCsItem(modifier = Modifier.padding(top = 16.dp), onClick = {}/*onMoveCs*/)//문의하기 컴포넌트, 화면은 추후 추가
         AppPrivacyItem(modifier = Modifier.padding(top = 16.dp), onClick = onMovePrivacy)//개인정보 컴포넌트
         AppTermsItem(modifier = Modifier.padding(top = 16.dp), onClick = onMoveTerms)//이용약관 컴포넌트
 

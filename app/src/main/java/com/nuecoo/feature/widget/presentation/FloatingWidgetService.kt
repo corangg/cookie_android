@@ -38,6 +38,7 @@ class FloatingWidgetService : Service() {
 
     private var windowManager: WindowManager? = null
     private var floatingView: ImageView? = null
+    private var floatingViewParams: WindowManager.LayoutParams? = null
     private var closeZoneView: TextView? = null
     private var resultPopupView: View? = null
     private var resultPopupParams: WindowManager.LayoutParams? = null
@@ -182,6 +183,7 @@ class FloatingWidgetService : Service() {
 
         wm.addView(view, bubbleParams)
         floatingView = view
+        floatingViewParams = bubbleParams
     }
 
     private fun createCloseZoneView(): TextView {
@@ -243,6 +245,20 @@ class FloatingWidgetService : Service() {
         wm.addView(popup, params)
         resultPopupView = popup
         resultPopupParams = params
+        bringFloatingViewToFront()
+    }
+
+    /**
+     * Overlay windows stack in add order, so the popup (added after the widget)
+     * would otherwise cover it. Re-adding the widget puts it back on top whenever
+     * the two overlap.
+     */
+    private fun bringFloatingViewToFront() {
+        val wm = windowManager ?: return
+        val view = floatingView ?: return
+        val params = floatingViewParams ?: return
+        wm.removeView(view)
+        wm.addView(view, params)
     }
 
     private fun updateResultPopupPosition(anchorX: Int, anchorY: Int, anchorWidth: Int, anchorHeight: Int) {
@@ -265,15 +281,14 @@ class FloatingWidgetService : Service() {
         anchorHeight: Int
     ) {
         val density = resources.displayMetrics.density
-        val gap = (RESULT_POPUP_GAP_DP * density).toInt()
         val margin = (RESULT_POPUP_MARGIN_DP * density).toInt()
         val screenWidth = resources.displayMetrics.widthPixels
         val screenHeight = resources.displayMetrics.heightPixels
         val maxX = (screenWidth - params.width - margin).coerceAtLeast(margin)
         val maxY = (screenHeight - params.height - margin).coerceAtLeast(margin)
 
-        val desiredX = anchorX + anchorWidth + gap
-        val desiredY = anchorY
+        val desiredX = anchorX + anchorWidth/2
+        val desiredY = anchorY + anchorHeight/2
 
         params.x = desiredX.coerceIn(margin, maxX)
         params.y = desiredY.coerceIn(margin, maxY)
