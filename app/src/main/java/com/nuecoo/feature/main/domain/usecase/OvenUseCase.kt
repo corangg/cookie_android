@@ -28,3 +28,9 @@ class OpenCookieUseCase @Inject constructor(
 ){
     suspend operator fun invoke(type: Int) = repository.openCookie(type)
 }
+
+class GetCookieTotalCountsUseCase @Inject constructor(
+    private val repository: CookieRepository
+){
+    suspend operator fun invoke(type: Int) = repository.getCookieCount(type)
+}

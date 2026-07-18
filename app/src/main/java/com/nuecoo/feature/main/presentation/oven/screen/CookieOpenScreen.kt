@@ -1,5 +1,6 @@
 package com.nuecoo.feature.main.presentation.oven.screen
 
+import android.R.id.message
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -75,7 +76,6 @@ import kotlin.math.hypot
 @Composable
 fun CookieOpenScreen(
     cookieData: CookieUIItemData,
-    cookieMessages: Map<Int, List<String>>,
     onClose: () -> Unit,
     onCookieOpened: (Int) -> Unit,
     onMoveCollection: () -> Unit
@@ -121,11 +121,7 @@ fun CookieOpenScreen(
         else -> cookieData.imgRes
     }
 
-    val message = run {
-        val messages = cookieMessages[cookieData.type] ?: emptyList()
-        val no = cookieData.no
-        if (no != null && no > 0 && no <= messages.size) messages[no - 1] else ""
-    }
+    val message = cookieData.message?: stringResource(R.string.text_message_open_cookie_error)
 
     Box(
         modifier = Modifier
@@ -416,33 +412,5 @@ private fun Modifier.cookiePinchOpenDetector(
                 }
             }
         }
-    }
-}
-
-@Preview(
-    showBackground = true,
-    name = "Cookie Open Screen - Closed",
-    widthDp = 360,
-    heightDp = 800
-)
-@Composable
-private fun CookieOpenScreenClosedPreview() {
-    NueCooTheme {
-        CookieOpenScreen(
-            cookieData = CookieUIItemData(
-                type = CookieType.Cheering.type,
-                no = 1,
-                isOpened = false,
-                imgRes = R.drawable.img_cookie_cheering_1
-            ),
-            cookieMessages = mapOf(
-                CookieType.Cheering.type to listOf(
-                    "오늘도 충분히 잘하고 있어요!"
-                )
-            ),
-            onClose = {},
-            onCookieOpened = {},
-            onMoveCollection = {}
-        )
     }
 }

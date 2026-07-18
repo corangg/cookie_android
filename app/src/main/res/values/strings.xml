@@ -162,6 +162,7 @@
     <string name="text_collection_all">총</string>
     <string name="text_collection_cookie_unit">개</string>
     <string name="text_collection_un_collected">미수집</string>
+    <string name="text_collection_error">잘못된 쿠키 입니다. 다시 시도해 주세요</string>
 
     <!-- Menu -->
     <string name="text_menu_title">메뉴</string>

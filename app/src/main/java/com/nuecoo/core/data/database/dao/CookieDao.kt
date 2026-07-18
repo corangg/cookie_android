@@ -6,6 +6,7 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.nuecoo.core.data.model.local.CookieEventEntity
 import com.nuecoo.core.data.model.local.CookieTypeCountEntity
+import com.nuecoo.core.data.model.local.LocalTypeCollectedCount
 import com.nuecoo.feature.main.domain.model.CookieSyncStatus
 import kotlinx.coroutines.flow.Flow
 
@@ -53,6 +54,13 @@ interface CookieEventDao {
     WHERE type = :type AND syncStatus IN ('SAVED', 'SAVED_VIA_TICKET')
 """)
     fun observeDistinctCollectedCount(type: Int): Flow<Int>
+
+    @Query("""
+    SELECT type, COUNT(DISTINCT cookieNo) AS count FROM CookieEventEntity 
+    WHERE syncStatus IN ('SAVED', 'SAVED_VIA_TICKET')
+    GROUP BY type
+""")
+    fun observeDistinctCollectedCounts(): Flow<List<LocalTypeCollectedCount>>
 
     @Query("SELECT * FROM CookieEventEntity WHERE syncStatus = :status")
     suspend fun getAllByStatus(status: CookieSyncStatus): List<CookieEventEntity>

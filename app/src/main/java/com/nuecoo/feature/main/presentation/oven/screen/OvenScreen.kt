@@ -40,15 +40,12 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -57,48 +54,38 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.R
 import com.nuecoo.core.presetation.ui.component.DefaultItemBox
-import com.nuecoo.feature.main.domain.model.CookieType
-import com.nuecoo.feature.main.domain.model.CookieUIItemData
 import com.nuecoo.core.presetation.ui.component.MainTitleItem
-import com.nuecoo.feature.main.presentation.oven.viewmodel.OvenViewModel
 import com.nuecoo.core.theme.MainBackground
 import com.nuecoo.core.theme.MainBorder
 import com.nuecoo.core.theme.MainText
 import com.nuecoo.core.theme.MainTitle
-import com.nuecoo.core.theme.NueCooTheme
 import com.nuecoo.core.theme.ProgressBackground
 import com.nuecoo.core.theme.SubText
 import com.nuecoo.core.theme.SubTitle
 import com.nuecoo.core.theme.White
-import getCookieMessageResMap
+import com.nuecoo.feature.main.domain.model.CookieUIItemData
+import com.nuecoo.feature.main.domain.model.TypeCollectedCount
+import com.nuecoo.feature.main.presentation.oven.viewmodel.OvenViewModel
 import getCookieTypeAllCollectedTextRes
 import getCookieTypeBackgroundColor
 import getCookieTypeColor
-import getCookieTypeListSize
 import getCookieTypeMainTextRes
 import kotlinx.coroutines.launch
-import toUiItem
 
 @Composable
 fun OvenScreen(viewModel: OvenViewModel = hiltViewModel(), onMoveCollection: () -> Unit) {
-    val context = LocalContext.current
-    val dailyCookieSlots by viewModel.dailyCookieSlots.collectAsStateWithLifecycle()
+    val cookieSlotItems by viewModel.cookieSlotItems.collectAsStateWithLifecycle()
     val notOpenedCookies by viewModel.notOpenedCookies.collectAsStateWithLifecycle()
     val remainTime by viewModel.remainTime.collectAsStateWithLifecycle()
     val selectedCookie by viewModel.selectedCookie.collectAsStateWithLifecycle()
-
-    val cookieMessageResMap = getCookieMessageResMap()
-
-    val cookieNameMap = cookieMessageResMap.mapValues { entry ->
-        stringArrayResource(entry.value).toList()
-    }
+    val cookieCount by viewModel.collectionProgress.collectAsStateWithLifecycle()
 
     OvenScreenContent(
         remainTime = remainTime,
-        cookieList = dailyCookieSlots.map { it.toUiItem() },
+        cookieList = cookieSlotItems,
         notOpenedCookies = notOpenedCookies,
         selectedCookie = selectedCookie,
-        cookieNameMap = cookieNameMap,
+        cookieCount = cookieCount,
         onCookieClick = { uiItem ->
             viewModel.selectCookie(uiItem.type)
         },
@@ -115,8 +102,8 @@ private fun OvenScreenContent(
     remainTime: String,
     cookieList: List<CookieUIItemData>,
     notOpenedCookies: Int,
+    cookieCount: List<TypeCollectedCount>,
     selectedCookie: CookieUIItemData?,
-    cookieNameMap: Map<Int, List<String>>,
     onCookieClick: (CookieUIItemData) -> Unit,
     onCookieClose: () -> Unit,
     onCookieOpened: (Int) -> Unit,
@@ -152,7 +139,8 @@ private fun OvenScreenContent(
                 .padding(horizontal = 12.dp),
             list = cookieList,
             onMoveCollection = onMoveCollection,
-            openCookie = onCookieClick
+            openCookie = onCookieClick,
+            totalCount = cookieCount
         )//쿠키 트레이
 
         CookieBottomMessage()//쿠키 하단 메세지
@@ -160,7 +148,6 @@ private fun OvenScreenContent(
         selectedCookie?.let { cookie ->
             showOpenedCookie(
                 item = cookie,
-                cookieNameMap = cookieNameMap,
                 onCookieOpened = onCookieOpened,
                 onMoveCollection = onMoveCollection,
                 onClose = onCookieClose
@@ -195,6 +182,7 @@ private fun TimerInitCookie(time: String) {
 @Composable
 private fun CookieTray(
     modifier: Modifier,
+    totalCount: List<TypeCollectedCount>,
     list: List<CookieUIItemData>,
     onMoveCollection: () -> Unit,
     openCookie: (CookieUIItemData) -> Unit
@@ -222,7 +210,8 @@ private fun CookieTray(
                 CookieItem(
                     data = item,
                     onMoveCollection = onMoveCollection,
-                    onClick = { openCookie(item) }
+                    onClick = { openCookie(item) },
+                    totalCount =  totalCount.find { it.type == item.type }?.maxCount?:return@items
                 )
             }
         }
@@ -245,7 +234,6 @@ private fun CookieBottomMessage() {
 @Composable
 private fun showOpenedCookie(
     item: CookieUIItemData,
-    cookieNameMap: Map<Int, List<String>>,
     onCookieOpened: (Int) -> Unit,
     onMoveCollection: () -> Unit,
     onClose: () -> Unit
@@ -259,7 +247,6 @@ private fun showOpenedCookie(
     ) {
         CookieOpenScreen(
             cookieData = item,
-            cookieMessages = cookieNameMap,
             onClose = onClose,
             onCookieOpened = onCookieOpened,
             onMoveCollection = {
@@ -271,7 +258,12 @@ private fun showOpenedCookie(
 }
 
 @Composable
-fun CookieItem(data: CookieUIItemData, onMoveCollection: () -> Unit, onClick: () -> Unit) {
+fun CookieItem(
+    data: CookieUIItemData,
+    totalCount: Int,
+    onMoveCollection: () -> Unit,
+    onClick: () -> Unit,
+) {
     val scale = remember { Animatable(1f) }
     val coroutineScope = rememberCoroutineScope()
     val interactionSource = remember { MutableInteractionSource() }
@@ -281,7 +273,8 @@ fun CookieItem(data: CookieUIItemData, onMoveCollection: () -> Unit, onClick: ()
         AllCookieOpenedDialog(
             type = data.type,
             onMoveCollection = onMoveCollection,
-            onDismiss = { showFullDialog = false })
+            onDismiss = { showFullDialog = false },
+            totalCount = totalCount)
     }
 
     Image(
@@ -312,13 +305,11 @@ fun CookieItem(data: CookieUIItemData, onMoveCollection: () -> Unit, onClick: ()
 }
 
 @Composable
-private fun AllCookieOpenedDialog(type: Int, onMoveCollection: () -> Unit, onDismiss: () -> Unit) {
-    val context = LocalContext.current
+private fun AllCookieOpenedDialog(type: Int, totalCount: Int, onMoveCollection: () -> Unit, onDismiss: () -> Unit) {
     val defaultColor = getCookieTypeColor(type)
     val backgroundColor = getCookieTypeBackgroundColor(type)
     val cookieText = stringResource(getCookieTypeMainTextRes(type))
     val allCollectedText = stringResource(getCookieTypeAllCollectedTextRes(type))
-    val totalCount = context.getCookieTypeListSize().find { it.first.type == type }?.second ?: 0
 
     Dialog(onDismissRequest = onDismiss) {
         DefaultItemBox {

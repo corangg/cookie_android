@@ -29,20 +29,22 @@ class GetCollectionByTypeUseCase @Inject constructor(
 class GetCollectionListUseCase @Inject constructor(
     private val repository: CookieRepository
 ) {
-    suspend operator fun invoke(collectionSize: List<Pair<CookieType, Int>>): List<CollectionDisplayItem> {
+    suspend operator fun invoke(): List<CollectionDisplayItem> {
+        val collectionSize = repository.getCookieCount()
         val savedEvents = repository.getAllEvents()
             .filter { it.isSaved && it.cookieNo != null }
             .distinctBy { it.type to it.cookieNo }
-        val collectedMap = savedEvents.associate { (it.type to it.cookieNo!!) to it.claimDate }
+        val collectedMap = savedEvents.associateBy {it.type to it.cookieNo}
 
         return collectionSize.flatMap { (cookieType, size) ->
             (1..size).map { no ->
-                val date = collectedMap[cookieType.type to no]
+                val event = collectedMap[cookieType to no]
                 CollectionDisplayItem(
                     no = no,
-                    type = cookieType.type,
-                    isCollected = date != null,
-                    date = date
+                    type = cookieType,
+                    isCollected = event != null,
+                    date = event?.claimDate,
+                    message = event?.message
                 )
             }
         }

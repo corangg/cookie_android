@@ -287,31 +287,3 @@ private fun Modifier.cookiePinchOpenDetector(
         }
     }
 }
-
-@Preview(
-    showBackground = true,
-    name = "Cookie Open Screen - Closed",
-    widthDp = 360,
-    heightDp = 800
-)
-@Composable
-private fun CookieOpenScreenClosedPreview() {
-    NueCooTheme {
-        CookieOpenScreen(
-            cookieData = CookieUIItemData(
-                type = CookieType.Cheering.type,
-                no = 1,
-                isOpened = false,
-                imgRes = R.drawable.img_cookie_cheering_1
-            ),
-            cookieMessages = mapOf(
-                CookieType.Cheering.type to listOf(
-                    "오늘도 충분히 잘하고 있어요!"
-                )
-            ),
-            onClose = {},
-            onCookieOpened = {},
-            onMoveCollection = {}
-        )
-    }
-}

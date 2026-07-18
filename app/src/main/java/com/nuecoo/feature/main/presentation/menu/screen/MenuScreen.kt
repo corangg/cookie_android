@@ -90,13 +90,12 @@ import com.nuecoo.core.theme.WidgetInActive
 import com.nuecoo.core.theme.WidgetInActiveBackground
 import com.nuecoo.core.theme.WidgetOff
 import com.nuecoo.core.theme.WidgetOn
+import com.nuecoo.feature.main.domain.model.TypeCollectedCount
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
-import com.nuecoo.feature.main.presentation.menu.viewmodel.CollectionProgress
 import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
 import com.nuecoo.feature.widget.presentation.FloatingWidgetService
 import getCookieTypeColor
 import getCookieTypeList
-import getCookieTypeListSize
 import java.time.LocalDate
 
 @Composable
@@ -125,9 +124,6 @@ fun MenuScreen(
     }
 
     LaunchedEffect(Unit) { viewModel.refreshUserInfo() }
-    LaunchedEffect(Unit) {
-        viewModel.loadCollectionProgress(context.getCookieTypeListSize())
-    }
 
     MenuScreenContent(
         progress = progress,
@@ -165,7 +161,7 @@ fun MenuScreen(
 
 @Composable
 private fun MenuScreenContent(
-    progress: List<CollectionProgress>,
+    progress: List<TypeCollectedCount>,
     isLoading: Boolean,
     nickname: String?,
     attendanceCount: Int,
@@ -456,9 +452,9 @@ private fun WeeklyAttendanceCard(modifier: Modifier, list: List<WeeklyAttendance
 }
 
 @Composable
-private fun CollectionProgressItem(modifier: Modifier, progressList: List<CollectionProgress>) {
-    val total = progressList.sumOf { it.total }
-    val colleted = progressList.sumOf { it.collected }
+private fun CollectionProgressItem(modifier: Modifier, progressList: List<TypeCollectedCount>) {
+    val total = progressList.sumOf { it.maxCount }
+    val colleted = progressList.sumOf { it.collectedCount }
 
     DefaultItemBox(modifier = modifier) {
         Row(
@@ -550,7 +546,7 @@ fun CookieCircleProgress(
 }
 
 @Composable
-private fun CollectionList(modifier: Modifier, progressList: List<CollectionProgress>) {
+private fun CollectionList(modifier: Modifier, progressList: List<TypeCollectedCount>) {
     Column(modifier = modifier) {
         val cookies = getCookieTypeList()
         cookies.forEach {
@@ -587,8 +583,8 @@ private fun CollectionList(modifier: Modifier, progressList: List<CollectionProg
 }
 
 @Composable
-private fun CollectionProgressLine(modifier: Modifier, progressData: CollectionProgress) {
-    val progress = progressData.collected.toFloat() / progressData.total.toFloat()
+private fun CollectionProgressLine(modifier: Modifier, progressData: TypeCollectedCount) {
+    val progress = progressData.collectedCount.toFloat() / progressData.maxCount.toFloat()
 
     Canvas(
         modifier = modifier
@@ -620,9 +616,9 @@ private fun CollectionProgressLine(modifier: Modifier, progressData: CollectionP
 }
 
 @Composable
-private fun CollectionProgressText(modifier: Modifier, progressData: CollectionProgress) {
-    val colleted = progressData.collected
-    val total = progressData.total
+private fun CollectionProgressText(modifier: Modifier, progressData: TypeCollectedCount) {
+    val colleted = progressData.collectedCount
+    val total = progressData.maxCount
     Text(
         modifier = modifier,
         text = "${colleted}/${total}",

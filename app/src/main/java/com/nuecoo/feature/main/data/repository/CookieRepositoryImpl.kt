@@ -13,6 +13,7 @@ import com.nuecoo.feature.main.data.datasource.local.CookieTypeCountLocalDataSou
 import com.nuecoo.feature.main.data.datasource.remote.CookieRemoteDataSource
 import com.nuecoo.feature.main.data.worker.CookieSyncScheduler
 import com.nuecoo.feature.main.domain.model.CookieSyncStatus
+import com.nuecoo.feature.main.domain.model.TypeCollectedCount
 import com.nuecoo.feature.main.domain.repository.CookieRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.combine
@@ -42,9 +43,11 @@ class CookieRepositoryImpl @Inject constructor(
                 }
             }
 
-    override fun observeAllEvents() = cookieEventDataSource.observeAllEvents().map { list -> list.map { it.toDomain() } }
+    override fun observeAllEvents() =
+        cookieEventDataSource.observeAllEvents().map { list -> list.map { it.toDomain() } }
 
-    override suspend fun getAllEvents() = withContext(ioDispatcher) { cookieEventDataSource.getAllEvents().map { it.toDomain() } }
+    override suspend fun getAllEvents() =
+        withContext(ioDispatcher) { cookieEventDataSource.getAllEvents().map { it.toDomain() } }
 
     override suspend fun refreshCounts() {
         runCatching {
@@ -56,19 +59,18 @@ class CookieRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun canOpenCookie(type: Int) = withContext(ioDispatcher) {
-        val maxCount = cookieTypeCountLocalDataSource.getMaxCount(type) ?: return@withContext true
-        val collectedCount = cookieEventDataSource.getDistinctCollectedCount(type)
-        return@withContext collectedCount < maxCount
-    }
-
-    override fun observeCollectionProgress(type: Int) =
+    override fun observeCollectionProgress() =
         combine(
-            cookieEventDataSource.observeDistinctCollectedCount(type),
+            cookieEventDataSource.observeDistinctCollectedCounts(),
             cookieTypeCountLocalDataSource.getCookieTypeCountFlow()
-        ) { collected, allCounts ->
-            val maxCount = allCounts.find { it.type == type }?.maxCount
-            collected to maxCount
+        ) { collectedList, allCounts ->
+            collectedList.map {
+                TypeCollectedCount(
+                    type = it.type,
+                    collectedCount = it.count,
+                    maxCount = allCounts.find { count -> count.type == it.type }?.maxCount ?: 0
+                )
+            }
         }
 
     override suspend fun syncAllEventsFromServer() {
@@ -78,6 +80,8 @@ class CookieRepositoryImpl @Inject constructor(
             cookieEventDataSource.insertAll(events)
         }
     }
+
+    override suspend fun getCookieCount(type: Int) = cookieEventDataSource.getDistinctCollectedCount(type)
 
     override fun observeDailyClaimDates() = cookieEventDataSource.observeDailyClaimDates()
 
@@ -94,5 +98,11 @@ class CookieRepositoryImpl @Inject constructor(
                 syncStatus = CookieSyncStatus.PENDING
             )
         )
+    }
+
+    override suspend fun getCookieCount() = withContext(ioDispatcher) {
+        cookieTypeCountLocalDataSource.getCookieTypeCount().map {
+            Pair(it.type, it.maxCount)
+        }
     }
 }

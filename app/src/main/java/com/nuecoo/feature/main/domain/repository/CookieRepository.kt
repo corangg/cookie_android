@@ -1,6 +1,7 @@
 package com.nuecoo.feature.main.domain.repository
 
 import com.nuecoo.feature.main.domain.model.CookieEvent
+import com.nuecoo.feature.main.domain.model.TypeCollectedCount
 import kotlinx.coroutines.flow.Flow
 
 interface CookieRepository {
@@ -9,9 +10,10 @@ interface CookieRepository {
     fun observeAllEvents(): Flow<List<CookieEvent>>
     suspend fun getAllEvents(): List<CookieEvent>
     suspend fun refreshCounts()
-    suspend fun canOpenCookie(type: Int): Boolean
-    fun observeCollectionProgress(type: Int): Flow<Pair<Int, Int?>>
+    fun observeCollectionProgress(): Flow<List<TypeCollectedCount>>
     suspend fun syncAllEventsFromServer()
-
+    suspend fun getCookieCount(type: Int): Int
     fun observeDailyClaimDates(): Flow<List<String>>
+
+    suspend fun getCookieCount(): List<Pair<Int, Int>>
 }

@@ -33,7 +33,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -45,9 +44,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
@@ -65,11 +62,6 @@ import com.nuecoo.R
 import com.nuecoo.core.presetation.ui.component.CommonDropDown
 import com.nuecoo.core.presetation.ui.component.MainTitleItem
 import com.nuecoo.core.presetation.ui.model.CommonDropDownItem
-import com.nuecoo.core.util.toDisplayDate
-import com.nuecoo.feature.main.domain.model.CollectionDisplayItem
-import com.nuecoo.feature.main.domain.model.CollectionSortType
-import com.nuecoo.feature.main.domain.model.CookieType
-import com.nuecoo.feature.main.presentation.collection.viewmodel.CollectionViewModel
 import com.nuecoo.core.theme.DropDownBackground
 import com.nuecoo.core.theme.DropDownSelectBackground
 import com.nuecoo.core.theme.ItemCardBackground
@@ -81,28 +73,26 @@ import com.nuecoo.core.theme.MainText
 import com.nuecoo.core.theme.SubTitle
 import com.nuecoo.core.theme.UnCollectedText
 import com.nuecoo.core.theme.White
+import com.nuecoo.core.util.toDisplayDate
+import com.nuecoo.feature.main.domain.model.CollectionDisplayItem
+import com.nuecoo.feature.main.domain.model.CollectionSortType
+import com.nuecoo.feature.main.domain.model.CookieType
+import com.nuecoo.feature.main.presentation.collection.viewmodel.CollectionViewModel
 import getCollectionTypeImages
-import getCookieMessageResMap
 import getCookieTypeColor
 import getCookieTypeList
-import getCookieTypeListSize
 import getCookieTypeMainTextRes
 import kotlinx.coroutines.launch
 
 
 @Composable
 fun CollectionScreen(viewModel: CollectionViewModel = hiltViewModel()) {
-    val context = LocalContext.current
     val items by viewModel.items.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val selectedType by viewModel.selectedCookieType.collectAsStateWithLifecycle()
     val showCollectedOnly by viewModel.showCollectedOnly.collectAsStateWithLifecycle()
     val sortType by viewModel.sortType.collectAsStateWithLifecycle()
     val selectedItem by viewModel.selectedItem.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.initCollectionList(context.getCookieTypeListSize())
-    }
 
     CollectionScreenContent(
         items = items,
@@ -588,22 +578,12 @@ private fun showOpenedCollectionItem(item: CollectionDisplayItem?, onClose: () -
                 decorFitsSystemWindows = false
             )
         ) {
-            val cookieMessageResMap = getCookieMessageResMap()
-            val cookieNameMap = cookieMessageResMap.mapValues { entry ->
-                stringArrayResource(entry.value).toList()
-            }
-
-            val message = run {
-                val messages = cookieNameMap[item.type] ?: emptyList()
-                val no = item.no
-                if (no > 0 && no <= messages.size) messages[no - 1] else ""
-            }
 
             CollectionOpenScreen(
                 collectionData = item,
                 onClose = onClose,
                 imgRes = getCollectionTypeImages(item.type).getOrElse(0) { R.drawable.img_cookie_deactive },
-                message = message
+                message = item.message ?: stringResource(R.string.text_collection_error)
             )
         }
     }

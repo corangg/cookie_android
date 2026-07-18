@@ -20,7 +20,6 @@ import com.nuecoo.core.theme.UnknownColor
 
 data class CookieTypeResource(
     val type: CookieType,
-    val messageArrayRes: Int,
     val closedImgRes: Int,
     val openedImgRes: Int,
     val collectionImages: List<Int>,
@@ -34,7 +33,6 @@ data class CookieTypeResource(
 private val COOKIE_TYPE_RESOURCES = listOf(
     CookieTypeResource(
         type = CookieType.Cheering,
-        messageArrayRes = R.array.cookie_type_cheering,
         closedImgRes = R.drawable.img_cookie_cheering_1,
         openedImgRes = R.drawable.img_cookie_cheering_11,
         collectionImages = listOf(
@@ -58,7 +56,6 @@ private val COOKIE_TYPE_RESOURCES = listOf(
     ),
     CookieTypeResource(
         type = CookieType.Comfort,
-        messageArrayRes = R.array.cookie_type_consolation,
         closedImgRes = R.drawable.img_cookie_comfort_1,
         openedImgRes = R.drawable.img_cookie_comfort_11,
         collectionImages = listOf(
@@ -82,7 +79,6 @@ private val COOKIE_TYPE_RESOURCES = listOf(
     ),
     CookieTypeResource(
         type = CookieType.Passion,
-        messageArrayRes = R.array.cookie_type_passion,
         closedImgRes = R.drawable.img_cookie_passion_1,
         openedImgRes = R.drawable.img_cookie_passion_11,
         collectionImages = listOf(
@@ -106,7 +102,6 @@ private val COOKIE_TYPE_RESOURCES = listOf(
     ),
     CookieTypeResource(
         type = CookieType.Sermon,
-        messageArrayRes = R.array.cookie_type_determination,
         closedImgRes = R.drawable.img_cookie_sermon_1,
         openedImgRes = R.drawable.img_cookie_sermon_11,
         collectionImages = listOf(
@@ -130,7 +125,6 @@ private val COOKIE_TYPE_RESOURCES = listOf(
     ),
     CookieTypeResource(
         type = CookieType.Love,
-        messageArrayRes = R.array.cookie_type_love,
         closedImgRes = R.drawable.img_cookie_love_1,
         openedImgRes = R.drawable.img_cookie_love_11,
         collectionImages = listOf(
@@ -166,6 +160,7 @@ fun CookieSlotUi.toUiItem(): CookieUIItemData {
             isFull = false,
             isOpened = false,
             no = null,
+            message = null,
             imgRes = resource?.closedImgRes ?: R.drawable.img_cookie_deactive
         )
         is CookieSlotUi.InProgress -> CookieUIItemData(
@@ -173,6 +168,7 @@ fun CookieSlotUi.toUiItem(): CookieUIItemData {
             isFull = false,
             isOpened = false,
             no = null,
+            message = null,
             imgRes = resource?.closedImgRes ?: R.drawable.img_cookie_deactive
         )
         is CookieSlotUi.Filled -> {
@@ -182,6 +178,7 @@ fun CookieSlotUi.toUiItem(): CookieUIItemData {
                 isFull = false,
                 isOpened = savedEvent != null,
                 no = savedEvent?.cookieNo,
+                message = savedEvent?.message,
                 imgRes = if (savedEvent != null) resource?.openedImgRes ?: R.drawable.img_cookie_deactive
                          else resource?.closedImgRes ?: R.drawable.img_cookie_deactive
             )
@@ -201,16 +198,6 @@ fun getCookieTypeList(): List<CookieTypeData> {
             imgRes = resource.closedImgRes,
             nameRes = resource.mainTextRes
         )
-    }
-}
-
-fun getCookieMessageArrayRes(type: Int): Int {
-    return getCookieTypeResource(type)?.messageArrayRes ?: 0
-}
-
-fun getCookieMessageResMap(): Map<Int, Int> {
-    return COOKIE_TYPE_RESOURCES.associate {
-        it.type.type to it.messageArrayRes
     }
 }
 
@@ -247,10 +234,4 @@ fun getCookieTypeAllCollectedTextRes(type: Int): Int {
 
 fun getCookieTypeSubTextRes(type: Int): Int {
     return getCookieTypeResource(type)?.subTextRes ?: R.string.text_open_cookie_error_main
-}
-
-fun Context.getCookieTypeListSize(): List<Pair<CookieType, Int>> {
-    return COOKIE_TYPE_RESOURCES.map {
-        Pair(it.type, resources.getStringArray(it.messageArrayRes).size)
-    }
 }

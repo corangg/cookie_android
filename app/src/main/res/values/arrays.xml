@@ -1,48 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 응원 쿠키 메시지 (6개) -->
-    <string-array name="cookie_type_cheering">
-        <item>오늘도 최선을 다하는 당신, 정말 멋져요!</item>
-        <item>당신의 노력은 반드시 빛을 발할 거예요!</item>
-        <item>힘든 길을 걷는 당신 곁에 항상 응원이 있어요.</item>
-        <item>포기하지 마세요, 당신은 충분히 잘하고 있어요!</item>
-        <item>작은 걸음이 모여 큰 변화를 만든답니다!</item>
-        <item>당신의 가능성은 무한해요. 믿어봐요!</item>
-        <item>우리 오늘도 힘내요!</item>
-        <item>괜찮지 않아도 괜찮아요</item>
-    </string-array>
 
-    <!-- 위로 쿠키 메시지 (4개) -->
-    <string-array name="cookie_type_consolation">
-        <item>괜찮아요, 오늘 하루도 정말 수고 많았어요.</item>
-        <item>힘든 감정도 잠시예요. 곧 괜찮아질 거예요.</item>
-        <item>당신의 마음이 따뜻하게 회복되길 바라요.</item>
-        <item>울고 싶을 땐 울어도 돼요. 그것도 용기랍니다.</item>
-    </string-array>
-
-    <!-- 열정 쿠키 메시지 (3개) -->
-    <string-array name="cookie_type_passion">
-        <item>열정으로 가득한 오늘이 되길 바라요!</item>
-        <item>불타는 마음으로 도전해봐요!</item>
-        <item>당신의 열정이 세상을 바꿀 거예요!</item>
-        <item>조금만 조금만 더!</item>
-    </string-array>
-
-    <!-- 결심 쿠키 메시지 (5개) -->
-    <string-array name="cookie_type_determination">
-        <item>오늘의 작은 결심이 내일의 큰 변화를 만들어요.</item>
-        <item>결심한 것을 끝까지 밀어붙여봐요!</item>
-        <item>흔들리더라도 다시 일어나는 것이 진정한 결심입니다.</item>
-        <item>당신의 결심을 응원해요. 할 수 있어요!</item>
-        <item>목표를 향해 한 걸음씩, 그것으로 충분해요.</item>
-    </string-array>
-
-    <string-array name="cookie_type_love">
-        <item>오늘의 작은 결심이 내일의 큰 변화를 만들어요.</item>
-        <item>결심한 것을 끝까지 밀어붙여봐요!</item>
-        <item>흔들리더라도 다시 일어나는 것이 진정한 결심입니다.</item>
-        <item>당신의 결심을 응원해요. 할 수 있어요!</item>
-        <item>목표를 향해 한 걸음씩, 그것으로 충분해요.</item>
-        <item>사랑합니다.</item>
-    </string-array>
 </resources>

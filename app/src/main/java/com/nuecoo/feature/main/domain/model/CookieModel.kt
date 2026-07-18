@@ -49,6 +49,7 @@ data class CookieUIItemData(
     val type: Int,
     val isFull: Boolean = false,
     val no: Int? = null,
+    val message: String?,
     val isOpened: Boolean? = false,
     @field:DrawableRes val imgRes: Int
 )
@@ -67,3 +68,9 @@ enum class CookieType(val type: Int) {
     Love(4),
     Unknown(-1)
 }
+
+data class TypeCollectedCount(
+    val type: Int,
+    val collectedCount: Int,
+    val maxCount: Int
+)

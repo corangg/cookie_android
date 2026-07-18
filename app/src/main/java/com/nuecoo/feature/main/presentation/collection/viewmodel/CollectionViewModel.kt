@@ -39,8 +39,12 @@ class CollectionViewModel @Inject constructor(
     private val _showCollectedOnly = MutableStateFlow(false)
     val showCollectedOnly: StateFlow<Boolean> = _showCollectedOnly
 
-    fun initCollectionList(list: List<Pair<CookieType, Int>>) = onIoWork {
-        allItems.value = getCollectionListUseCase(list)
+    init {
+        initCollectionList()
+    }
+
+    private fun initCollectionList() = onIoWork {
+        allItems.value = getCollectionListUseCase()
         _items.value = allItems.value
     }
 

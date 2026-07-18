@@ -17,6 +17,11 @@ data class CookieEventEntity(
     val hasBeenViewed: Boolean = false
 )
 
+data class LocalTypeCollectedCount(
+    val type: Int,
+    val count: Int
+)
+
 @Entity
 data class CookieTypeCountEntity(
     @PrimaryKey val type: Int,

@@ -23,6 +23,7 @@ class CookieEventDataSourceImpl @Inject constructor(
     ) = cookieEventDao.updateStatus(eventId, status, cookieNo, ticketGroupId)
     override suspend fun getDistinctCollectedCount(type: Int) = cookieEventDao.getDistinctCollectedCount(type)
     override fun observeDistinctCollectedCount(type: Int) = cookieEventDao.observeDistinctCollectedCount(type)
+    override fun observeDistinctCollectedCounts() = cookieEventDao.observeDistinctCollectedCounts()
     override suspend fun getAllByStatus(status: CookieSyncStatus) = cookieEventDao.getAllByStatus(status)
     override suspend fun deleteAll() = cookieEventDao.deleteAll()
     override suspend fun insertAll(events: List<CookieEventEntity>) = cookieEventDao.insertAll(events)

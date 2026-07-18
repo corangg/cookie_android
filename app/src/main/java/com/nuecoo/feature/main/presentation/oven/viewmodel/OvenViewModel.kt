@@ -5,9 +5,9 @@ import com.nuecoo.core.base.BaseViewModel
 import com.nuecoo.core.di.DefaultDispatcher
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.MainDispatcher
-import com.nuecoo.feature.main.domain.model.CookieSlotUi
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
-import com.nuecoo.feature.main.domain.repository.CookieRepository
+import com.nuecoo.feature.main.domain.usecase.GetCookieTotalCountsUseCase
+import com.nuecoo.feature.main.domain.usecase.ObserveCollectionProgressUseCase
 import com.nuecoo.feature.main.domain.usecase.ObserveDailyCookieData
 import com.nuecoo.feature.main.domain.usecase.ObserveNotOpenedCookies
 import com.nuecoo.feature.main.domain.usecase.OpenCookieUseCase
@@ -26,6 +26,8 @@ import javax.inject.Inject
 @HiltViewModel
 class OvenViewModel @Inject constructor(
     private val openCookieUseCase: OpenCookieUseCase,
+    private val getCookieTotalCountsUseCase: GetCookieTotalCountsUseCase,
+    observeCollectionProgressUseCase: ObserveCollectionProgressUseCase,
     observeDailyCookieData: ObserveDailyCookieData,
     remainTimeUseCase: RemainTimeUseCase,
     observeNotOpenedCookies: ObserveNotOpenedCookies,
@@ -46,13 +48,25 @@ class OvenViewModel @Inject constructor(
         viewModelScope, SharingStarted.WhileSubscribed(5000), 0
     )
 
+    val collectionProgress = observeCollectionProgressUseCase().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val cookieSlotItems: StateFlow<List<CookieUIItemData>> = combine(
+        dailyCookieSlots, collectionProgress
+    ) { slots, progress ->
+        slots.map { slot ->
+            val isFull = progress.find { it.type == slot.type }
+                ?.let { it.maxCount > 0 && it.collectedCount >= it.maxCount } ?: false
+            slot.toUiItem().copy(isFull = isFull)
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     private val _selectedCookieType = MutableStateFlow<Int?>(null)
 
     val selectedCookie: StateFlow<CookieUIItemData?> = combine(
-        dailyCookieSlots, _selectedCookieType
-    ) { slots, type ->
+        cookieSlotItems, _selectedCookieType
+    ) { items, type ->
         if (type == null) return@combine null
-        slots.find { it.type == type }?.toUiItem()
+        items.find { it.type == type }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     fun selectCookie(type: Int) {

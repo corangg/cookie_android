@@ -13,5 +13,6 @@ data class CollectionDisplayItem(
     val no: Int,
     val isCollected: Boolean,
     val type: Int,
-    val date: String? = null
+    val date: String? = null,
+    val message: String? = null,
 )

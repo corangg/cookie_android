@@ -110,3 +110,9 @@ class ObserveUserInfoUseCase @Inject constructor(
 ){
     operator fun invoke() = repository.observeUserInfo()
 }
+
+class ObserveCollectionProgressUseCase @Inject constructor(
+    private val repository: CookieRepository
+){
+    operator fun invoke() = repository.observeCollectionProgress()
+}
