@@ -20,7 +20,7 @@ class CookieEventDataSourceImpl @Inject constructor(
         cookieNo: Int?,
         message: String?,
         ticketGroupId: String?
-    ) = cookieEventDao.updateStatus(eventId, status, cookieNo, ticketGroupId)
+    ) = cookieEventDao.updateStatus(eventId, status, cookieNo, message, ticketGroupId)
     override suspend fun getDistinctCollectedCount(type: Int) = cookieEventDao.getDistinctCollectedCount(type)
     override fun observeDistinctCollectedCount(type: Int) = cookieEventDao.observeDistinctCollectedCount(type)
     override fun observeDistinctCollectedCounts() = cookieEventDao.observeDistinctCollectedCounts()
