@@ -9,6 +9,7 @@ appcompat = "1.7.1"
 material = "1.13.0"
 activity = "1.12.1"
 composeRuntimeLivedata = "1.9.0"
+coreSplashscreen = "1.0.1"
 
 ksp = "2.0.10-1.0.24"
 viewmodel = "2.10.0"
@@ -51,6 +52,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 
 # Compose BOM
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }

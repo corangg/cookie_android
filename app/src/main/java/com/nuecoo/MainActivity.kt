@@ -8,6 +8,7 @@ import android.provider.Settings
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.nuecoo.core.navigation.AppNavigation
@@ -35,7 +36,9 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        splashScreen.setOnExitAnimationListener { it.remove() }
 
         requestPermissionsLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()

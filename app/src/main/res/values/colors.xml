@@ -16,6 +16,7 @@
     <color name="blue_500">#2196F3</color>
 
     <color name="main_background">#F7E0A6</color>
+    <color name="splash_background">#F3EAD8</color>
     <color name="sub_background">#FFF2CC</color>
     <color name="main_color">#FBB11B</color>
     <color name="main_border">#4D310E</color>

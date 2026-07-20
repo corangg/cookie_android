@@ -11,4 +11,11 @@
     </style>
 
     <style name="Theme.NueCoo" parent="Base.Theme.NueCoo" />
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon_empty</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/splash_background</item>
+        <item name="postSplashScreenTheme">@style/Theme.NueCoo</item>
+    </style>
 </resources>
