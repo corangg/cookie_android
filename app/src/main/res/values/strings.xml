@@ -185,6 +185,7 @@
     <string name="text_floating_widget_close_hint">드래그해서 종료</string>
     <string name="text_menu_app_info">앱 정보</string>
     <string name="text_menu_app_logout">로그아웃</string>
+    <string name="text_menu_withdrawn">회원 탈퇴</string>
 
 
     <!--AppInfo-->
@@ -218,7 +219,22 @@
     <string name="text_app_terms_sub_title">TERMS</string>
     <string name="text_app_terms_content">제1조 (목적)\n본 약관은 너쿠(이하 "회사")가 제공하는 모바일 애플리케이션(이하 "서비스")의 이용 조건과 절차, 회사와 이용자의 권리·의무 및 책임 사항을 규정함을 목적으로 합니다.\n\n제2조 (약관의 효력 및 변경)\n1. 본 약관은 서비스 내에 게시함으로써 효력이 발생합니다.\n2. 회사는 관련 법령을 위반하지 않는 범위에서 약관을 변경할 수 있으며, 변경 시 적용일자 및 변경사유를 명시하여 최소 7일 전(이용자에게 불리한 변경의 경우 최소 30일 전) 사전 공지합니다.\n3. 이용자가 변경된 약관에 동의하지 않을 경우 서비스 이용을 중단하고 제7조에 따라 탈퇴할 수 있으며, 공지 후에도 이용자가 거부 의사를 표시하지 않고 서비스를 계속 이용하는 경우 변경된 약관에 동의한 것으로 봅니다.\n\n제3조 (회원가입)\n1. 이용자는 회사가 요청하는 정보를 정확히 입력하여 회원가입을 신청합니다.\n2. 회원가입 시 수집하는 정보는 이름, 생년월일, 휴대전화번호, 이메일입니다.\n3. 본 서비스는 만 14세 이상만 이용할 수 있으며, 만 14세 미만은 회원가입을 신청할 수 없습니다.\n4. 허위 정보 기재 또는 타인 정보 도용 시 서비스 이용이 제한될 수 있습니다.\n\n제4조 (서비스의 제공 및 변경)\n1. 회사는 이용자에게 서비스를 제공합니다.\n2. 회사는 서비스 품질 향상 및 운영상·기술상의 필요에 따라 서비스의 전부 또는 일부 내용을 수정·추가·중단할 수 있으며, 이 경우 사전에 공지합니다.\n\n제5조 (이용자의 의무)\n이용자는 다음 행위를 해서는 안 됩니다.\n- 타인의 개인정보 도용\n- 서비스의 정상적인 운영 방해\n- 불법 정보 게시 또는 전송\n- 회사 또는 제3자의 지식재산권 침해\n\n제6조 (개인정보 보호)\n회사는 관련 법령 및 개인정보 처리방침에 따라 이용자의 개인정보를 보호합니다.\n\n제7조 (회원 탈퇴 및 계약 해지)\n1. 회원은 언제든지 앱 내 문의하기 또는 이메일(dlwprkdlq64@gmail.com)을 통해 탈퇴를 요청할 수 있으며, 회사는 요청 접수 후 지체 없이 처리합니다.\n2. 회원이 제5조를 위반하는 등 서비스 이용을 계속하기 어려운 사유가 있는 경우 회사는 사전 통지 후 이용계약을 해지하거나 서비스 이용을 제한할 수 있습니다.\n\n제8조 (지식재산권)\n1. 서비스에 포함된 저작물에 대한 저작권 및 지식재산권은 회사에 귀속합니다.\n2. 이용자가 서비스 내에 작성한 게시물의 저작권은 이용자 본인에게 귀속하며, 회사는 서비스 운영·홍보에 필요한 범위 내에서 이를 사용할 수 있습니다.\n\n제9조 (서비스 중단)\n천재지변, 시스템 점검 등의 사유로 서비스 제공이 일시 중단될 수 있습니다.\n이 경우 회사는 사전에 공지하거나, 긴급 시 사후 통지할 수 있습니다.\n\n제10조 (면책 및 손해배상)\n1. 회사는 천재지변 등 불가항력 또는 이용자의 귀책 사유로 인한 손해에 대해 책임지지 않습니다.\n2. 회사의 고의 또는 중대한 과실로 이용자에게 손해가 발생한 경우 관련 법령에 따라 배상 책임을 집니다.\n\n제11조 (분쟁 해결 및 준거법)\n본 약관은 대한민국 법령에 따르며, 서비스 이용과 관련하여 분쟁이 발생한 경우 회사와 이용자는 상호 협의하여 해결하기 위해 노력하고, 협의가 이루어지지 않을 경우 민사소송법상의 관할 법원에 제소할 수 있습니다.\n\n본 약관은 2026년 08월 25일부터 적용됩니다.</string>
 
+    <!--Withdrawn-->
+    <string name="text_withdrawn_title">회원 탈퇴</string>
+    <string name="text_withdrawn_sub_title">DELETE ACCOUNT</string>
+    <string name="text_withdrawn_main">정말 탈퇴하시겠습니까?</string>
+    <string name="text_withdrawn_sub">탈퇴하면 아래 정보가 모두 삭제 됩니다.</string>
+    <string name="text_withdrawn_delete_cookie_main">수집한 쿠키</string>
+    <string name="text_withdrawn_delete_cookie_sub">수집한 쿠키 정보가 사라져요</string>
+    <string name="text_withdrawn_delete_attendance_main">출석 기록</string>
+    <string name="text_withdrawn_delete_attendance_sub">쌓아온 출석 일수가 초기화 돼요</string>
+    <string name="text_withdrawn_check">안내 사항을 확인 했으며 탈퇴에 동의 합니다.</string>
+    <string name="text_withdrawn_ok">탈퇴하기</string>
+    <string name="text_withdrawn_cancel">계속 사용할게요</string>
 
+    <string name="text_withdrawn_complete_main">탈퇴가 완료되었습니다.</string>
+    <string name="text_withdrawn_complete_sub">그동안 너쿠와 함께해 주셔서 감사합니다.\n언제든 다시 만나요</string>
+    <string name="text_withdrawn_complete_ok">확인</string>
 
 
     <string name="text_app_info_build">빌드 번호</string>

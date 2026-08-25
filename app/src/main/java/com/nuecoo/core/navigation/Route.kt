@@ -10,6 +10,8 @@ object Route {
     const val APP_CS = "app_cs"
     const val APP_PRIVACY = "app_privacy"
     const val APP_TERMS = "app_terms"
+    const val WITHDRAWN = "withdrawn"
+    const val WITHDRAWN_COMPLETE = "withdrawn_complete"
 
     object Login {
         const val GRAPH      = "login"

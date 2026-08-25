@@ -16,6 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -55,6 +56,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -103,6 +105,7 @@ fun MenuScreen(
     viewModel: MenuViewModel = hiltViewModel(),
     onMoveOven: () -> Unit,
     onMoveAppInfo: () -> Unit,
+    onWithdrawn: () -> Unit
 ) {
     val context = LocalContext.current
     val progress by viewModel.collectionProgress.collectAsStateWithLifecycle()
@@ -155,6 +158,7 @@ fun MenuScreen(
             }
         },
         onLogOut = viewModel::logout,
+        onWithdrawn = onWithdrawn,
         onCancelLoading = viewModel::cancelCurrentWork
     )
 }
@@ -173,6 +177,7 @@ private fun MenuScreenContent(
     onMoveAppInfo: () -> Unit,
     onSaveWidgetEnabled: (Boolean) -> Unit,
     onLogOut: () -> Unit,
+    onWithdrawn: () -> Unit,
     onCancelLoading: () -> Unit
 ) {
     Column(
@@ -216,13 +221,17 @@ private fun MenuScreenContent(
         )//앱 정보 컴포넌트
 
         LogOutItem(
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .clickable(onClick = onLogOut)
+            modifier = Modifier.padding(top = 16.dp),
+            onClick = onLogOut
         )//로그아웃 컴포넌트
 
+        WithdrawnItem(
+            modifier = Modifier.padding(top = 18.dp),
+            onClick = onWithdrawn
+        )//회원 탈퇴
+
         AppVersionItem(
-            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
+            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
         )//앱 버전 컴포넌트
     }
     LoadingOverlay(isLoading = isLoading, onCancel = onCancelLoading)
@@ -318,7 +327,7 @@ private fun CheckInDayItem(
 ) {
     var showAttendanceCalendar by remember { mutableStateOf(false) }
 
-    DefaultItemBox(modifier = modifier.clickable { showAttendanceCalendar = true }) {
+    DefaultItemBox(modifier = modifier, onClick = { showAttendanceCalendar = true }) {
         Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -751,8 +760,8 @@ private fun AppInfoItem(modifier: Modifier, onClick: () -> Unit) {
 }
 
 @Composable
-private fun LogOutItem(modifier: Modifier) {
-    DefaultItemBox(modifier = modifier) {
+private fun LogOutItem(modifier: Modifier, onClick: () -> Unit) {
+    DefaultItemBox(modifier = modifier, onClick = onClick) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -788,6 +797,37 @@ private fun LogOutItem(modifier: Modifier) {
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.size(28.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun WithdrawnItem(modifier: Modifier, onClick: () -> Unit) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Column(
+            modifier = Modifier
+                .width(IntrinsicSize.Max)
+                .clip(RoundedCornerShape(12.dp))
+                .clickable(onClick = onClick)
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.text_menu_withdrawn),
+                color = SubText,
+                fontSize = 18.sp,
+                fontFamily = FontFamily(Font(R.font.title_font)),
+                fontWeight = FontWeight.Light,
+                textAlign = TextAlign.Center,
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(SubText)
             )
         }
     }

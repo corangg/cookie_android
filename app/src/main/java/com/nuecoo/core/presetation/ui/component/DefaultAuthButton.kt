@@ -31,6 +31,7 @@ fun DefaultAuthButton(
     background: Color = Black,
     icon: Painter? = null,
     title: String,
+    fontSize: Int = 16,
     titleColor: Color = White,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -73,7 +74,7 @@ fun DefaultAuthButton(
                 color = titleColor,
                 fontWeight = FontWeight.Medium,
                 fontFamily = FontFamily(Font(R.font.title_font)),
-                fontSize = 16.sp,
+                fontSize = fontSize.sp,
             )
         }
     }

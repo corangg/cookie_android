@@ -19,6 +19,8 @@ private val bottomBarHiddenRoutes = setOf(
     Route.APP_CS,
     Route.APP_PRIVACY,
     Route.APP_TERMS,
+    Route.WITHDRAWN,
+    Route.WITHDRAWN_COMPLETE,
 )
 
 @Composable

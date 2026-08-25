@@ -91,3 +91,6 @@ val Transparent= Color(0x00FFFFFF)
 val Kakao = Color(0xFFfee500)
 val MailBackground = Color(0xFFE7F0F9)
 val MailIcon = Color(0xFF5B86B6)
+
+val WithdrawnChecked = Color(0xFFcf7639)
+val WithdrawnUnChecked = Color(0x77cf7639)

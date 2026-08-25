@@ -1,7 +1,6 @@
 package com.nuecoo.feature.main.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -14,7 +13,9 @@ import com.nuecoo.feature.main.presentation.menu.screen.AppInfoScreen
 import com.nuecoo.feature.main.presentation.menu.screen.AppPrivacyScreen
 import com.nuecoo.feature.main.presentation.menu.screen.AppRateScreen
 import com.nuecoo.feature.main.presentation.menu.screen.AppTermsScreen
+import com.nuecoo.feature.main.presentation.menu.screen.WithdrawnScreen
 import com.nuecoo.feature.main.presentation.menu.screen.MenuScreen
+import com.nuecoo.feature.main.presentation.menu.screen.WithdrawnCompleteScreen
 import com.nuecoo.feature.main.presentation.oven.screen.OvenScreen
 
 @Composable
@@ -51,6 +52,7 @@ fun MainNavHost(
                     }
                 },
                 onMoveAppInfo = { navController.navigate(Route.APP_INFO) },
+                onWithdrawn = { navController.navigate(Route.WITHDRAWN) }
             )
         }
         composable(Route.APP_INFO) {
@@ -76,6 +78,12 @@ fun MainNavHost(
         }
         composable(Route.APP_TERMS) {
             AppTermsScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Route.WITHDRAWN) {
+            WithdrawnScreen(onBack = { navController.popBackStack() }, onMoveWithdrawnComplete = { navController.navigate(Route.WITHDRAWN_COMPLETE) },)
+        }
+        composable(Route.WITHDRAWN_COMPLETE) {
+            WithdrawnCompleteScreen()
         }
     }
 }
