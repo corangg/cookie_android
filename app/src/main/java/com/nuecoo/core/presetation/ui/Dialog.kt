@@ -1,4 +1,4 @@
-package com.nuecoo.core.ui
+package com.nuecoo.core.presetation.ui
 
 import android.content.Context
 import androidx.appcompat.app.AlertDialog

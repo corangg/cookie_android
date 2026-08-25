@@ -21,6 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "NueCoo"
 include(":app")
-include(":core")
-include(":domain")
-include(":data")

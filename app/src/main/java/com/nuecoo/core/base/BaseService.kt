@@ -1,4 +1,4 @@
-package com.nuecoo.core.service
+package com.nuecoo.core.base
 
 import android.app.Service
 import android.content.Intent

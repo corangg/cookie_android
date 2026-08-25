@@ -12,8 +12,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.nuecoo.core.navigation.AppNavigation
-import com.nuecoo.core.ui.BaseActivity
-import com.nuecoo.core.ui.showSimpleDialog
+import com.nuecoo.core.presetation.ui.BaseActivity
+import com.nuecoo.core.presetation.ui.showSimpleDialog
 import com.nuecoo.core.util.hasNotificationPermission
 import com.nuecoo.core.theme.NueCooTheme
 import com.nuecoo.feature.widget.domain.usecase.GetWidgetEnabledUseCase
