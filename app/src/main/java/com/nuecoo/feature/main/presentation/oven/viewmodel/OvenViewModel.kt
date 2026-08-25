@@ -5,6 +5,7 @@ import com.nuecoo.core.base.BaseViewModel
 import com.nuecoo.core.di.DefaultDispatcher
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.MainDispatcher
+import com.nuecoo.feature.main.domain.model.CookieSlotUi
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
 import com.nuecoo.feature.main.domain.usecase.GetCookieTotalCountsUseCase
 import com.nuecoo.feature.main.domain.usecase.ObserveCollectionProgressUseCase
@@ -54,8 +55,11 @@ class OvenViewModel @Inject constructor(
         dailyCookieSlots, collectionProgress
     ) { slots, progress ->
         slots.map { slot ->
-            val isFull = progress.find { it.type == slot.type }
+            val allCollected = progress.find { it.type == slot.type }
                 ?.let { it.maxCount > 0 && it.collectedCount >= it.maxCount } ?: false
+            // 오늘 이미 연 쿠키(InProgress/Filled)는 열람해야 하므로,
+            // 오늘 아직 열지 않은 슬롯(Empty)일 때만 "모두 수집 완료"로 취급한다.
+            val isFull = allCollected && slot is CookieSlotUi.Empty
             slot.toUiItem().copy(isFull = isFull)
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
