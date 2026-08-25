@@ -94,9 +94,26 @@ class GetAttendanceDatesUseCase @Inject constructor(
 }
 
 class LogOutUseCase @Inject constructor(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+    private val cookieRepository: CookieRepository
 ) {
-    suspend operator fun invoke() = repository.logOut()
+    suspend operator fun invoke(): Boolean {
+        val success = repository.logOut()
+        // 기기에 남아있는 계정별 로컬 캐시가 다음 로그인 계정으로 새어 들어가지 않도록 정리
+        if (success) cookieRepository.clearLocalCache()
+        return success
+    }
+}
+
+class WithdrawUseCase @Inject constructor(
+    private val repository: AuthRepository,
+    private val cookieRepository: CookieRepository
+) {
+    suspend operator fun invoke(): Boolean {
+        val success = repository.withdraw()
+        if (success) cookieRepository.clearLocalCache()
+        return success
+    }
 }
 
 class RefreshUserInfoUseCase @Inject constructor(

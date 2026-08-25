@@ -5,6 +5,7 @@ import com.nuecoo.core.di.DefaultDispatcher
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.MainDispatcher
 import com.nuecoo.feature.main.domain.usecase.LogOutUseCase
+import com.nuecoo.feature.main.domain.usecase.WithdrawUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.MainCoroutineDispatcher
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WithdrawnViewModel @Inject constructor(
+    private val withdrawUseCase: WithdrawUseCase,
     private val logoutUseCase: LogOutUseCase,
     @MainDispatcher mainDispatcher: MainCoroutineDispatcher,
     @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
@@ -26,12 +28,24 @@ class WithdrawnViewModel @Inject constructor(
     private val _isSuccessWithdrawn = MutableStateFlow(false)
     val isSuccessWithdrawn: StateFlow<Boolean> = _isSuccessWithdrawn
 
+    private val _isWithdrawFailed = MutableStateFlow(false)
+    val isWithdrawFailed: StateFlow<Boolean> = _isWithdrawFailed
+
     fun setCheckedWithdrawn(checked: Boolean) {
         _isCheckedWithdrawn.value = checked
     }
 
-    fun onWithdrawn() {
-        _isSuccessWithdrawn.value = true
+    fun onWithdrawn() = onIoWork {
+        _isWithdrawFailed.value = false
+        if (withdrawUseCase()) {
+            _isSuccessWithdrawn.value = true
+        } else {
+            _isWithdrawFailed.value = true
+        }
+    }
+
+    fun consumeWithdrawFailure() {
+        _isWithdrawFailed.value = false
     }
 
     fun moveLogin() = onIoWork{

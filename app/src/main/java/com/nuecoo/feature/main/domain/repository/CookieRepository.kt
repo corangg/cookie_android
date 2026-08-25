@@ -16,4 +16,5 @@ interface CookieRepository {
     fun observeDailyClaimDates(): Flow<List<String>>
 
     suspend fun getCookieCount(): List<Pair<Int, Int>>
+    suspend fun clearLocalCache()
 }

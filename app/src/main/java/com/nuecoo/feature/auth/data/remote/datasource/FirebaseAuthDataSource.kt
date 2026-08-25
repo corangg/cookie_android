@@ -8,6 +8,7 @@ interface FirebaseAuthDataSource {
     suspend fun trySignUp(authModel: RemoteAuthModel)
     suspend fun logIn(email: String, password: String)
     suspend fun logOut()
+    suspend fun withdraw()
     suspend fun sendVerificationCode(phoneNumber: String, purpose: String)
     suspend fun verifyCode(phoneNumber: String, code: String)
     suspend fun verifyCodeAndFindEmail(phoneNumber: String, code: String): String

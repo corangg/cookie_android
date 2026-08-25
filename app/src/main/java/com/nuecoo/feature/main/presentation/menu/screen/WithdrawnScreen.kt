@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -45,6 +46,7 @@ import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
 import com.nuecoo.core.presetation.ui.component.DefaultItemBox
 import com.nuecoo.core.presetation.ui.component.LoadingOverlay
 import com.nuecoo.core.presetation.ui.component.MainTitleItem
+import com.nuecoo.core.presetation.ui.showSimpleDialog
 import com.nuecoo.core.theme.LogoutBackground
 import com.nuecoo.core.theme.MainBackground
 import com.nuecoo.core.theme.MainBorder
@@ -64,10 +66,28 @@ fun WithdrawnScreen(
     val isCheckedOnly by viewModel.isCheckedWithdrawn.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val isSuccessWithdrawn by viewModel.isSuccessWithdrawn.collectAsStateWithLifecycle()
+    val isWithdrawFailed by viewModel.isWithdrawFailed.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+    val errorTitle = stringResource(R.string.text_withdrawn_error_title)
+    val errorMessage = stringResource(R.string.text_withdrawn_error_message)
+    val closeText = stringResource(R.string.close)
 
     LaunchedEffect(isSuccessWithdrawn) {
         if (isSuccessWithdrawn) {
             onMoveWithdrawnComplete()
+        }
+    }
+
+    LaunchedEffect(isWithdrawFailed) {
+        if (isWithdrawFailed) {
+            context.showSimpleDialog(
+                title = errorTitle,
+                message = errorMessage,
+                positiveText = closeText,
+                negativeText = closeText
+            )
+            viewModel.consumeWithdrawFailure()
         }
     }
 

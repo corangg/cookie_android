@@ -12,6 +12,7 @@ interface AuthRepository {
     suspend fun trySignUp(authModel: AuthModel): SignUpResult
     suspend fun logIn(email: String, password: String): Boolean
     suspend fun logOut(): Boolean
+    suspend fun withdraw(): Boolean
     suspend fun sendSignupVerificationCode(phoneNumber: String): VerificationResult
     suspend fun verifyCodeForSignUp(phoneNumber: String, code: String): VerificationResult
     suspend fun sendFindEmailVerificationCode(phoneNumber: String): VerificationResult

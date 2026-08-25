@@ -64,11 +64,12 @@ class CookieRepositoryImpl @Inject constructor(
             cookieEventDataSource.observeDistinctCollectedCounts(),
             cookieTypeCountLocalDataSource.getCookieTypeCountFlow()
         ) { collectedList, allCounts ->
-            collectedList.map {
+            val collectedByType = collectedList.associateBy { it.type }
+            allCounts.map { count ->
                 TypeCollectedCount(
-                    type = it.type,
-                    collectedCount = it.count,
-                    maxCount = allCounts.find { count -> count.type == it.type }?.maxCount ?: 0
+                    type = count.type,
+                    collectedCount = collectedByType[count.type]?.count ?: 0,
+                    maxCount = count.maxCount
                 )
             }
         }
@@ -79,6 +80,10 @@ class CookieRepositoryImpl @Inject constructor(
             cookieEventDataSource.deleteAll()
             cookieEventDataSource.insertAll(events)
         }
+    }
+
+    override suspend fun clearLocalCache() {
+        cookieEventDataSource.deleteAll()
     }
 
     override suspend fun getCookieCount(type: Int) = cookieEventDataSource.getDistinctCollectedCount(type)

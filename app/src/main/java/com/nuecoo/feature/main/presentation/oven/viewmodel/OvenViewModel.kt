@@ -55,10 +55,7 @@ class OvenViewModel @Inject constructor(
         dailyCookieSlots, collectionProgress
     ) { slots, progress ->
         slots.map { slot ->
-            val allCollected = progress.find { it.type == slot.type }
-                ?.let { it.maxCount > 0 && it.collectedCount >= it.maxCount } ?: false
-            // 오늘 이미 연 쿠키(InProgress/Filled)는 열람해야 하므로,
-            // 오늘 아직 열지 않은 슬롯(Empty)일 때만 "모두 수집 완료"로 취급한다.
+            val allCollected = progress.find { it.type == slot.type }?.let { it.maxCount > 0 && it.collectedCount >= it.maxCount } ?: false
             val isFull = allCollected && slot is CookieSlotUi.Empty
             slot.toUiItem().copy(isFull = isFull)
         }

@@ -314,6 +314,60 @@ export const signUp = onCall(
   }
 );
 
+// 서버사이드 회원탈퇴: Auth 계정 삭제 + users/emails/phoneToUid/verificationCodes 및 사용자 데이터 원자적 삭제
+export const withdrawUser = onCall(
+  { region: "asia-northeast3" },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "인증되지 않은 요청입니다.");
+    }
+
+    const uid = request.auth.uid;
+
+    const userSnap = await rtdb.ref(`users/${uid}`).get();
+    const userInfo = userSnap.exists()
+      ? (userSnap.val() as { email?: string; phone?: string })
+      : null;
+
+    // 1. RTDB 원자적 삭제 (users, 인덱스 테이블, 쿠키/출석 관련 사용자 데이터)
+    const updates: Record<string, null> = {
+      [`users/${uid}`]: null,
+      [`userCollectedCookies/${uid}`]: null,
+      [`cookieEvents/${uid}`]: null,
+      [`dailyCookieClaims/${uid}`]: null,
+      [`eventTicketBalance/${uid}`]: null,
+      [`ticketUsageLog/${uid}`]: null,
+    };
+
+    if (userInfo?.email) {
+      updates[`emails/${encodeEmailKey(userInfo.email)}`] = null;
+    }
+    if (userInfo?.phone) {
+      updates[`phoneToUid/${encodeKey(toDomesticFormat(userInfo.phone))}`] = null;
+      updates[`verificationCodes/${encodeKey(userInfo.phone)}`] = null;
+    }
+
+    try {
+      await rtdb.ref().update(updates);
+    } catch (e) {
+      console.error("탈퇴 데이터 삭제 실패:", e);
+      throw new HttpsError("internal", "회원 정보를 삭제하지 못했습니다. 다시 시도해주세요.");
+    }
+
+    // 2. Auth 계정 삭제 (사용자 데이터가 이미 지워졌으므로 마지막에 처리)
+    try {
+      await admin.auth().deleteUser(uid);
+    } catch (e: any) {
+      if (e.code !== "auth/user-not-found") {
+        console.error("Auth 계정 삭제 실패:", e);
+        throw new HttpsError("internal", "계정 삭제에 실패했습니다. 문의해주세요.");
+      }
+    }
+
+    return { success: true };
+  }
+);
+
 export const verifyCodeAndFindEmail = onCall(
   { region: "asia-northeast3" },
   async (request) => {

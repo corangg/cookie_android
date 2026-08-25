@@ -231,6 +231,8 @@
     <string name="text_withdrawn_check">안내 사항을 확인 했으며 탈퇴에 동의 합니다.</string>
     <string name="text_withdrawn_ok">탈퇴하기</string>
     <string name="text_withdrawn_cancel">계속 사용할게요</string>
+    <string name="text_withdrawn_error_title">탈퇴 실패</string>
+    <string name="text_withdrawn_error_message">탈퇴 처리에 실패했습니다. 잠시 후 다시 시도해 주세요.</string>
 
     <string name="text_withdrawn_complete_main">탈퇴가 완료되었습니다.</string>
     <string name="text_withdrawn_complete_sub">그동안 너쿠와 함께해 주셔서 감사합니다.\n언제든 다시 만나요</string>

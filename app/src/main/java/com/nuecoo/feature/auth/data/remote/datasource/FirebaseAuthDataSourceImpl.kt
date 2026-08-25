@@ -47,6 +47,13 @@ class FirebaseAuthDataSourceImpl @Inject constructor(
 
     override suspend fun logOut() = auth.signOut()
 
+    override suspend fun withdraw() {
+        functions
+            .getHttpsCallable("withdrawUser")
+            .call()
+            .await()
+    }
+
     override suspend fun sendVerificationCode(phoneNumber: String, purpose: String) {
         ensureAuthenticated()
         functions

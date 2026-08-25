@@ -53,6 +53,14 @@ class AuthRepositoryImpl @Inject constructor(
         }.getOrElse { false }
     }
 
+    override suspend fun withdraw() = withContext(ioDispatcher) {
+        runCatching {
+            firebaseAuthDataSource.withdraw()
+            userInfoDataSource.deleteUserInfo()
+            true
+        }.getOrElse { false }
+    }
+
     override suspend fun sendSignupVerificationCode(phoneNumber: String) =
         sendCode(phoneNumber = phoneNumber, purpose = VerificationPurpose.SIGNUP)
 
