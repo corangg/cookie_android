@@ -56,7 +56,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,9 +63,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.BuildConfig
 import com.nuecoo.R
-import com.nuecoo.core.presetation.ui.component.DefaultItemBox
-import com.nuecoo.core.presetation.ui.component.LoadingOverlay
-import com.nuecoo.core.presetation.ui.component.MainTitleItem
+import com.nuecoo.core.presentation.ui.component.DefaultItemBox
+import com.nuecoo.core.presentation.ui.component.LoadingOverlay
+import com.nuecoo.core.presentation.ui.component.MainTitleItem
 import com.nuecoo.core.theme.AttendanceActive
 import com.nuecoo.core.theme.AttendanceComplete
 import com.nuecoo.core.theme.AttendanceInActive
@@ -95,7 +94,7 @@ import com.nuecoo.core.theme.WidgetOn
 import com.nuecoo.feature.main.domain.model.TypeCollectedCount
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
 import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
-import com.nuecoo.feature.widget.presentation.FloatingWidgetService
+//import com.nuecoo.feature.widget.presentation.FloatingWidgetService
 import getCookieTypeColor
 import getCookieTypeList
 import java.time.LocalDate
@@ -122,7 +121,7 @@ fun MenuScreen(
     ) {
         if (Settings.canDrawOverlays(context)) {
             viewModel.saveWidgetEnabled(true)
-            FloatingWidgetService.start(context)
+            //FloatingWidgetService.start(context)
         }
     }
 
@@ -143,7 +142,7 @@ fun MenuScreen(
             if (enabled) {
                 if (Settings.canDrawOverlays(context)) {
                     viewModel.saveWidgetEnabled(true)
-                    FloatingWidgetService.start(context)
+                    //FloatingWidgetService.start(context)
                 } else {
                     overlayPermissionLauncher.launch(
                         Intent(
@@ -154,7 +153,7 @@ fun MenuScreen(
                 }
             } else {
                 viewModel.saveWidgetEnabled(false)
-                FloatingWidgetService.stop(context)
+                //FloatingWidgetService.stop(context)
             }
         },
         onLogOut = viewModel::logout,
