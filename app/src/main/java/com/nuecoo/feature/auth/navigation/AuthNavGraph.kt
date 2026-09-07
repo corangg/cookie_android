@@ -32,8 +32,8 @@ import com.nuecoo.feature.auth.presentation.signup.screen.SignUpPhoneScreen
 import com.nuecoo.feature.auth.presentation.signup.screen.SignUpPwScreen
 import com.nuecoo.feature.auth.presentation.signup.screen.SignUpTermsScreen
 import com.nuecoo.feature.auth.presentation.signup.viewmodel.SignUpViewModel
-import com.nuecoo.feature.main.presentation.menu.screen.AppPrivacyScreen
-import com.nuecoo.feature.main.presentation.menu.screen.AppTermsScreen
+import com.nuecoo.core.presentation.ui.screen.AppPrivacyScreen
+import com.nuecoo.core.presentation.ui.screen.AppTermsScreen
 import com.nuecoo.core.theme.MainBackground
 
 fun NavGraphBuilder.authNavGraph(navController: NavHostController) {

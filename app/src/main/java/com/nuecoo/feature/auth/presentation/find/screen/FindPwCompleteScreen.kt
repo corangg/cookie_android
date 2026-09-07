@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.nuecoo.R
-import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
-import com.nuecoo.core.presetation.ui.component.MainTitleItem
+import com.nuecoo.core.presentation.ui.component.DefaultAuthButton
+import com.nuecoo.core.presentation.ui.component.MainTitleItem
 import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
 import com.nuecoo.core.theme.MailBackground
 import com.nuecoo.core.theme.MailIcon

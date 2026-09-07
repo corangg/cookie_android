@@ -2,7 +2,7 @@ package com.nuecoo.feature.main.data.datasource.local
 
 import com.nuecoo.core.data.model.local.CookieEventEntity
 import com.nuecoo.core.data.model.local.LocalTypeCollectedCount
-import com.nuecoo.feature.main.domain.model.CookieSyncStatus
+import com.nuecoo.core.domain.model.CookieSyncStatus
 import kotlinx.coroutines.flow.Flow
 
 interface CookieEventDataSource {
@@ -18,6 +18,7 @@ interface CookieEventDataSource {
         message: String? = null,
         ticketGroupId: String? = null
     )
+
     suspend fun getDistinctCollectedCount(type: Int): Int
     fun observeDistinctCollectedCount(type: Int): Flow<Int>
     fun observeDistinctCollectedCounts(): Flow<List<LocalTypeCollectedCount>>

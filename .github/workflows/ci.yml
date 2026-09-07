@@ -29,6 +29,9 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Run architecture tests (Konsist)
+        run: ./gradlew :app:testDebugUnitTest --tests "com.nuecoo.architecture.*"
+
       - name: Run unit tests
         run: ./gradlew :app:testDebugUnitTest
 

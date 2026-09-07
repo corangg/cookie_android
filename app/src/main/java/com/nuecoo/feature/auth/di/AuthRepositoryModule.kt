@@ -1,5 +1,6 @@
 package com.nuecoo.feature.auth.di
 
+import com.nuecoo.core.domain.repository.UserSessionRepository
 import com.nuecoo.feature.auth.data.repository.AuthRepositoryImpl
 import com.nuecoo.feature.auth.domain.AuthRepository
 import dagger.Binds
@@ -14,4 +15,8 @@ abstract class AuthRepositoryModule {
     @Binds
     @Singleton
     abstract fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserSessionRepository(impl: AuthRepositoryImpl): UserSessionRepository
 }

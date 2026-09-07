@@ -7,6 +7,7 @@ import com.nuecoo.core.data.mapper.toLocal
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.LocalDataSources
 import com.nuecoo.core.di.RemoteDataSources
+import com.nuecoo.core.domain.model.UserInfo
 import com.nuecoo.feature.auth.data.mapper.toRemote
 import com.nuecoo.feature.auth.data.mapper.toSignUpResult
 import com.nuecoo.feature.auth.data.mapper.toVerificationResult
@@ -16,7 +17,6 @@ import com.nuecoo.feature.auth.domain.AuthRepository
 import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.FindEmailResult
 import com.nuecoo.feature.auth.domain.model.SignUpResult
-import com.nuecoo.feature.auth.domain.model.UserInfo
 import com.nuecoo.feature.auth.domain.model.VerificationResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow

@@ -14,12 +14,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.google.android.play.integrity.internal.s
 import com.nuecoo.R
 import com.nuecoo.core.navigation.Route
-import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
-import com.nuecoo.core.presetation.ui.component.FireworksEffect
-import com.nuecoo.core.presetation.ui.component.LoadingOverlay
+import com.nuecoo.core.presentation.ui.component.DefaultAuthButton
+import com.nuecoo.core.presentation.ui.component.FireworksEffect
+import com.nuecoo.core.presentation.ui.component.LoadingOverlay
 import com.nuecoo.feature.auth.domain.model.SignUpResult
 import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
 import com.nuecoo.feature.auth.presentation.signup.component.SignUpMainTextItem

@@ -1,8 +1,8 @@
 package com.nuecoo.feature.main.domain.usecase
 
-import com.nuecoo.feature.main.domain.model.CookieEvent
+import com.nuecoo.core.domain.model.CookieEvent
+import com.nuecoo.core.domain.model.CookieSyncStatus
 import com.nuecoo.feature.main.domain.model.CookieType
-import com.nuecoo.feature.main.domain.model.CookieSyncStatus
 import com.nuecoo.feature.main.domain.repository.CookieRepository
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -14,8 +14,15 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-private fun savedEvent(type: Int, no: Int, date: String) =
-    CookieEvent("id_${type}_${no}_$date", "${date}1000", date, type, no, CookieSyncStatus.SAVED)
+private fun savedEvent(type: Int, no: Int, date: String) = CookieEvent(
+    eventId = "id_${type}_${no}_$date",
+    datetime = "${date}1000",
+    claimDate = date,
+    message = null,
+    type = type,
+    cookieNo = no,
+    syncStatus = CookieSyncStatus.SAVED
+)
 
 // ──────────────────────────────────────────────
 // GetCollectionByTypeUseCase
@@ -83,7 +90,15 @@ class GetCollectionByTypeUseCaseTest {
 
     @Test
     fun `PENDING 상태 이벤트는 수집 완료로 보지 않는다`() = runTest {
-        val pendingEvent = CookieEvent("id1", "202606201000", "20260620", 0, 1, CookieSyncStatus.PENDING)
+        val pendingEvent = CookieEvent(
+            eventId = "id1",
+            datetime = "202606201000",
+            claimDate = "20260620",
+            message = null,
+            type = 0,
+            cookieNo = 1,
+            syncStatus = CookieSyncStatus.PENDING
+        )
         coEvery { repository.getAllEvents() } returns listOf(pendingEvent)
 
         val result = useCase(type = 0, totalSize = 2)
@@ -109,10 +124,13 @@ class GetCollectionListUseCaseTest {
 
     @Test
     fun `여러 타입의 사이즈 합만큼 항목이 반환된다`() = runTest {
+        coEvery { repository.getCookieCount() } returns listOf(
+            CookieType.Cheering.type to 3,
+            CookieType.Comfort.type to 2
+        )
         coEvery { repository.getAllEvents() } returns emptyList()
 
-        val input = listOf(CookieType.Cheering to 3, CookieType.Comfort to 2)
-        val result = useCase(input)
+        val result = useCase()
 
         assertEquals(5, result.size)
         assertEquals(3, result.count { it.type == CookieType.Cheering.type })
@@ -121,21 +139,26 @@ class GetCollectionListUseCaseTest {
 
     @Test
     fun `저장된 데이터가 없으면 모든 항목이 미수집 상태이다`() = runTest {
+        coEvery { repository.getCookieCount() } returns listOf(CookieType.Cheering.type to 5)
         coEvery { repository.getAllEvents() } returns emptyList()
 
-        val result = useCase(listOf(CookieType.Cheering to 5))
+        val result = useCase()
 
         assertTrue(result.all { !it.isCollected })
     }
 
     @Test
     fun `타입별로 수집된 쿠키가 정확히 표시된다`() = runTest {
+        coEvery { repository.getCookieCount() } returns listOf(
+            CookieType.Cheering.type to 3,
+            CookieType.Comfort.type to 3
+        )
         coEvery { repository.getAllEvents() } returns listOf(
             savedEvent(CookieType.Cheering.type, 1, "20260620"),
             savedEvent(CookieType.Comfort.type, 2, "20260620")
         )
 
-        val result = useCase(listOf(CookieType.Cheering to 3, CookieType.Comfort to 3))
+        val result = useCase()
 
         val cheeringNo1 = result.find { it.type == CookieType.Cheering.type && it.no == 1 }
         val comfortNo2 = result.find { it.type == CookieType.Comfort.type && it.no == 2 }
@@ -145,12 +168,13 @@ class GetCollectionListUseCaseTest {
 
     @Test
     fun `같은 타입과 번호를 여러 날에 열어도 수집 횟수는 1로 계산된다`() = runTest {
+        coEvery { repository.getCookieCount() } returns listOf(CookieType.Cheering.type to 5)
         coEvery { repository.getAllEvents() } returns listOf(
             savedEvent(0, 1, "20260620"),
             savedEvent(0, 1, "20260621")
         )
 
-        val result = useCase(listOf(CookieType.Cheering to 5))
+        val result = useCase()
 
         assertEquals(1, result.count { it.isCollected })
     }

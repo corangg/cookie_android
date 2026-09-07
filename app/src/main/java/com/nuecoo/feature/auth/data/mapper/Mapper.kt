@@ -2,9 +2,18 @@ package com.nuecoo.feature.auth.data.mapper
 
 import com.google.firebase.functions.FirebaseFunctionsException
 import com.nuecoo.core.data.model.remote.RemoteAuthModel
+import com.nuecoo.core.domain.model.UserInfo
 import com.nuecoo.feature.auth.domain.model.AuthModel
 import com.nuecoo.feature.auth.domain.model.SignUpResult
 import com.nuecoo.feature.auth.domain.model.VerificationResult
+
+fun AuthModel.toUserInfo() = UserInfo(
+    email = this.email,
+    nickname = this.nickname,
+    phone = this.phone,
+    birth = this.birth,
+    gender = this.gender,
+)
 
 fun Throwable.toVerificationResult(): VerificationResult {
     if (this !is FirebaseFunctionsException) return VerificationResult.Unknown

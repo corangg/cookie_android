@@ -22,15 +22,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.nuecoo.R
 import com.nuecoo.core.navigation.Route
-import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
+import com.nuecoo.core.presentation.ui.component.DefaultAuthButton
 import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
-import com.nuecoo.core.theme.Black
 import com.nuecoo.core.theme.MainBackground
 import com.nuecoo.core.theme.MainButton
 import com.nuecoo.core.theme.MainText
 import com.nuecoo.core.theme.SubText
 import com.nuecoo.core.theme.White
-import com.nuecoo.core.theme.Kakao
 
 @Composable
 fun LoginHomeScreen(navController: NavHostController) {

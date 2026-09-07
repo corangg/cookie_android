@@ -95,8 +95,8 @@ import com.nuecoo.feature.main.domain.model.TypeCollectedCount
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
 import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
 //import com.nuecoo.feature.widget.presentation.FloatingWidgetService
-import getCookieTypeColor
-import getCookieTypeList
+import com.nuecoo.feature.main.data.mapper.getCookieTypeColor
+import com.nuecoo.feature.main.data.mapper.getCookieTypeList
 import java.time.LocalDate
 
 @Composable

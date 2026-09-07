@@ -2,7 +2,7 @@ package com.nuecoo.core.data.model.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.nuecoo.feature.main.domain.model.CookieSyncStatus
+import com.nuecoo.core.domain.model.CookieSyncStatus
 
 @Entity
 data class CookieEventEntity(

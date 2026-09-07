@@ -1,29 +1,12 @@
 package com.nuecoo.feature.main.domain.model
 
 import androidx.annotation.DrawableRes
-
-enum class CookieSyncStatus {
-    PENDING, SAVED, SAVED_VIA_TICKET,
-    REJECTED_DAILY_LIMIT, REJECTED_TICKET_RACE, SYNC_FAILED, REJECTED_ALL_COLLECTED
-}
-
-data class CookieEvent(
-    val eventId: String,
-    val datetime: String,
-    val claimDate: String,
-    val message: String?,
-    val type: Int,
-    val cookieNo: Int? = null,
-    val syncStatus: CookieSyncStatus = CookieSyncStatus.PENDING,
-    val viaTicketGroupId: String? = null,
-    val hasBeenViewed: Boolean = false
-)
-
-val CookieEvent.isSaved: Boolean
-    get() = syncStatus == CookieSyncStatus.SAVED || syncStatus == CookieSyncStatus.SAVED_VIA_TICKET
+import com.nuecoo.core.domain.model.CookieEvent
+import com.nuecoo.core.domain.model.CookieSyncStatus
 
 sealed interface CookieSlotUi {
     val type: Int
+
     data class Empty(override val type: Int) : CookieSlotUi
     data class InProgress(override val type: Int, val events: List<CookieEvent>) : CookieSlotUi
     data class Filled(override val type: Int, val events: List<CookieEvent>) : CookieSlotUi
@@ -39,6 +22,7 @@ fun buildDailyCookieView(events: List<CookieEvent>): List<CookieSlotUi> {
             typeEvents.isEmpty() -> CookieSlotUi.Empty(type)
             typeEvents.any { it.syncStatus == CookieSyncStatus.PENDING } ->
                 CookieSlotUi.InProgress(type, typeEvents)
+
             else -> CookieSlotUi.Filled(type, typeEvents)
         }
     }

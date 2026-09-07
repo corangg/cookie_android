@@ -10,9 +10,9 @@ import com.nuecoo.feature.main.presentation.main.screen.BottomNavItem
 import com.nuecoo.feature.main.presentation.collection.screen.CollectionScreen
 import com.nuecoo.feature.main.presentation.menu.screen.AppCsScreen
 import com.nuecoo.feature.main.presentation.menu.screen.AppInfoScreen
-import com.nuecoo.feature.main.presentation.menu.screen.AppPrivacyScreen
+import com.nuecoo.core.presentation.ui.screen.AppPrivacyScreen
 import com.nuecoo.feature.main.presentation.menu.screen.AppRateScreen
-import com.nuecoo.feature.main.presentation.menu.screen.AppTermsScreen
+import com.nuecoo.core.presentation.ui.screen.AppTermsScreen
 import com.nuecoo.feature.main.presentation.menu.screen.WithdrawnScreen
 import com.nuecoo.feature.main.presentation.menu.screen.MenuScreen
 import com.nuecoo.feature.main.presentation.menu.screen.WithdrawnCompleteScreen

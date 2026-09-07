@@ -1,20 +1,22 @@
 package com.nuecoo.feature.main.presentation.oven
 
-import com.nuecoo.feature.main.domain.model.CookieEvent
+import com.nuecoo.core.domain.model.CookieEvent
+import com.nuecoo.core.domain.model.CookieSyncStatus
 import com.nuecoo.feature.main.domain.model.CookieSlotUi
-import com.nuecoo.feature.main.domain.model.CookieSyncStatus
 import com.nuecoo.feature.main.domain.model.CookieType
-import com.nuecoo.feature.main.domain.repository.CookieRepository
+import com.nuecoo.feature.main.domain.usecase.GetCookieTotalCountsUseCase
+import com.nuecoo.feature.main.domain.usecase.ObserveCollectionProgressUseCase
 import com.nuecoo.feature.main.domain.usecase.ObserveDailyCookieData
 import com.nuecoo.feature.main.domain.usecase.ObserveNotOpenedCookies
+import com.nuecoo.feature.main.domain.usecase.OpenCookieUseCase
 import com.nuecoo.feature.main.domain.usecase.RemainTimeUseCase
 import com.nuecoo.feature.main.presentation.oven.viewmodel.OvenViewModel
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.Runs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainCoroutineDispatcher
@@ -34,6 +36,10 @@ import org.junit.Test
 // ──────────────────────────────────────────────
 // OvenViewModel
 // 일일 쿠키 슬롯·열기·선택 상태를 관리하는 ViewModel 테스트
+//
+// [아키텍처 변경 메모]
+// CookieRepository를 직접 주입받지 않는다. 쿠키 열기는 OpenCookieUseCase에,
+// 진행도는 ObserveCollectionProgressUseCase에 위임한다.
 // ──────────────────────────────────────────────
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -41,7 +47,9 @@ class OvenViewModelTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
 
-    private lateinit var cookieRepository: CookieRepository
+    private lateinit var openCookieUseCase: OpenCookieUseCase
+    private lateinit var getCookieTotalCountsUseCase: GetCookieTotalCountsUseCase
+    private lateinit var observeCollectionProgressUseCase: ObserveCollectionProgressUseCase
     private lateinit var observeDailyCookieData: ObserveDailyCookieData
     private lateinit var remainTimeUseCase: RemainTimeUseCase
     private lateinit var observeNotOpenedCookies: ObserveNotOpenedCookies
@@ -52,7 +60,15 @@ class OvenViewModelTest {
         CookieSlotUi.Filled(
             type = CookieType.Comfort.type,
             events = listOf(
-                CookieEvent("id1", "202606261200", "20260626", CookieType.Comfort.type, 1, CookieSyncStatus.SAVED)
+                CookieEvent(
+                    eventId = "id1",
+                    datetime = "202606261200",
+                    claimDate = "20260626",
+                    message = null,
+                    type = CookieType.Comfort.type,
+                    cookieNo = 1,
+                    syncStatus = CookieSyncStatus.SAVED
+                )
             )
         )
     )
@@ -60,17 +76,22 @@ class OvenViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        cookieRepository = mockk()
+        openCookieUseCase = mockk()
+        getCookieTotalCountsUseCase = mockk()
+        observeCollectionProgressUseCase = mockk()
         observeDailyCookieData = mockk()
         remainTimeUseCase = mockk()
         observeNotOpenedCookies = mockk()
 
+        every { observeCollectionProgressUseCase() } returns flowOf(emptyList())
         every { observeDailyCookieData() } returns flowOf(fakeSlots)
         every { remainTimeUseCase() } returns flowOf("23 : 59 : 59")
         every { observeNotOpenedCookies() } returns flowOf(1)
 
         viewModel = OvenViewModel(
-            cookieRepository = cookieRepository,
+            openCookieUseCase = openCookieUseCase,
+            getCookieTotalCountsUseCase = getCookieTotalCountsUseCase,
+            observeCollectionProgressUseCase = observeCollectionProgressUseCase,
             observeDailyCookieData = observeDailyCookieData,
             remainTimeUseCase = remainTimeUseCase,
             observeNotOpenedCookies = observeNotOpenedCookies,
@@ -126,10 +147,18 @@ class OvenViewModelTest {
     }
 
     @Test
-    fun `openCookie는 repository의 openCookie에 위임한다`() = runTest {
-        coEvery { cookieRepository.openCookie(any()) } just Runs
+    fun `selectCookie 호출 시 해당 타입의 슬롯이 selectedCookie에 반영된다`() = runTest {
+        backgroundScope.launch { viewModel.selectedCookie.collect {} }
+        advanceUntilIdle()
+        viewModel.selectCookie(CookieType.Cheering.type)
+        assertEquals(CookieType.Cheering.type, viewModel.selectedCookie.value?.type)
+    }
+
+    @Test
+    fun `openCookie는 OpenCookieUseCase에 위임한다`() = runTest {
+        coEvery { openCookieUseCase(any()) } just Runs
         viewModel.openCookie(CookieType.Cheering.type)
         advanceUntilIdle()
-        coVerify(exactly = 1) { cookieRepository.openCookie(CookieType.Cheering.type) }
+        coVerify(exactly = 1) { openCookieUseCase(CookieType.Cheering.type) }
     }
 }

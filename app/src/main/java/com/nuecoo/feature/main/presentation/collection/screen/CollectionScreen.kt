@@ -59,9 +59,9 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.R
-import com.nuecoo.core.presetation.ui.component.CommonDropDown
-import com.nuecoo.core.presetation.ui.component.MainTitleItem
-import com.nuecoo.core.presetation.ui.model.CommonDropDownItem
+import com.nuecoo.core.presentation.ui.component.CommonDropDown
+import com.nuecoo.core.presentation.ui.component.MainTitleItem
+import com.nuecoo.core.presentation.ui.model.CommonDropDownItem
 import com.nuecoo.core.theme.DropDownBackground
 import com.nuecoo.core.theme.DropDownSelectBackground
 import com.nuecoo.core.theme.ItemCardBackground
@@ -78,10 +78,10 @@ import com.nuecoo.feature.main.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CollectionSortType
 import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.presentation.collection.viewmodel.CollectionViewModel
-import getCollectionTypeImages
-import getCookieTypeColor
-import getCookieTypeList
-import getCookieTypeMainTextRes
+import com.nuecoo.feature.main.data.mapper.getCollectionTypeImages
+import com.nuecoo.feature.main.data.mapper.getCookieTypeColor
+import com.nuecoo.feature.main.data.mapper.getCookieTypeList
+import com.nuecoo.feature.main.data.mapper.getCookieTypeMainTextRes
 import kotlinx.coroutines.launch
 
 

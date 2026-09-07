@@ -18,7 +18,7 @@ import android.widget.TextView
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationCompat
 import com.nuecoo.R
-import com.nuecoo.feature.widget.domain.usecase.SaveWidgetEnabledUseCase
+import com.nuecoo.core.domain.usecase.SaveWidgetEnabledUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

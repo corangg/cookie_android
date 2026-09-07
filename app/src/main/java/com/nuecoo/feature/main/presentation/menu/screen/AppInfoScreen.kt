@@ -29,9 +29,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nuecoo.BuildConfig
 import com.nuecoo.R
-import com.nuecoo.core.presetation.ui.component.BackButton
-import com.nuecoo.core.presetation.ui.component.DefaultItemBox
-import com.nuecoo.core.presetation.ui.component.MainTitleItem
+import com.nuecoo.core.presentation.ui.component.BackButton
+import com.nuecoo.core.presentation.ui.component.DefaultItemBox
+import com.nuecoo.core.presentation.ui.component.MainTitleItem
 import com.nuecoo.core.theme.DefaultIconBackground
 import com.nuecoo.core.theme.MainBackground
 import com.nuecoo.core.theme.MainText

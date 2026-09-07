@@ -1,6 +1,6 @@
 package com.nuecoo.feature.main.domain.repository
 
-import com.nuecoo.feature.main.domain.model.CookieEvent
+import com.nuecoo.core.domain.model.CookieEvent
 import com.nuecoo.feature.main.domain.model.TypeCollectedCount
 import kotlinx.coroutines.flow.Flow
 

@@ -1,7 +1,7 @@
 package com.nuecoo.feature.main.domain.usecase
 
 import com.nuecoo.core.data.datasource.remote.FirebaseDataDataSource
-import com.nuecoo.feature.auth.domain.AuthRepository
+import com.nuecoo.core.domain.repository.UserSessionRepository
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
 import com.nuecoo.feature.main.domain.repository.CookieRepository
 import kotlinx.coroutines.flow.Flow
@@ -94,7 +94,7 @@ class GetAttendanceDatesUseCase @Inject constructor(
 }
 
 class LogOutUseCase @Inject constructor(
-    private val repository: AuthRepository,
+    private val repository: UserSessionRepository,
     private val cookieRepository: CookieRepository
 ) {
     suspend operator fun invoke(): Boolean {
@@ -106,7 +106,7 @@ class LogOutUseCase @Inject constructor(
 }
 
 class WithdrawUseCase @Inject constructor(
-    private val repository: AuthRepository,
+    private val repository: UserSessionRepository,
     private val cookieRepository: CookieRepository
 ) {
     suspend operator fun invoke(): Boolean {
@@ -117,13 +117,13 @@ class WithdrawUseCase @Inject constructor(
 }
 
 class RefreshUserInfoUseCase @Inject constructor(
-    private val repository: AuthRepository
+    private val repository: UserSessionRepository
 ){
     suspend operator fun invoke() = repository.refreshUserInfo()
 }
 
 class ObserveUserInfoUseCase @Inject constructor(
-    private val repository: AuthRepository
+    private val repository: UserSessionRepository
 ){
     operator fun invoke() = repository.observeUserInfo()
 }

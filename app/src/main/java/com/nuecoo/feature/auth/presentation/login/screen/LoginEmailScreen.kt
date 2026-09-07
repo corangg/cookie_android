@@ -33,9 +33,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.nuecoo.R
 import com.nuecoo.core.navigation.Route
-import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
-import com.nuecoo.core.presetation.ui.component.DefaultTextField
-import com.nuecoo.core.presetation.ui.component.LoadingOverlay
+import com.nuecoo.core.presentation.ui.component.DefaultAuthButton
+import com.nuecoo.core.presentation.ui.component.DefaultTextField
+import com.nuecoo.core.presentation.ui.component.LoadingOverlay
 import com.nuecoo.feature.auth.domain.model.LoginResult
 import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper
 import com.nuecoo.feature.auth.presentation.login.viewmodel.LoginViewModel

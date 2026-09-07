@@ -1,8 +1,8 @@
 package com.nuecoo.feature.main.domain.usecase
 
+import com.nuecoo.core.domain.model.isSaved
 import com.nuecoo.feature.main.domain.model.CollectionDisplayItem
 import com.nuecoo.feature.main.domain.model.CookieType
-import com.nuecoo.feature.main.domain.model.isSaved
 import com.nuecoo.feature.main.domain.repository.CookieRepository
 import javax.inject.Inject
 

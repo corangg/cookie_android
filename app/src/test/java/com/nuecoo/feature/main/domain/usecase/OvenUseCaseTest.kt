@@ -1,9 +1,9 @@
 package com.nuecoo.feature.main.domain.usecase
 
+import com.nuecoo.core.domain.model.CookieEvent
+import com.nuecoo.core.domain.model.CookieSyncStatus
 import com.nuecoo.feature.main.domain.model.ALL_COOKIE_TYPES
-import com.nuecoo.feature.main.domain.model.CookieEvent
 import com.nuecoo.feature.main.domain.model.CookieSlotUi
-import com.nuecoo.feature.main.domain.model.CookieSyncStatus
 import com.nuecoo.feature.main.domain.repository.CookieRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -40,7 +40,10 @@ class ObserveNotOpenedCookiesTest {
 
     @Test
     fun `SAVED 이벤트가 있는 타입은 Filled이므로 카운트에서 제외된다`() = runTest {
-        val savedEvent = CookieEvent("id1", "202606261000", TODAY, 0, 1, CookieSyncStatus.SAVED)
+        val savedEvent = CookieEvent(
+            eventId = "id1", datetime = "202606261000", claimDate = TODAY,
+            message = null, type = 0, cookieNo = 1, syncStatus = CookieSyncStatus.SAVED
+        )
         every { repository.observeEventsForToday() } returns flowOf(listOf(savedEvent))
         // type 0은 Filled → Empty는 나머지 4개
         assertEquals(ALL_COOKIE_TYPES.size - 1, useCase().first())
@@ -48,7 +51,10 @@ class ObserveNotOpenedCookiesTest {
 
     @Test
     fun `PENDING 이벤트가 있는 타입은 InProgress이므로 Empty가 아니다`() = runTest {
-        val pendingEvent = CookieEvent("id1", "202606261000", TODAY, 0, null, CookieSyncStatus.PENDING)
+        val pendingEvent = CookieEvent(
+            eventId = "id1", datetime = "202606261000", claimDate = TODAY,
+            message = null, type = 0, cookieNo = null, syncStatus = CookieSyncStatus.PENDING
+        )
         every { repository.observeEventsForToday() } returns flowOf(listOf(pendingEvent))
         // type 0은 InProgress → Empty는 나머지 4개
         assertEquals(ALL_COOKIE_TYPES.size - 1, useCase().first())
@@ -81,7 +87,10 @@ class ObserveDailyCookieDataTest {
 
     @Test
     fun `PENDING 이벤트가 있는 타입은 InProgress 슬롯이다`() = runTest {
-        val event = CookieEvent("id1", "202606261000", TODAY, 0, null, CookieSyncStatus.PENDING)
+        val event = CookieEvent(
+            eventId = "id1", datetime = "202606261000", claimDate = TODAY,
+            message = null, type = 0, cookieNo = null, syncStatus = CookieSyncStatus.PENDING
+        )
         every { repository.observeEventsForToday() } returns flowOf(listOf(event))
         val result = useCase().first()
         assert(result.find { it.type == 0 } is CookieSlotUi.InProgress)
@@ -89,7 +98,10 @@ class ObserveDailyCookieDataTest {
 
     @Test
     fun `SAVED 이벤트가 있는 타입은 Filled 슬롯이다`() = runTest {
-        val event = CookieEvent("id1", "202606261000", TODAY, 0, 1, CookieSyncStatus.SAVED)
+        val event = CookieEvent(
+            eventId = "id1", datetime = "202606261000", claimDate = TODAY,
+            message = null, type = 0, cookieNo = 1, syncStatus = CookieSyncStatus.SAVED
+        )
         every { repository.observeEventsForToday() } returns flowOf(listOf(event))
         val result = useCase().first()
         assert(result.find { it.type == 0 } is CookieSlotUi.Filled)

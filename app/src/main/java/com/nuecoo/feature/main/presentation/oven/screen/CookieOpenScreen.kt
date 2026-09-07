@@ -1,6 +1,5 @@
 package com.nuecoo.feature.main.presentation.oven.screen
 
-import android.R.id.message
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -53,21 +52,18 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
 import com.nuecoo.R
-import com.nuecoo.core.presetation.ui.component.CommonRoundButton
+import com.nuecoo.core.presentation.ui.component.CommonRoundButton
 import com.nuecoo.core.theme.MainText
-import com.nuecoo.core.theme.NueCooTheme
-import com.nuecoo.feature.main.domain.model.CookieType
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
-import getCookieAnimationFrames
-import getCookieTypeColor
-import getCookieTypeMainTextRes
-import getCookieTypeSubTextRes
-import getOpenedCookieImage
+import com.nuecoo.feature.main.data.mapper.getCookieAnimationFrames
+import com.nuecoo.feature.main.data.mapper.getCookieTypeColor
+import com.nuecoo.feature.main.data.mapper.getCookieTypeMainTextRes
+import com.nuecoo.feature.main.data.mapper.getCookieTypeSubTextRes
+import com.nuecoo.feature.main.data.mapper.getOpenedCookieImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext

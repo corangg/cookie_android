@@ -4,9 +4,8 @@ import com.google.firebase.database.DataSnapshot
 import com.nuecoo.core.data.model.local.CookieEventEntity
 import com.nuecoo.core.data.model.local.LocalUserInfo
 import com.nuecoo.core.data.model.remote.RemoteUserInfo
-import com.nuecoo.feature.auth.domain.model.AuthModel
-import com.nuecoo.feature.auth.domain.model.UserInfo
-import com.nuecoo.feature.main.domain.model.CookieEvent
+import com.nuecoo.core.domain.model.CookieEvent
+import com.nuecoo.core.domain.model.UserInfo
 
 fun UserInfo.toRemote() = RemoteUserInfo(
     email = this.email,
@@ -33,14 +32,6 @@ fun RemoteUserInfo.toDomain() = UserInfo(
 )
 
 fun LocalUserInfo.toDomain() = UserInfo(
-    email = this.email,
-    nickname = this.nickname,
-    phone = this.phone,
-    birth = this.birth,
-    gender = this.gender,
-)
-
-fun AuthModel.toUserInfo() = UserInfo(
     email = this.email,
     nickname = this.nickname,
     phone = this.phone,

@@ -40,6 +40,10 @@ class SignUpUseCaseTest {
         gender = true,
     )
 
+    // SignUpUseCase가 Repository 호출 전 국내 번호를 E.164 형식으로 변환하므로
+    // Repository가 실제로 받는 값은 phone이 "+82..."로 바뀐 모델이다.
+    private val expectedAuthModel = dummyAuthModel.copy(phone = "+821012345678")
+
     @Before
     fun setUp() {
         repository = mockk()
@@ -48,12 +52,12 @@ class SignUpUseCaseTest {
 
     @Test
     fun `UseCase 호출 시 Repository의 trySignUp을 정확히 한 번 호출한다`() = runTest {
-        // UseCase 는 직접 로직을 수행하지 않고 Repository 에 위임만 해야 함
-        coEvery { repository.trySignUp(dummyAuthModel) } returns SignUpResult.Success
+        // UseCase 는 직접 로직을 수행하지 않고 Repository 에 위임만 해야 함 (전화번호는 E.164로 변환되어 전달됨)
+        coEvery { repository.trySignUp(expectedAuthModel) } returns SignUpResult.Success
 
         useCase(dummyAuthModel)
 
-        coVerify(exactly = 1) { repository.trySignUp(dummyAuthModel) }
+        coVerify(exactly = 1) { repository.trySignUp(expectedAuthModel) }
     }
 
     @Test

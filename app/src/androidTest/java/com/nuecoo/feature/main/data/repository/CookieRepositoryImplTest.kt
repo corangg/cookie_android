@@ -4,12 +4,14 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.work.WorkManager
 import com.nuecoo.core.data.database.NueCooDatabase
-import com.nuecoo.feature.main.domain.model.CookieSyncStatus
-import io.mockk.coJustRun
-import io.mockk.every
+import com.nuecoo.core.domain.model.CookieSyncStatus
+import com.nuecoo.feature.main.data.datasource.local.CookieEventDataSourceImpl
+import com.nuecoo.feature.main.data.datasource.local.CookieTypeCountLocalDataSourceImpl
+import com.nuecoo.feature.main.data.datasource.remote.CookieRemoteDataSource
+import com.nuecoo.feature.main.data.worker.CookieSyncScheduler
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -18,12 +20,17 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.UUID
 
 // ──────────────────────────────────────────────
 // CookieRepositoryImpl 통합 테스트
-// 실제 인메모리 DB + Repository 계층을 연결하여 도메인 모델 변환 검증
-// WorkManager는 목킹하여 Room 동작에만 집중
+// 실제 인메모리 DB + 로컬 데이터소스 계층을 연결하여 도메인 모델 변환 검증
+// 원격 동기화(CookieRemoteDataSource)와 WorkManager 스케줄링(CookieSyncScheduler)은
+// 이 테스트가 다루는 시나리오(로컬 저장/조회)와 무관하므로 목킹한다.
+//
+// [아키텍처 변경 메모]
+// CookieRepositoryImpl은 더 이상 CookieDao/WorkManager를 직접 받지 않는다.
+// CookieEventDataSource·CookieTypeCountLocalDataSource·CookieRemoteDataSource·
+// CookieSyncScheduler로 계층이 분리되었다.
 // ──────────────────────────────────────────────
 
 @RunWith(AndroidJUnit4::class)
@@ -31,7 +38,8 @@ class CookieRepositoryImplTest {
 
     private lateinit var db: NueCooDatabase
     private lateinit var repository: CookieRepositoryImpl
-    private lateinit var workManager: WorkManager
+    private lateinit var cookieRemoteDataSource: CookieRemoteDataSource
+    private lateinit var cookieSyncScheduler: CookieSyncScheduler
 
     @Before
     fun setUp() {
@@ -39,10 +47,14 @@ class CookieRepositoryImplTest {
         db = Room.inMemoryDatabaseBuilder(context, NueCooDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        workManager = mockk(relaxed = true)
+        cookieRemoteDataSource = mockk(relaxed = true)
+        cookieSyncScheduler = mockk(relaxed = true)
         repository = CookieRepositoryImpl(
-            cookieDao = db.cookieEventDao(),
-            workManager = workManager
+            cookieEventDataSource = CookieEventDataSourceImpl(db.cookieEventDao()),
+            cookieTypeCountLocalDataSource = CookieTypeCountLocalDataSourceImpl(db.cookieTypeCountDao()),
+            cookieRemoteDataSource = cookieRemoteDataSource,
+            ioDispatcher = Dispatchers.IO,
+            cookieSyncScheduler = cookieSyncScheduler,
         )
     }
 

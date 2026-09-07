@@ -6,13 +6,13 @@ import com.nuecoo.core.data.model.local.CookieTypeCountEntity
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.LocalDataSources
 import com.nuecoo.core.di.RemoteDataSources
+import com.nuecoo.core.domain.model.CookieSyncStatus
 import com.nuecoo.core.util.nowAsYyyyMMddHHmm
 import com.nuecoo.core.util.todayAsYyyyMMdd
 import com.nuecoo.feature.main.data.datasource.local.CookieEventDataSource
 import com.nuecoo.feature.main.data.datasource.local.CookieTypeCountLocalDataSource
 import com.nuecoo.feature.main.data.datasource.remote.CookieRemoteDataSource
 import com.nuecoo.feature.main.data.worker.CookieSyncScheduler
-import com.nuecoo.feature.main.domain.model.CookieSyncStatus
 import com.nuecoo.feature.main.domain.model.TypeCollectedCount
 import com.nuecoo.feature.main.domain.repository.CookieRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -86,7 +86,8 @@ class CookieRepositoryImpl @Inject constructor(
         cookieEventDataSource.deleteAll()
     }
 
-    override suspend fun getCookieCount(type: Int) = cookieEventDataSource.getDistinctCollectedCount(type)
+    override suspend fun getCookieCount(type: Int) =
+        cookieEventDataSource.getDistinctCollectedCount(type)
 
     override fun observeDailyClaimDates() = cookieEventDataSource.observeDailyClaimDates()
 

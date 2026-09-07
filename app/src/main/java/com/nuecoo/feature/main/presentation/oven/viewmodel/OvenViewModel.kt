@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import toUiItem
+import com.nuecoo.feature.main.data.mapper.toUiItem
 import javax.inject.Inject
 
 @HiltViewModel

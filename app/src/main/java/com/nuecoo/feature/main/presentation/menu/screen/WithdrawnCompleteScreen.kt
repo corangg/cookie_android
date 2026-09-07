@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key.Companion.W
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -26,14 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nuecoo.R
-import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
+import com.nuecoo.core.presentation.ui.component.DefaultAuthButton
 import com.nuecoo.core.theme.MainBackground
 import com.nuecoo.core.theme.MainButton
 import com.nuecoo.core.theme.MainTitle
 import com.nuecoo.core.theme.SubTitle
 import com.nuecoo.core.theme.White
-import com.nuecoo.core.theme.WithdrawnChecked
-import com.nuecoo.core.theme.WithdrawnUnChecked
 import com.nuecoo.feature.main.presentation.menu.viewmodel.WithdrawnViewModel
 
 @Composable

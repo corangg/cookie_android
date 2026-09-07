@@ -5,6 +5,8 @@ import com.nuecoo.core.base.BaseViewModel
 import com.nuecoo.core.di.DefaultDispatcher
 import com.nuecoo.core.di.IoDispatcher
 import com.nuecoo.core.di.MainDispatcher
+import com.nuecoo.core.domain.usecase.GetWidgetEnabledUseCase
+import com.nuecoo.core.domain.usecase.SaveWidgetEnabledUseCase
 import com.nuecoo.feature.main.domain.usecase.CheckTodayAttendanceUseCase
 import com.nuecoo.feature.main.domain.usecase.GetAttendanceCount
 import com.nuecoo.feature.main.domain.usecase.GetAttendanceDatesUseCase
@@ -14,8 +16,6 @@ import com.nuecoo.feature.main.domain.usecase.LogOutUseCase
 import com.nuecoo.feature.main.domain.usecase.ObserveCollectionProgressUseCase
 import com.nuecoo.feature.main.domain.usecase.ObserveUserInfoUseCase
 import com.nuecoo.feature.main.domain.usecase.RefreshUserInfoUseCase
-import com.nuecoo.feature.widget.domain.usecase.GetWidgetEnabledUseCase
-import com.nuecoo.feature.widget.domain.usecase.SaveWidgetEnabledUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.MainCoroutineDispatcher

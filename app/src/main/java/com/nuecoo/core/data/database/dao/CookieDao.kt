@@ -7,7 +7,7 @@ import androidx.room.Upsert
 import com.nuecoo.core.data.model.local.CookieEventEntity
 import com.nuecoo.core.data.model.local.CookieTypeCountEntity
 import com.nuecoo.core.data.model.local.LocalTypeCollectedCount
-import com.nuecoo.feature.main.domain.model.CookieSyncStatus
+import com.nuecoo.core.domain.model.CookieSyncStatus
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -27,14 +27,16 @@ interface CookieEventDao {
     @Query("SELECT * FROM CookieEventEntity WHERE eventId = :eventId")
     suspend fun getById(eventId: String): CookieEventEntity?
 
-    @Query("""
+    @Query(
+        """
         UPDATE CookieEventEntity
         SET syncStatus = :status,
             cookieNo = COALESCE(:cookieNo, cookieNo),
             message = COALESCE(:message, message),
             viaTicketGroupId = COALESCE(:ticketGroupId, viaTicketGroupId)
         WHERE eventId = :eventId
-    """)
+    """
+    )
     suspend fun updateStatus(
         eventId: String,
         status: CookieSyncStatus,
@@ -43,23 +45,29 @@ interface CookieEventDao {
         ticketGroupId: String? = null
     )
 
-    @Query("""
+    @Query(
+        """
     SELECT COUNT(DISTINCT cookieNo) FROM CookieEventEntity 
     WHERE type = :type AND syncStatus IN ('SAVED', 'SAVED_VIA_TICKET')
-""")
+"""
+    )
     suspend fun getDistinctCollectedCount(type: Int): Int
 
-    @Query("""
+    @Query(
+        """
     SELECT COUNT(DISTINCT cookieNo) FROM CookieEventEntity 
     WHERE type = :type AND syncStatus IN ('SAVED', 'SAVED_VIA_TICKET')
-""")
+"""
+    )
     fun observeDistinctCollectedCount(type: Int): Flow<Int>
 
-    @Query("""
+    @Query(
+        """
     SELECT type, COUNT(DISTINCT cookieNo) AS count FROM CookieEventEntity 
     WHERE syncStatus IN ('SAVED', 'SAVED_VIA_TICKET')
     GROUP BY type
-""")
+"""
+    )
     fun observeDistinctCollectedCounts(): Flow<List<LocalTypeCollectedCount>>
 
     @Query("SELECT * FROM CookieEventEntity WHERE syncStatus = :status")
@@ -71,10 +79,12 @@ interface CookieEventDao {
     @Insert
     suspend fun insertAll(events: List<CookieEventEntity>)
 
-    @Query("""
+    @Query(
+        """
         SELECT DISTINCT claimDate FROM CookieEventEntity 
         ORDER BY claimDate DESC
-    """)
+    """
+    )
     fun observeAllClaimDates(): Flow<List<String>>
 }
 

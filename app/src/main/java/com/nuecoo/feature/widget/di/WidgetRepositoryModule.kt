@@ -1,5 +1,6 @@
 package com.nuecoo.feature.widget.di
 
+import com.nuecoo.core.domain.repository.WidgetSettingsRepository
 import com.nuecoo.feature.widget.data.repository.WidgetRepositoryImpl
 import com.nuecoo.feature.widget.domain.repository.WidgetRepository
 import dagger.Binds
@@ -15,4 +16,8 @@ abstract class WidgetRepositoryModule {
     @Binds
     @Singleton
     abstract fun bindWidgetRepository(impl: WidgetRepositoryImpl): WidgetRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWidgetSettingsRepository(impl: WidgetRepositoryImpl): WidgetSettingsRepository
 }

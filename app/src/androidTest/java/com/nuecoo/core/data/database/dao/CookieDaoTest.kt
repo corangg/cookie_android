@@ -6,7 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nuecoo.core.data.database.NueCooDatabase
 import com.nuecoo.core.data.model.local.CookieEventEntity
-import com.nuecoo.feature.main.domain.model.CookieSyncStatus
+import com.nuecoo.core.domain.model.CookieSyncStatus
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -34,6 +34,7 @@ class CookieDaoTest {
         datetime = "202606261000",
         claimDate = "20260626",
         type = 0,
+        message = null,
         cookieNo = null,
         syncStatus = CookieSyncStatus.PENDING
     )

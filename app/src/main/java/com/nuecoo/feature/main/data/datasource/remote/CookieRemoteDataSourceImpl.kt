@@ -3,8 +3,8 @@ package com.nuecoo.feature.main.data.datasource.remote
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.FirebaseFunctionsException
 import com.nuecoo.core.data.model.local.CookieEventEntity
+import com.nuecoo.core.domain.model.CookieSyncStatus
 import com.nuecoo.feature.main.domain.model.CookieSyncResult
-import com.nuecoo.feature.main.domain.model.CookieSyncStatus
 import com.nuecoo.feature.main.domain.model.RejectReason
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject

@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.nuecoo.R
-import com.nuecoo.core.presetation.ui.component.DefaultItemBox
+import com.nuecoo.core.presentation.ui.component.DefaultItemBox
 import com.nuecoo.core.theme.AttendanceComplete
 import com.nuecoo.core.theme.CheckAttendance
 import com.nuecoo.core.theme.CheckNonAttendance

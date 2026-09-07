@@ -53,8 +53,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nuecoo.R
-import com.nuecoo.core.presetation.ui.component.DefaultItemBox
-import com.nuecoo.core.presetation.ui.component.MainTitleItem
+import com.nuecoo.core.presentation.ui.component.DefaultItemBox
+import com.nuecoo.core.presentation.ui.component.MainTitleItem
 import com.nuecoo.core.theme.MainBackground
 import com.nuecoo.core.theme.MainBorder
 import com.nuecoo.core.theme.MainText
@@ -66,10 +66,10 @@ import com.nuecoo.core.theme.White
 import com.nuecoo.feature.main.domain.model.CookieUIItemData
 import com.nuecoo.feature.main.domain.model.TypeCollectedCount
 import com.nuecoo.feature.main.presentation.oven.viewmodel.OvenViewModel
-import getCookieTypeAllCollectedTextRes
-import getCookieTypeBackgroundColor
-import getCookieTypeColor
-import getCookieTypeMainTextRes
+import com.nuecoo.feature.main.data.mapper.getCookieTypeAllCollectedTextRes
+import com.nuecoo.feature.main.data.mapper.getCookieTypeBackgroundColor
+import com.nuecoo.feature.main.data.mapper.getCookieTypeColor
+import com.nuecoo.feature.main.data.mapper.getCookieTypeMainTextRes
 import kotlinx.coroutines.launch
 
 @Composable

@@ -6,10 +6,10 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.nuecoo.core.di.LocalDataSources
 import com.nuecoo.core.di.RemoteDataSources
+import com.nuecoo.core.domain.model.CookieSyncStatus
 import com.nuecoo.feature.main.data.datasource.local.CookieEventDataSource
 import com.nuecoo.feature.main.data.datasource.remote.CookieRemoteDataSource
 import com.nuecoo.feature.main.domain.model.CookieSyncResult
-import com.nuecoo.feature.main.domain.model.CookieSyncStatus
 import com.nuecoo.feature.main.domain.model.RejectReason
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject

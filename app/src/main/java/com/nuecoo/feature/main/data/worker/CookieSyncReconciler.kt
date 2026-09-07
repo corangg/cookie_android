@@ -1,8 +1,8 @@
 package com.nuecoo.feature.main.data.worker
 
 import com.nuecoo.core.di.LocalDataSources
+import com.nuecoo.core.domain.model.CookieSyncStatus
 import com.nuecoo.feature.main.data.datasource.local.CookieEventDataSource
-import com.nuecoo.feature.main.domain.model.CookieSyncStatus
 import javax.inject.Inject
 
 class CookieSyncReconciler @Inject constructor(

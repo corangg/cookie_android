@@ -32,11 +32,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.nuecoo.R
 import com.nuecoo.core.navigation.Route
-import com.nuecoo.core.presetation.ui.component.BackButton
-import com.nuecoo.core.presetation.ui.component.DefaultAuthButton
-import com.nuecoo.core.presetation.ui.component.DefaultTextField
-import com.nuecoo.core.presetation.ui.component.LoadingOverlay
-import com.nuecoo.core.presetation.ui.component.MainTitleItem
+import com.nuecoo.core.presentation.ui.component.BackButton
+import com.nuecoo.core.presentation.ui.component.DefaultAuthButton
+import com.nuecoo.core.presentation.ui.component.DefaultTextField
+import com.nuecoo.core.presentation.ui.component.LoadingOverlay
+import com.nuecoo.core.presentation.ui.component.MainTitleItem
 import com.nuecoo.feature.auth.domain.model.FindEmailResult
 import com.nuecoo.feature.auth.domain.model.VerificationResult
 import com.nuecoo.feature.auth.presentation.component.DefaultScreenWrapper

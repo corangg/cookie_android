@@ -1,16 +1,21 @@
 package com.nuecoo.feature.main.presentation.menu
 
-import com.nuecoo.feature.main.domain.model.CollectionDisplayItem
+import com.nuecoo.core.domain.model.UserInfo
+import com.nuecoo.core.domain.usecase.GetWidgetEnabledUseCase
+import com.nuecoo.core.domain.usecase.SaveWidgetEnabledUseCase
 import com.nuecoo.feature.main.domain.model.CookieType
+import com.nuecoo.feature.main.domain.model.TypeCollectedCount
 import com.nuecoo.feature.main.domain.model.WeeklyAttendanceModel
 import com.nuecoo.feature.main.domain.usecase.CheckTodayAttendanceUseCase
 import com.nuecoo.feature.main.domain.usecase.GetAttendanceCount
+import com.nuecoo.feature.main.domain.usecase.GetAttendanceDatesUseCase
 import com.nuecoo.feature.main.domain.usecase.GetCollectionByTypeUseCase
 import com.nuecoo.feature.main.domain.usecase.GetWeeklyAttendanceUseCase
 import com.nuecoo.feature.main.domain.usecase.LogOutUseCase
+import com.nuecoo.feature.main.domain.usecase.ObserveCollectionProgressUseCase
+import com.nuecoo.feature.main.domain.usecase.ObserveUserInfoUseCase
+import com.nuecoo.feature.main.domain.usecase.RefreshUserInfoUseCase
 import com.nuecoo.feature.main.presentation.menu.viewmodel.MenuViewModel
-import com.nuecoo.feature.widget.domain.usecase.GetWidgetEnabledUseCase
-import com.nuecoo.feature.widget.domain.usecase.SaveWidgetEnabledUseCase
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -42,6 +47,11 @@ import org.junit.Test
 // 로그아웃 후 화면 이동은 더 이상 MenuViewModel._isLoggedIn 으로 처리하지 않는다.
 // Firebase 인증 상태를 MainViewModel 이 ObserveAuthStateUseCase 로 직접 관찰하며,
 // AppNavigation 의 LaunchedEffect 가 isLoggedIn 값에 따라 전체 스택을 교체한다.
+//
+// collectionProgress는 더 이상 loadCollectionProgress(List<Pair<CookieType, Int>>)를
+// 직접 호출해 계산하지 않는다. ObserveCollectionProgressUseCase가 CookieRepository의
+// 진행도를 그대로 관찰하며, ViewModel 생성 시점에 Flow가 한 번 캡처되므로 값을 바꾸려면
+// UseCase의 반환값을 다시 스텁한 뒤 ViewModel을 재생성해야 한다.
 // ──────────────────────────────────────────────
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -52,10 +62,14 @@ class MenuViewModelTest {
     private lateinit var getCollectionByTypeUseCase: GetCollectionByTypeUseCase
     private lateinit var logoutUseCase: LogOutUseCase
     private lateinit var saveWidgetEnabledUseCase: SaveWidgetEnabledUseCase
+    private lateinit var refreshUserInfoUseCase: RefreshUserInfoUseCase
+    private lateinit var observeUserInfoUseCase: ObserveUserInfoUseCase
     private lateinit var getAttendanceCount: GetAttendanceCount
     private lateinit var checkTodayAttendanceUseCase: CheckTodayAttendanceUseCase
     private lateinit var getWeeklyAttendanceUseCase: GetWeeklyAttendanceUseCase
+    private lateinit var getAttendanceDatesUseCase: GetAttendanceDatesUseCase
     private lateinit var getWidgetEnabledUseCase: GetWidgetEnabledUseCase
+    private lateinit var observeCollectionProgressUseCase: ObserveCollectionProgressUseCase
     private lateinit var viewModel: MenuViewModel
 
     // 테스트용 주간 출석 데이터 (7일치)
@@ -68,25 +82,40 @@ class MenuViewModelTest {
         getCollectionByTypeUseCase = mockk()
         logoutUseCase = mockk()
         saveWidgetEnabledUseCase = mockk()
+        refreshUserInfoUseCase = mockk()
+        observeUserInfoUseCase = mockk()
         getAttendanceCount = mockk()
         checkTodayAttendanceUseCase = mockk()
         getWeeklyAttendanceUseCase = mockk()
+        getAttendanceDatesUseCase = mockk()
         getWidgetEnabledUseCase = mockk()
+        observeCollectionProgressUseCase = mockk()
 
         // ViewModel 생성 시 property initializer에서 호출되므로 사전에 반환값 지정
+        every { observeUserInfoUseCase() } returns flowOf(null)
         every { getAttendanceCount() } returns flowOf(5)
         every { checkTodayAttendanceUseCase() } returns flowOf(true)
         every { getWeeklyAttendanceUseCase() } returns flowOf(fakeWeekly)
+        every { getAttendanceDatesUseCase() } returns flowOf(emptySet())
         every { getWidgetEnabledUseCase() } returns flowOf(false)
+        every { observeCollectionProgressUseCase() } returns flowOf(emptyList())
 
+        createViewModel()
+    }
+
+    private fun createViewModel() {
         viewModel = MenuViewModel(
             getCollectionByTypeUseCase = getCollectionByTypeUseCase,
             logoutUseCase = logoutUseCase,
             saveWidgetEnabledUseCase = saveWidgetEnabledUseCase,
+            refreshUserInfoUseCase = refreshUserInfoUseCase,
+            observeUserInfoUseCase = observeUserInfoUseCase,
             getAttendanceCount = getAttendanceCount,
             checkTodayAttendanceUseCase = checkTodayAttendanceUseCase,
             getWeeklyAttendanceUseCase = getWeeklyAttendanceUseCase,
+            getAttendanceDatesUseCase = getAttendanceDatesUseCase,
             getWidgetEnabledUseCase = getWidgetEnabledUseCase,
+            observeCollectionProgressUseCase = observeCollectionProgressUseCase,
             mainDispatcher = Dispatchers.Main as MainCoroutineDispatcher,
             defaultDispatcher = testDispatcher,
             ioDispatcher = testDispatcher,
@@ -98,11 +127,10 @@ class MenuViewModelTest {
         Dispatchers.resetMain()
     }
 
-    // ── 초기 상태 ──
+    // ── 초기 상태 (WhileSubscribed 정책이므로 구독 전에는 initialValue를 유지) ──
 
     @Test
     fun `초기 collectionProgress는 비어있다`() {
-        // loadCollectionProgress 호출 전에는 진행도 목록이 없어야 함
         assertTrue(viewModel.collectionProgress.value.isEmpty())
     }
 
@@ -155,57 +183,34 @@ class MenuViewModelTest {
         assertFalse(viewModel.widgetEnabled.value)
     }
 
-    // ── loadCollectionProgress ──
-
     @Test
-    fun `loadCollectionProgress는 수집 수량을 올바르게 계산한다`() = runTest {
-        // Cheering 3개 중 2개 수집 → collected=2, total=3
-        coEvery { getCollectionByTypeUseCase(CookieType.Cheering.type, 3) } returns listOf(
-            CollectionDisplayItem(no = 1, type = CookieType.Cheering.type, isCollected = true, date = "20260620"),
-            CollectionDisplayItem(no = 2, type = CookieType.Cheering.type, isCollected = false, date = null),
-            CollectionDisplayItem(no = 3, type = CookieType.Cheering.type, isCollected = true, date = "20260622"),
+    fun `nickname은 observeUserInfoUseCase가 방출한 UserInfo의 닉네임을 반영한다`() = runTest {
+        // observeUserInfoUseCase()는 생성 시점에 캡처되므로 재생성 후 검증
+        every { observeUserInfoUseCase() } returns flowOf(
+            UserInfo(email = "a@test.com", nickname = "쿠키러버", phone = "", birth = "", gender = true)
         )
+        createViewModel()
 
-        viewModel.loadCollectionProgress(listOf(CookieType.Cheering to 3))
-
-        val progress = viewModel.collectionProgress.value
-        assertEquals(1, progress.size)
-        assertEquals(CookieType.Cheering.type, progress[0].type)
-        assertEquals(2, progress[0].collected)
-        assertEquals(3, progress[0].total)
+        backgroundScope.launch { viewModel.nickname.collect {} }
+        advanceUntilIdle()
+        assertEquals("쿠키러버", viewModel.nickname.value)
     }
 
-    @Test
-    fun `loadCollectionProgress는 여러 타입을 동시에 처리한다`() = runTest {
-        // Cheering 1개, Comfort 2개 수집 → 각각 정확히 계산
-        coEvery { getCollectionByTypeUseCase(CookieType.Cheering.type, 3) } returns listOf(
-            CollectionDisplayItem(no = 1, type = CookieType.Cheering.type, isCollected = true, date = "20260620"),
-            CollectionDisplayItem(no = 2, type = CookieType.Cheering.type, isCollected = false, date = null),
-            CollectionDisplayItem(no = 3, type = CookieType.Cheering.type, isCollected = false, date = null),
-        )
-        coEvery { getCollectionByTypeUseCase(CookieType.Comfort.type, 2) } returns listOf(
-            CollectionDisplayItem(no = 1, type = CookieType.Comfort.type, isCollected = true, date = "20260621"),
-            CollectionDisplayItem(no = 2, type = CookieType.Comfort.type, isCollected = true, date = "20260622"),
-        )
-
-        viewModel.loadCollectionProgress(listOf(CookieType.Cheering to 3, CookieType.Comfort to 2))
-
-        val progress = viewModel.collectionProgress.value
-        assertEquals(2, progress.size)
-        assertEquals(1, progress.find { it.type == CookieType.Cheering.type }?.collected)
-        assertEquals(2, progress.find { it.type == CookieType.Comfort.type }?.collected)
-    }
+    // ── collectionProgress ──
 
     @Test
-    fun `아무것도 수집하지 않으면 collected가 0이다`() = runTest {
-        // 전부 미수집 상태이면 collected=0
-        coEvery { getCollectionByTypeUseCase(any(), any()) } returns listOf(
-            CollectionDisplayItem(no = 1, type = CookieType.Cheering.type, isCollected = false, date = null),
+    fun `collectionProgress는 ObserveCollectionProgressUseCase가 방출한 값을 반영한다`() = runTest {
+        val progress = listOf(
+            TypeCollectedCount(type = CookieType.Cheering.type, collectedCount = 2, maxCount = 3),
+            TypeCollectedCount(type = CookieType.Comfort.type, collectedCount = 1, maxCount = 2),
         )
+        every { observeCollectionProgressUseCase() } returns flowOf(progress)
+        createViewModel()
 
-        viewModel.loadCollectionProgress(listOf(CookieType.Cheering to 1))
+        backgroundScope.launch { viewModel.collectionProgress.collect {} }
+        advanceUntilIdle()
 
-        assertEquals(0, viewModel.collectionProgress.value[0].collected)
+        assertEquals(progress, viewModel.collectionProgress.value)
     }
 
     // ── saveWidgetEnabled ──
@@ -218,6 +223,17 @@ class MenuViewModelTest {
         viewModel.saveWidgetEnabled(true)
 
         coVerify(exactly = 1) { saveWidgetEnabledUseCase(true) }
+    }
+
+    // ── refreshUserInfo ──
+
+    @Test
+    fun `refreshUserInfo는 RefreshUserInfoUseCase에 위임한다`() = runTest {
+        coEvery { refreshUserInfoUseCase() } just Runs
+
+        viewModel.refreshUserInfo()
+
+        coVerify(exactly = 1) { refreshUserInfoUseCase() }
     }
 
     // ── logout ──
