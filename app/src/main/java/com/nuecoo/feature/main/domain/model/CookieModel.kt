@@ -35,6 +35,7 @@ data class CookieUIItemData(
     val no: Int? = null,
     val message: String?,
     val isOpened: Boolean? = false,
+    val isLoading: Boolean = false,
     @field:DrawableRes val imgRes: Int
 )
 

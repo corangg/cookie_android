@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -77,11 +78,14 @@ fun CookieOpenScreen(
     onMoveCollection: () -> Unit
 ) {
     val isAlreadyOpened = cookieData.isOpened == true
-    var isOpened by remember { mutableStateOf(isAlreadyOpened) }
+    var animationFinished by remember { mutableStateOf(isAlreadyOpened) }
     var isAnimating by remember { mutableStateOf(false) }
     var currentFrame by remember { mutableIntStateOf(0) }
     val animFrames = remember(cookieData.type) { getCookieAnimationFrames(cookieData.type) }
     var triggerAnimation by remember { mutableStateOf(false) }
+
+    val isWaitingForServer = animationFinished && cookieData.isLoading
+    val isOpened = animationFinished && !cookieData.isLoading
 
     val haptic = LocalHapticFeedback.current
     val context = LocalContext.current
@@ -95,7 +99,7 @@ fun CookieOpenScreen(
     }
 
     LaunchedEffect(triggerAnimation) {
-        if (!triggerAnimation || isOpened || isAnimating) return@LaunchedEffect
+        if (!triggerAnimation || animationFinished || isAnimating) return@LaunchedEffect
         isAnimating = true
         onCookieOpened(cookieData.type)
 
@@ -107,8 +111,8 @@ fun CookieOpenScreen(
         }
 
         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-        isOpened = true
         isAnimating = false
+        animationFinished = true
     }
 
     val displayImage = when {
@@ -128,7 +132,7 @@ fun CookieOpenScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .cookiePinchOpenDetector(
-                    enabled = !isOpened && !isAnimating,
+                    enabled = !triggerAnimation,
                     onOpen = {
                         triggerAnimation = true
                     }
@@ -173,7 +177,7 @@ fun CookieOpenScreen(
                         }
                 )
 
-                if (!isOpened && !isAnimating) {
+                if (!isOpened && !isAnimating && !isWaitingForServer) {
                     Spacer(Modifier.height(96.dp))
                     Text(
                         stringResource(R.string.text_open_cookie_sub),
@@ -182,6 +186,24 @@ fun CookieOpenScreen(
                         fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
                         fontWeight = FontWeight.Thin,
                     )
+                }
+
+                AnimatedVisibility(
+                    visible = isWaitingForServer,
+                    enter = fadeIn(animationSpec = tween(300))
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Spacer(Modifier.height(48.dp))
+                        CircularProgressIndicator(color = Color.White)
+                        Spacer(Modifier.height(16.dp))
+                        Text(
+                            stringResource(R.string.text_open_cookie_loading),
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontFamily = FontFamily(Font(R.font.cookie_run_regular)),
+                            fontWeight = FontWeight.Thin,
+                        )
+                    }
                 }
 
                 AnimatedVisibility(

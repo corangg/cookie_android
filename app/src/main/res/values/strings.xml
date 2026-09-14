@@ -144,6 +144,7 @@
     <string name="text_open_cookie_love_sub">마음을 전하는 한마디</string>
     <string name="text_open_cookie_error_main">오류</string>
     <string name="text_open_cookie_start_collection">도감으로 이동</string>
+    <string name="text_open_cookie_loading">쿠키를 준비 중이에요</string>
 
     <string name="text_open_all_colleted_cheering">CHEER COMPLETE</string>
     <string name="text_open_all_colleted_comfort">Comfort Complete</string>

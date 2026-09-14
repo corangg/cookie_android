@@ -169,6 +169,7 @@ fun CookieSlotUi.toUiItem(): CookieUIItemData {
             type = type,
             isFull = false,
             isOpened = false,
+            isLoading = true,
             no = null,
             message = null,
             imgRes = resource?.closedImgRes ?: R.drawable.img_cookie_deactive
