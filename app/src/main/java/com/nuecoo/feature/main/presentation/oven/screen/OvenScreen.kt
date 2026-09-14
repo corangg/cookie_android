@@ -63,13 +63,13 @@ import com.nuecoo.core.theme.ProgressBackground
 import com.nuecoo.core.theme.SubText
 import com.nuecoo.core.theme.SubTitle
 import com.nuecoo.core.theme.White
-import com.nuecoo.feature.main.domain.model.CookieUIItemData
-import com.nuecoo.feature.main.domain.model.TypeCollectedCount
-import com.nuecoo.feature.main.presentation.oven.viewmodel.OvenViewModel
 import com.nuecoo.feature.main.data.mapper.getCookieTypeAllCollectedTextRes
 import com.nuecoo.feature.main.data.mapper.getCookieTypeBackgroundColor
 import com.nuecoo.feature.main.data.mapper.getCookieTypeColor
 import com.nuecoo.feature.main.data.mapper.getCookieTypeMainTextRes
+import com.nuecoo.feature.main.domain.model.CookieUIItemData
+import com.nuecoo.feature.main.domain.model.TypeCollectedCount
+import com.nuecoo.feature.main.presentation.oven.viewmodel.OvenViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -211,7 +211,7 @@ private fun CookieTray(
                     data = item,
                     onMoveCollection = onMoveCollection,
                     onClick = { openCookie(item) },
-                    totalCount =  totalCount.find { it.type == item.type }?.maxCount?:return@items
+                    totalCount = totalCount.find { it.type == item.type }?.maxCount ?: return@items
                 )
             }
         }
@@ -274,7 +274,8 @@ fun CookieItem(
             type = data.type,
             onMoveCollection = onMoveCollection,
             onDismiss = { showFullDialog = false },
-            totalCount = totalCount)
+            totalCount = totalCount
+        )
     }
 
     Image(
@@ -305,7 +306,12 @@ fun CookieItem(
 }
 
 @Composable
-private fun AllCookieOpenedDialog(type: Int, totalCount: Int, onMoveCollection: () -> Unit, onDismiss: () -> Unit) {
+private fun AllCookieOpenedDialog(
+    type: Int,
+    totalCount: Int,
+    onMoveCollection: () -> Unit,
+    onDismiss: () -> Unit
+) {
     val defaultColor = getCookieTypeColor(type)
     val backgroundColor = getCookieTypeBackgroundColor(type)
     val cookieText = stringResource(getCookieTypeMainTextRes(type))
