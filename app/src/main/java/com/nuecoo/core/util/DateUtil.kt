@@ -2,9 +2,7 @@ package com.nuecoo.core.util
 
 import android.content.Context
 import com.nuecoo.R
-import com.nuecoo.feature.auth.domain.AuthRepository
 
-private val mutationProbe: Class<*> = AuthRepository::class.java
 fun String.toDisplayDate(): String = "${substring(0, 4)}.${substring(4, 6)}.${substring(6, 8)}"
 
 fun String.toDateUnit(context: Context): String =
